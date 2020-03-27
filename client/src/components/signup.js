@@ -1,0 +1,193 @@
+import React from "react";
+import {
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBInput,
+  MDBBtn,
+  MDBCard,
+  MDBCardBody
+} from "mdbreact";
+
+import Scard from "./signupComponents/signupCard";
+import axios from "axios";
+
+class FormPage extends React.Component {
+  state = {
+    fullName: "",
+    email: "",
+    userName: "",
+    password: "",
+    confirmPassword: "",
+    passError: ""
+  };
+
+  //This method handles the change in form fields and updates state accordingly
+  handleChange = e => {
+    let name = e.target.name;
+    let value = e.target.value;
+    this.setState({
+      [name]: value
+    });
+  };
+
+  //This method clears the form fields
+  clearFields = () => {
+    this.setState({
+      fullName: "",
+      email: "",
+      userName: "",
+      password: "",
+      confirmPassword: "",
+      passError: ""
+    });
+  };
+
+  //This method validates password mismatch in form
+  isValid = () => {
+    if (this.state.password !== this.state.confirmPassword) {
+      this.setState({
+        password: "",
+        confirmPassword: "",
+        passError: "Passwords do not match!"
+      });
+      return false;
+    } else return true;
+  };
+
+  //This method submits the form data to the database using various checks
+  submitForm = e => {
+    e.preventDefault();
+    if (this.isValid()) {
+      const payload = {
+        fullName: this.state.fullName,
+        email: this.state.email,
+        userName: this.state.userName,
+        password: this.state.password
+      };
+
+      axios({
+        url: "/userSignUp",
+        method: "post",
+        data: payload
+      })
+        .then(() => console.log("send successful!"))
+        .catch(() => console.log("error occurred!"));
+      this.clearFields();
+    }
+  };
+
+  render() {
+    let styles;
+
+    if (this.state.passError) {
+      styles = {
+        borderBottom: "1px solid red"
+      };
+    } else {
+      styles = {
+        borderBottom: ""
+      };
+    }
+
+    return (
+      <MDBContainer className="mt-5">
+        <MDBRow className="justify-content-center">
+          <MDBCol md="8" sm="10" lg="5">
+            <MDBCard>
+              <MDBCardBody>
+                <form onSubmit={this.submitForm}>
+                  <p className="h4 text-center py-4">Sign up</p>
+                  <div className="grey-text">
+                    <MDBInput
+                      label="Full name"
+                      icon="user"
+                      group
+                      type="text"
+                      validate
+                      error="wrong"
+                      success="right"
+                      name="fullName"
+                      value={this.state.fullName}
+                      onChange={this.handleChange}
+                    />
+                    <MDBInput
+                      label="Email"
+                      icon="envelope"
+                      group
+                      type="email"
+                      validate
+                      error="wrong"
+                      success="right"
+                      name="email"
+                      value={this.state.email}
+                      onChange={this.handleChange}
+                    />
+                    <MDBInput
+                      label="User name"
+                      icon="user"
+                      group
+                      type="text"
+                      validate
+                      error="wrong"
+                      success="right"
+                      name="userName"
+                      value={this.state.userName}
+                      onChange={this.handleChange}
+                    />
+                    <MDBInput
+                      label="Password"
+                      icon="lock"
+                      group
+                      type="password"
+                      validate
+                      name="password"
+                      value={this.state.password}
+                      onChange={this.handleChange}
+                      style={styles}
+                    />
+                    <MDBInput
+                      label="Confirm password"
+                      icon="lock"
+                      group
+                      type="password"
+                      validate
+                      name="confirmPassword"
+                      value={this.state.confirmPassword}
+                      onChange={this.handleChange}
+                      style={styles}
+                    />
+                  </div>
+
+                  {/* Render error message if passwords do not match */}
+                  {this.state.passError ? (
+                    <div
+                      style={{
+                        color: "red",
+                        fontSize: "12pt",
+                        textAlign: "center"
+                      }}
+                    >
+                      {this.state.passError}
+                    </div>
+                  ) : null}
+
+                  <div className="text-center py-4 mt-3">
+                    <MDBBtn color="cyan" type="submit">
+                      Register
+                    </MDBBtn>
+                  </div>
+                </form>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+          {/*}<MDBCol md="4">
+            <Scard />
+    </MDBCol>*/}
+        </MDBRow>
+      </MDBContainer>
+    );
+  }
+}
+
+export default FormPage;
