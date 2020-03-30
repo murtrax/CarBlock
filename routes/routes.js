@@ -3,6 +3,7 @@ const router = express.Router();
 
 const userSignUp = require("./../models/userSignUp");
 const workshopRegistration = require("./../models/workshopRegistration");
+const carDetails = require("./../models/carSchema/carDetails");
 
 /** ROUTES */
 
@@ -40,6 +41,42 @@ router.post("/workshopSignUp", (req, res) => {
 
   console.log(data);
   res.json(data);
+});
+
+/*
+  This request handles search of a vehicle by vin and reg number. 
+  Model access: Car Details / Accident History / Service History / Owner History
+  Test after front end complete
+*/
+router.post("/searchCar", (req, res) => {
+  /*const data = req.body;
+  let returnedCar = null;
+
+  if (data.selectedOpt === "vin") {
+    carDetails.findOne({ vin: data.number }).then(car => {
+      //If car does not exist then
+      if (!car) {
+        return res.status(400).json({ error: "Car does not exist" });
+      } else {
+        returnedCar = car;
+      }
+    });
+  }
+
+  if (data.selectedOpt === "reg") {
+    carDetails.findOne({ reg: data.number }).then(car => {
+      //If car does not exist then
+      if (!car) {
+        return res.status(400).json({ error: "Car does not exist" });
+      } else {
+        returnedCar = car;
+      }
+    });
+  }
+
+  //retrieve data and send back to the client
+  res.json(returnedCar);*/
+  res.json("data recieved!");
 });
 
 module.exports = router;
