@@ -52,7 +52,8 @@ router.post("/workshopSignUp", (req, res) => {
   Test after front end complete
 */
 router.post("/searchCar", (req, res) => {
- /* const data = req.body;
+  const data = req.body;
+  console.log(data);
   let returnedCar = null;
   let ownership = null;
 
@@ -60,48 +61,62 @@ router.post("/searchCar", (req, res) => {
     carDetails.findOne({ vin: data.number }).then(car => {
       //If car does not exist then
       if (!car) {
-        return res.status(400).json({ error: "Car does not exist" });
+        return res.status(400).send("Car does not exist" );
       } else {
+        console.log(returnedCar)
         returnedCar = car;
+        console.log(returnedCar)
       }
+    }).catch(()=> {
+      
     });
 
     ownershipHistory.findOne({vin: data.number}, {yearPurchased: 1, millage: 1, city: 1, state: 1}).then(owner => {
       if (!owner) {
-        return res.status(400).json({error: "Ownership history does not exist"})
+        return res.status(400).send( "Ownership history does not exist")
       }
       else {
         ownership = owner; 
       }
     })
-  }
+    .catch(()=> {
 
+    })
+  }
 
   if (data.selectedOpt === "reg") {
     carDetails.findOne({ reg: data.number }).then(car => {
       //If car does not exist then
       if (!car) {
-        return res.status(400).json({ error: "Car does not exist" });
+        console.log("Error indicated here")
+        return res.status(400).send( "Car does not exist" );
       } else {
+        console.log(returnedCar)
         returnedCar = car;
+        console.log(returnedCar)
       }
+    })
+    .catch(()=> {
+
     });
 
     ownershipHistory.findOne({vin: data.number}, {yearPurchased: 1, millage: 1, city: 1, state: 1}).then(owner => {
       if (!owner) {
-        return res.status(400).json({error: "Ownership history does not exist"})
+        return res.status(400).send("Ownership history does not exist")
       }
       else {
         ownership = owner; 
       }
+    })
+    .catch(()=> {
+
     });
-
-    
   }
-
   //retrieve data and send back to the client
+  console.log("End of the code")
+  console.log(returnedCar)
   res.json(returnedCar);
-  res.json("data recieved!");*/
+  res.json("data recieved!");
 });
 
 
@@ -109,75 +124,49 @@ router.post("/CarEntry", (req, res)=> {
   
   const data = req.body;
 
-  carDetails.find({vin: data.vin}).then(car=> {
-    if (car)
-    {
-      return res.status(400).json({error: "A vehicle with this VIN already exists"})
-    }
-
-  })
-
-  carDetails.find({reg: data.reg}).then(car=> {
-    if (car)
-    {
-      return res.status(400).json({error: "A vehicle with this REG already exists"})
-    }
-    
-  })
-
-  const carData = {
-  
-    vin: data.vin,
-    reg: data.req,
-    make: data.make,
-    model: data.model,
-    year: data.year,
-    varaint: data.variant,
-    type: data.type,
-    fuel: data.fuel,
-    drive: data.drive
-  }
-
-  const ownerData = {
-    vin: data.vin,
-    reg: data.reg,
-    yearPurchased: data.yearPurchased,
-    millage: data.millage,
-    city: data.city,
-    state: data.state,
-    ownerName: data.ownerName,
-    ownerCNIC: data.ownerCNIC,
-    ownerContact: data.ownerContact
-  }
-
-  const newCarDetails = new carDetails(carData);
-  const newOwner = new ownershipHistory(ownerData);
-
-  newCarDetails.save(error => {
-    if (error)
-    {
-      console.log("There was an error saving Car Details")
-      return res.status(400).json({error: "There was an error saving Car Details"})
+  carDetails.findOne( {$or: [{reg: data.regNumber}, {vin: data.vinNumber} ]})
+  .then(car => {
+    if (car) {
+      return res.status(400).send("A vehicle with this VIN or Reg Number already exists");
     }
     else {
-      console.log("Car Details saved sucessfully")
+      const carData = {
+        vin: data.vinNumber,
+        reg: data.regNumber,
+        make: data.make,
+        model: data.model,
+        year: data.year,
+        varaint: data.variant,
+        type: data.type,
+        fuel: data.fuel,
+        drive: data.drive
+      }
+      const ownerData = {
+        vin: data.vinNumber,
+        reg: data.regNumber,
+        yearPurchased: data.year,
+        millage: data.millage,
+        city: data.ownerCity,
+        state: data.ownerState,
+        ownerName: data.FullName,
+        ownerCNIC: data.ownerCNIC,
+        ownerContact: data.ownerContact
+      }
+      const newCarDetails = new carDetails(carData);
+      const newOwner = new ownershipHistory(ownerData);
+      newCarDetails.save(error => {
+        if (error) {
+          return res.status(400).json({error: "There was an error saving Car Details"})
+        }
+      })
+      newOwner.save(error=> {
+        if (error) {
+         return res.status(400).json({error: "There was an error saving new Owner details"})
+        }
+      })
+      res.send("The new car entry was sucessfully saved");
     }
+
   })
-
-  newOwner.save(error=> {
-    if (error)
-    {
-      console.log("There was an errros saving ownership history");
-     return res.status(400).json({error: "There was an error saving "})
-    }
-
-    else {
-      console.log("Onwership details saved sucessfully")
-    }
-  })
-
-  res.send("The new car entry was sucessfully saved");
-  console.log("The new car entry was sucessfully saved");
-
 })
 module.exports = router;

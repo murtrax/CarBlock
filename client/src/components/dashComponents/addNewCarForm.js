@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import {
   MDBContainer,
   MDBRow,
@@ -20,7 +21,16 @@ class CardExample extends React.Component {
     make: "",
     model: "",
     year: "",
-    variant: ""
+    variant: "",
+    FullName: "",
+    ownerCNIC: "",
+    ownerContact: "",
+    ownerCity: "",
+    ownerState: "",
+    millage: "",
+    type: "",
+    fuel: "",
+    drive: "",
   };
 
   handleChange = e => {
@@ -29,14 +39,70 @@ class CardExample extends React.Component {
     this.setState({
       [name]: value
     });
+
+    
   };
 
   submitForm = e => {
     e.preventDefault();
-    console.log(e);
+    
+    const payload = {
+      vinNumber: this.state.vinNumber,
+      regNumber: this.state.regNumber,
+      make: this.state.make,
+      model: this.state.model,
+      year: this.state.year,
+      variant: this.state.variant,
+      FullName: this.state.FullName,
+      ownerCNIC: this.state.ownerCNIC,
+      ownerContact: this.state.ownerContact,
+      ownerCity: this.state.ownerCity,
+      ownerState: this.state.ownerState,
+      millage: this.state.millage,
+      type: this.state.type,
+      fuel: this.state.fuel,
+      drive: this.state.drive,
+    }
+    console.log(payload);
+
+    axios({
+      url: "/CarEntry",
+      method: "POST",
+      data: payload
+    })
+    .then((response)=> {
+      console.log(response.data);
+    })
+    .catch((error)=> {
+      console.log(error.response.data);
+    })
+
+
+    //this.resetFields()
   };
 
+  resetFields = ()=> {
+    this.setState({
+      vinNumber: "",
+      regNumber: "",
+      make: "",
+      model: "",
+      year: "",
+      variant: "",
+      FullName: "",
+      ownerCNIC: "",
+      ownerContact: "",
+      ownerCity: "",
+      ownerState: "",
+      millage: "",
+      type: "",
+      fuel: "",
+      drive: "",
+    })
+  }
+
   render() {
+    console.log(this.state)
     return (
       <MDBContainer>
         <MDBRow>
@@ -52,6 +118,8 @@ class CardExample extends React.Component {
                         placeholder="Vin Number of the Car"
                         name="vinNumber"
                         type="text"
+                        value= {this.state.vinNumber}
+                        onChange= {this.handleChange}
                         className="validate"
                       />
                       <label for="first_name">Enter Vin Number</label>
@@ -61,6 +129,8 @@ class CardExample extends React.Component {
                         name="regNumber"
                         type="text"
                         className="validate"
+                        value= {this.state.regNumber}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">Enter Registration Number</label>
 
@@ -69,6 +139,8 @@ class CardExample extends React.Component {
                         name="make"
                         type="text"
                         className="validate"
+                        value= {this.state.make}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">Make / Company</label>
 
@@ -77,6 +149,8 @@ class CardExample extends React.Component {
                         name="model"
                         type="text"
                         className="validate"
+                        value= {this.state.model}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">Model / Name</label>
 
@@ -85,6 +159,8 @@ class CardExample extends React.Component {
                         name="year"
                         type="text"
                         className="validate"
+                        value= {this.state.year}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">Year of Manufacture</label>
 
@@ -93,12 +169,16 @@ class CardExample extends React.Component {
                         name="variant"
                         type="text"
                         className="validate"
+                        value= {this.state.variant}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">Variant</label>
 
                       <MDBRow>
                         <MDBCol md="6" lg="6" sm="12">
-                          <select className="browser-default custom-select">
+                          <select className="browser-default custom-select" 
+                          value={this.state.type} 
+                          onChange={this.handleChange} name = "type">
                             <option>Choose your option</option>
                             <option value="Sedan">Sedan</option>
                             <option value="HatchBack">HatchBack</option>
@@ -113,7 +193,9 @@ class CardExample extends React.Component {
                           <label for="first_name">Type</label>
                         </MDBCol>
                         <MDBCol md="6" lg="6" sm="12">
-                          <select className="browser-default custom-select">
+                          <select className="browser-default custom-select"
+                          value={this.state.fuel} 
+                          onChange={this.handleChange} name = "fuel">
                             <option>Choose your option</option>
                             <option value="Gas">Gas</option>
                             <option value="Petrol">Petrol</option>
@@ -124,18 +206,19 @@ class CardExample extends React.Component {
                           <label for="first_name">Fuel</label>
                         </MDBCol>
                         <MDBCol md="6" lg="6" sm="12">
-                          <select className="browser-default custom-select">
+                          <select className="browser-default custom-select"
+                          onChange={this.handleChange} name = "drive"  >
                             <option>Choose your option</option>
                             <option value="Front Wheel Drive">
-                              Front Wheel Drive
+                              Front Wheel Drive (FWD)
                             </option>
                             <option value="Rear Wheel Drive">
-                              Rear Wheel Drive
+                              Rear Wheel Drive (RWD)
                             </option>
                             <option value="All Wheel Drive">
-                              All Wheel Drive
+                              All Wheel Drive (AWD)
                             </option>
-                            <option value="4 Wheel Drive">4 Wheel Drive</option>
+                            <option value="4 Wheel Drive">4 Wheel Drive (4WD)</option>
                           </select>
                           <label for="first_name">Drive</label>
                         </MDBCol>
@@ -152,9 +235,11 @@ class CardExample extends React.Component {
 
                       <input
                         placeholder="Full Name"
-                        name="Full Name"
+                        name="FullName"
                         type="text"
                         className="validate"
+                        value= {this.state.Fullname}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">ter Owner Name</label>
 
@@ -163,6 +248,8 @@ class CardExample extends React.Component {
                         name="ownerCNIC"
                         type="text"
                         className="validate"
+                        value= {this.state.ownerCNIC}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">CNIC</label>
 
@@ -171,6 +258,8 @@ class CardExample extends React.Component {
                         name="ownerContact"
                         type="text"
                         className="validate"
+                        value= {this.state.ownerContact}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">Contact</label>
 
@@ -179,6 +268,8 @@ class CardExample extends React.Component {
                         name="ownerCity"
                         type="text"
                         className="validate"
+                        value= {this.state.ownerCity}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">City</label>
 
@@ -187,16 +278,20 @@ class CardExample extends React.Component {
                         name="ownerState"
                         type="text"
                         className="validate"
+                        value= {this.state.ownerState}
+                        onChange= {this.handleChange}
                       />
                       <label for="first_name">State</label>
 
                       <input
-                        placeholder="Mileage at time of purchase"
-                        name="mileageAtPurchase"
+                        placeholder="millage at time of purchase"
+                        name="millage"
                         type="text"
                         className="validate"
+                        value= {this.state.millage}
+                        onChange= {this.handleChange}
                       />
-                      <label for="first_name">Mileage</label>
+                      <label for="first_name">millage</label>
                       <br />
                       <br />
                       <button

@@ -20,7 +20,7 @@ import axios from "axios";
 class JumbotronPage extends React.Component {
   state = {
     number: "",
-    selectedOpt: "vin"
+    selectedOpt: "vin",
   };
 
   clearFields = () => {
@@ -53,10 +53,10 @@ class JumbotronPage extends React.Component {
         data: payload
       })
         .then(response => {
-          console.log(response.data);
+          console.log(response);
         })
         .catch(err => {
-          console.log(err);
+          console.log(err.response.data);
         });
       this.clearFields();
     } else {

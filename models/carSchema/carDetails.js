@@ -12,8 +12,7 @@ const carDetailsSchema = new Schema({
   },
   make: {
     type: String,
-    required: true
-  },
+    required: true  },
   model: {
     type: String,
     required: true
