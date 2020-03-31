@@ -63,24 +63,19 @@ router.post("/searchCar", (req, res) => {
       if (!car) {
         return res.status(400).send("Car does not exist" );
       } else {
-        console.log(returnedCar)
         returnedCar = car;
-        console.log(returnedCar)
       }
-    }).catch(()=> {
-      
-    });
-
-    ownershipHistory.findOne({vin: data.number}, {yearPurchased: 1, millage: 1, city: 1, state: 1}).then(owner => {
-      if (!owner) {
-        return res.status(400).send( "Ownership history does not exist")
-      }
-      else {
-        ownership = owner; 
-      }
-    })
-    .catch(()=> {
-
+    
+      ownershipHistory.findOne({vin: data.number}, {yearPurchased: 1, millage: 1, city: 1, state: 1}).then(owner => {
+        if (!owner) {
+          return res.status(400).send( "Ownership history does not exist")
+        }
+        else {
+          ownership = owner;
+          res.json({owner: ownership, car: returnedCar});
+        }
+        //retrieve data and send back to the client
+      })
     })
   }
 
@@ -88,35 +83,23 @@ router.post("/searchCar", (req, res) => {
     carDetails.findOne({ reg: data.number }).then(car => {
       //If car does not exist then
       if (!car) {
-        console.log("Error indicated here")
         return res.status(400).send( "Car does not exist" );
       } else {
-        console.log(returnedCar)
         returnedCar = car;
-        console.log(returnedCar)
       }
+
+      ownershipHistory.findOne({reg: data.number}, {yearPurchased: 1, millage: 1, city: 1, state: 1}).then(owner => {
+        if (!owner) {
+          return res.status(400).send("Ownership history does not exist")
+        }
+        else {
+          ownership = owner; 
+        }
+        //retrieve data and send back to the client
+        res.json(returnedCar);
+      })
     })
-    .catch(()=> {
-
-    });
-
-    ownershipHistory.findOne({vin: data.number}, {yearPurchased: 1, millage: 1, city: 1, state: 1}).then(owner => {
-      if (!owner) {
-        return res.status(400).send("Ownership history does not exist")
-      }
-      else {
-        ownership = owner; 
-      }
-    })
-    .catch(()=> {
-
-    });
   }
-  //retrieve data and send back to the client
-  console.log("End of the code")
-  console.log(returnedCar)
-  res.json(returnedCar);
-  res.json("data recieved!");
 });
 
 
@@ -166,7 +149,6 @@ router.post("/CarEntry", (req, res)=> {
       })
       res.send("The new car entry was sucessfully saved");
     }
-
   })
 })
 module.exports = router;

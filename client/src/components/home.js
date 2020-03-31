@@ -53,7 +53,7 @@ class JumbotronPage extends React.Component {
         data: payload
       })
         .then(response => {
-          console.log(response);
+          console.log(response.data);
         })
         .catch(err => {
           console.log(err.response.data);
