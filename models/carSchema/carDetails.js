@@ -1,25 +1,50 @@
-const mongoose = require ("mongoose");
-
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-new carDetailsSchema = new Schema(({
-    vin: String,
-    reg: String,
-    make: String,
-    model: String,
-    //year vehicle was made
-    year: String,
-    //E.G Corolla Altis, Corolla Gli
-    variant: String,
-    //E.G SUV 5-DR, SEDAN 4-DR 
+const carDetailsSchema = new Schema({
+  vin: {
     type: String,
-    //E.G Diesel,Gasoline
-    fuel: String,
-    //E.G FWD (Front wheel drive) RWD Rear Wheel drive )
-    drive: String,
-}))
+    required: true
+  },
+  reg: {
+    type: String,
+    required: true
+  },
+  make: {
+    type: String,
+    required: true
+  },
+  model: {
+    type: String,
+    required: true
+  },
+  //year vehicle was made
+  year: {
+    type: String,
+    required: true
+  },
+  //E.G Corolla Altis, Corolla Gli
+  variant: {
+    type: String,
+    default: "N/A"
+  },
+  //E.G SUV 5-DR, SEDAN 4-DR
+  type: {
+    type: String,
+    required: true
+  },
+  //E.G Diesel,Gasoline
+  fuel: {
+    type: String,
+    required: true
+  },
+  //E.G FWD (Front wheel drive) RWD Rear Wheel drive )
+  drive: {
+    type: String,
+    required: true
+  }
+});
 
-new carDetails = mongoose.model("carDetails", carDetailsSchema);
+const carDetails = mongoose.model("carDetails", carDetailsSchema);
 
 module.exports = carDetails;
-
