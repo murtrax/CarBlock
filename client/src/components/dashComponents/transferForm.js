@@ -1,14 +1,21 @@
 import React from "react";
-import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBCard, MDBCardBody } from 'mdbreact';
-import {useForm} from 'react-hook-form';
+import {
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBInput,
+  MDBBtn,
+  MDBCard,
+  MDBCardBody
+} from "mdbreact";
+import { useForm } from "react-hook-form";
 
 const FormPage = () => {
+  const { register, handleSubmit, errors } = useForm();
 
-const {register, handleSubmit, errors} = useForm();
-
-const onSubmit = (data) => {
-console.log(data);
-}
+  const onSubmit = data => {
+    console.log(data);
+  };
 
   return (
     <MDBContainer>
@@ -17,6 +24,7 @@ console.log(data);
           <MDBCard>
             <MDBCardBody>
               <form onSubmit={handleSubmit(onSubmit)}>
+<<<<<<< HEAD
                   <h4 classNameName = "text-center">Owner Transfer Form</h4>
 
                     <input placeholder="Vin Number of the Car" ref = {register} name="vinNumber" type="text" className="validate"/>
@@ -49,6 +57,63 @@ console.log(data);
                     <button class="btn waves-effect waves-light" type="submit" name="action">Transfer
                         <i class="material-icons right">send</i>
                     </button>
+=======
+                <h4 classNameName="text-center">Owner Transfer Form</h4>
+
+                <input
+                  placeholder="Registration Number of the Car"
+                  ref={register}
+                  name="regNumber"
+                  type="text"
+                  className="validate"
+                />
+                <label for="first_name">Enter Registration Number</label>
+
+                <input
+                  placeholder="Owner's Name"
+                  name="name"
+                  ref={register}
+                  type="text"
+                  className="validate"
+                />
+                <label for="first_name">Full Name</label>
+
+                <input
+                  placeholder="CNIC"
+                  name="CNIC"
+                  type="text"
+                  ref={register}
+                  className="validate"
+                />
+                <label for="first_name">CNIC</label>
+
+                <input
+                  placeholder="Milage"
+                  name="milage"
+                  ref={register}
+                  type="text"
+                  className="validate"
+                />
+                <label for="first_name">Milage</label>
+
+                <input
+                  placeholder="Year"
+                  name="firstname"
+                  ref={register}
+                  type="text"
+                  className="validate"
+                />
+                <label for="first_name">Year of transfer</label>
+
+                <button
+                  class="btn waves-effect waves-light"
+                  type="submit"
+                  name="action"
+                >
+                  Transfer
+                  <i class="material-icons right">send</i>
+                </button>
+>>>>>>> Hassaan
               </form>
             </MDBCardBody>
           </MDBCard>

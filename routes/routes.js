@@ -4,9 +4,12 @@ const router = express.Router();
 const userSignUp = require("./../models/userSignUp");
 const workshopRegistration = require("./../models/workshopRegistration");
 const carDetails = require("./../models/carSchema/carDetails");
+<<<<<<< HEAD
 const ownershipHistory = require("./../models/carSchema/ownershipHistory");
 const serviceHistory = require("./../models/carSchema/serviceHistory");
 const accidentHistory = require("./../models/carSchema/accidentHistory");
+=======
+>>>>>>> Hassaan
 
 /** ROUTES */
 
@@ -52,9 +55,14 @@ router.post("/workshopSignUp", (req, res) => {
   Test after front end complete
 */
 router.post("/searchCar", (req, res) => {
+<<<<<<< HEAD
  /* const data = req.body;
   let returnedCar = null;
   let ownership = null;
+=======
+  /*const data = req.body;
+  let returnedCar = null;
+>>>>>>> Hassaan
 
   if (data.selectedOpt === "vin") {
     carDetails.findOne({ vin: data.number }).then(car => {
@@ -65,6 +73,7 @@ router.post("/searchCar", (req, res) => {
         returnedCar = car;
       }
     });
+<<<<<<< HEAD
 
     ownershipHistory.findOne({vin: data.number}, {yearPurchased: 1, millage: 1, city: 1, state: 1}).then(owner => {
       if (!owner) {
@@ -77,6 +86,10 @@ router.post("/searchCar", (req, res) => {
   }
 
 
+=======
+  }
+
+>>>>>>> Hassaan
   if (data.selectedOpt === "reg") {
     carDetails.findOne({ reg: data.number }).then(car => {
       //If car does not exist then
@@ -86,6 +99,7 @@ router.post("/searchCar", (req, res) => {
         returnedCar = car;
       }
     });
+<<<<<<< HEAD
 
     ownershipHistory.findOne({vin: data.number}, {yearPurchased: 1, millage: 1, city: 1, state: 1}).then(owner => {
       if (!owner) {
@@ -180,4 +194,13 @@ router.post("/CarEntry", (req, res)=> {
   console.log("The new car entry was sucessfully saved");
 
 })
+=======
+  }
+
+  //retrieve data and send back to the client
+  res.json(returnedCar);*/
+  res.json("data recieved!");
+});
+
+>>>>>>> Hassaan
 module.exports = router;
