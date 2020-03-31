@@ -18,7 +18,10 @@ console.log(data);
             <MDBCardBody>
               <form onSubmit={handleSubmit(onSubmit)}>
                   <h4 classNameName = "text-center">Owner Transfer Form</h4>
-              
+
+                    <input placeholder="Vin Number of the Car" ref = {register} name="vinNumber" type="text" className="validate"/>
+                    <label for="first_name">Enter Vin Number</label>
+
                     <input placeholder="Registration Number of the Car" ref = {register} name="regNumber" type="text" className="validate"/>
                     <label for="first_name">Enter Registration Number</label>
 
@@ -28,8 +31,17 @@ console.log(data);
                     <input placeholder="CNIC" name="CNIC" type="text" ref = {register} className="validate"/>
                     <label for="first_name">CNIC</label>
 
-                    <input placeholder="Milage" name="milage" ref = {register} type="text" className="validate"/>
-                    <label for="first_name">Milage</label>
+                    <input placeholder="Contact Number" name="Contact" type="text" ref = {register} className="validate"/>
+                    <label for="first_name">Contact Number</label>
+
+                    <input placeholder="City" name="City" type="text" ref = {register} className="validate"/>
+                    <label for="first_name">City</label>
+
+                    <input placeholder="State" name="State" type="text" ref = {register} className="validate"/>
+                    <label for="first_name">State</label>
+
+                    <input placeholder="Millage" name="millage" ref = {register} type="text" className="validate"/>
+                    <label for="first_name">Millage</label>
 
                     <input placeholder="Year" name="firstname" ref = {register} type="text" className="validate"/>
                     <label for="first_name">Year of transfer</label>

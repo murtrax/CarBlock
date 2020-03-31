@@ -10,13 +10,13 @@ const app = express();
 const port = 8080;
 
 /* Database Connection to Mongo */
-/*mongoose.connect("mongodb://localhost:27017/mernApp1", {
+mongoose.connect("mongodb://localhost:27017/CarBlock", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
 mongoose.connection.on("connected", () => {
   console.log("Database connection established!");
-});*/
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
