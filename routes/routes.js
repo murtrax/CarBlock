@@ -7,8 +7,8 @@ const carDetails = require("./../models/carSchema/carDetails");
 const ownershipHistory = require("./../models/carSchema/ownershipHistory");
 const serviceHistory = require("./../models/carSchema/serviceHistory");
 const accidentHistory = require("./../models/carSchema/accidentHistory");
-
 const carAndOwnerValidate = require("./../validation/addNewCarValidation");
+const ownerTransferValidate = require("./../validation/ownerTransferValidation");
 
 /** ROUTES */
 
@@ -174,4 +174,18 @@ router.post("/CarEntry", (req, res) => {
       });
   }
 });
+
+router.post("/OwnerTransfer", (req, res) => {
+  const data = req.body;
+
+  const { errors, isValid } = ownerTransferValidate(data);
+  if (!isValid) {
+    return res.status(400).json(errors);
+  } else {
+    //save in db
+    console.log(data);
+    res.json(data);
+  }
+});
+
 module.exports = router;

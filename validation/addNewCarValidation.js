@@ -6,24 +6,6 @@ function validateCarAndOwnerInput(data) {
 
   const date = new Date();
 
-  /*
-    vinNumber: this.state.vinNumber,
-      regNumber: this.state.regNumber,
-      make: this.state.make,
-      model: this.state.model,
-      year: this.state.year,
-      variant: this.state.variant,
-      FullName: this.state.FullName,
-      ownerCNIC: this.state.ownerCNIC,
-      ownerContact: this.state.ownerContact,
-      ownerCity: this.state.ownerCity,
-      ownerState: this.state.ownerState,
-      millage: this.state.millage,
-      type: this.state.type,
-      fuel: this.state.fuel,
-      drive: this.state.drive
-      */
-
   //Convert empty fields to an empty string so we can use validator
   //check if empty then convert to empty string else leave as is
   (data.vinNumber = !isEmpty(data.vinNumber) ? data.vinNumber : ""),
