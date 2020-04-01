@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+
 import {
   MDBContainer,
   MDBRow,
@@ -30,7 +31,9 @@ class CardExample extends React.Component {
     millage: "",
     type: "",
     fuel: "",
-    drive: ""
+    drive: "",
+    errors: [],
+    errorBool: ""
   };
 
   handleChange = e => {
@@ -40,6 +43,50 @@ class CardExample extends React.Component {
       [name]: value
     });
   };
+
+  displayError = (message, errorType)=> {
+
+    let labels= [];
+    let condition = "false"
+
+    if (this.state.errorBool == "true")
+    {
+        for (var x=0; x < errorType.length; x++)
+        {
+            if (this.state.errors[errorType[x]])
+            {
+              condition = "true"
+              labels[x] = (
+              <React.Fragment><label style={{color: "red"}} >{this.state.errors[errorType[x]]}</label></React.Fragment>)
+            }
+        }
+        if (condition === "false") {
+            return <label for="first_name">{message}</label>
+        }
+        else {
+            return labels
+        }
+    }
+    else {
+      return <label for="first_name">{message}</label>
+    }
+  }
+  /*displayError = (message, errorType)=> {
+    if (this.state.errorBool === "true") {
+      if (!this.state.errors[errorType])
+      {
+        return null;
+      }
+     return <label style={{color: "red"}} >{this.state.errors[errorType]}</label>
+    }
+    if (message === "")
+    {
+      return null;
+    }
+    else {
+      return <label for="first_name">{message}</label>
+    }
+  }*/
 
   submitForm = e => {
     e.preventDefault();
@@ -70,12 +117,23 @@ class CardExample extends React.Component {
     })
       .then(response => {
         console.log(response.data);
+        this.resetFields();
       })
       .catch(error => {
-        console.log(error.response.data);
-      });
+        let valid = error.response.data.isValid;
+        let errors = error.response.data.errors;
+        if (!valid)
+        {
+          this.setState({
+            errors: errors
+          })
+          this.setState({
+            errorBool: "true"
+          })
 
-    this.resetFields();
+        }
+        console.log(this.state.errors)
+      });
   };
 
   resetFields = () => {
@@ -94,12 +152,15 @@ class CardExample extends React.Component {
       millage: "",
       type: "",
       fuel: "",
-      drive: ""
+      drive: "",
+      errors: [],
+      errorBool: ""
     });
   };
 
   render() {
     console.log(this.state);
+
     return (
       <MDBContainer>
         <MDBRow>
@@ -110,7 +171,6 @@ class CardExample extends React.Component {
                   <MDBCard>
                     <MDBCardBody>
                       <h4 classNameName="text-center">Car Details</h4>
-
                       <input
                         placeholder="Vin Number of the Car"
                         name="vinNumber"
@@ -119,7 +179,7 @@ class CardExample extends React.Component {
                         onChange={this.handleChange}
                         className="validate"
                       />
-                      <label for="first_name">Enter Vin Number</label>
+                      {this.displayError("Enter Vin Number", ["vinNumber"])}
 
                       <input
                         placeholder="Registration Number of the Car"
@@ -129,7 +189,7 @@ class CardExample extends React.Component {
                         value={this.state.regNumber}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">Enter Registration Number</label>
+                      {this.displayError("Enter Registration Number", ["regNumber"])}
 
                       <input
                         placeholder="Make / Company"
@@ -139,7 +199,8 @@ class CardExample extends React.Component {
                         value={this.state.make}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">Make / Company</label>
+                      {this.displayError("Make / Company", ["make"])}
+
 
                       <input
                         placeholder="Model / Name"
@@ -149,7 +210,8 @@ class CardExample extends React.Component {
                         value={this.state.model}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">Model / Name</label>
+                      {this.displayError("Model / Name", ["model"])}
+
 
                       <input
                         placeholder="Year of Manufacture"
@@ -159,8 +221,7 @@ class CardExample extends React.Component {
                         value={this.state.year}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">Year of Manufacture</label>
-
+                      {this.displayError("Year of Manufacture", ["YearsEmpty", "YearsInvalid"])}
                       <input
                         placeholder="Variant"
                         name="variant"
@@ -190,7 +251,8 @@ class CardExample extends React.Component {
                             <option value="Van">Van</option>
                             <option value="Pickup Truck">Pickup Truck</option>
                           </select>
-                          <label for="first_name">Type</label>
+                          {this.displayError("Type", ["type"])}
+
                         </MDBCol>
                         <MDBCol md="6" lg="6" sm="12">
                           <select
@@ -206,7 +268,7 @@ class CardExample extends React.Component {
                             <option value="Electric">Electric</option>
                             <option value="Hybrid">Hybrid</option>
                           </select>
-                          <label for="first_name">Fuel</label>
+                        {this.displayError("Fuel", ["fuel"])}
                         </MDBCol>
                         <MDBCol md="6" lg="6" sm="12">
                           <select
@@ -228,8 +290,9 @@ class CardExample extends React.Component {
                               4 Wheel Drive (4WD)
                             </option>
                           </select>
-                          <label for="first_name">Drive</label>
+                        {this.displayError("Drive", ["drive"])}
                         </MDBCol>
+                        
                       </MDBRow>
 
                       <br />
@@ -249,8 +312,7 @@ class CardExample extends React.Component {
                         value={this.state.Fullname}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">ter Owner Name</label>
-
+                      {this.displayError("Enter Owner Name", ["FullName"])}
                       <input
                         placeholder="Owner CNIC"
                         name="ownerCNIC"
@@ -259,8 +321,7 @@ class CardExample extends React.Component {
                         value={this.state.ownerCNIC}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">CNIC</label>
-
+                      {this.displayError("CNIC", ["ownerCNICEmpty","ownerCNICLength","ownerCNICNegative"])}
                       <input
                         placeholder="Contact"
                         name="ownerContact"
@@ -269,8 +330,7 @@ class CardExample extends React.Component {
                         value={this.state.ownerContact}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">Contact</label>
-
+                      {this.displayError("Contact", ["ownerContactEmpty","ownerContactNegative"])}
                       <input
                         placeholder="City"
                         name="ownerCity"
@@ -279,7 +339,7 @@ class CardExample extends React.Component {
                         value={this.state.ownerCity}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">City</label>
+                      {this.displayError("City", ["ownerCity"])}
 
                       <input
                         placeholder="State"
@@ -289,8 +349,7 @@ class CardExample extends React.Component {
                         value={this.state.ownerState}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">State</label>
-
+                      {this.displayError("State", ["ownerState"])}
                       <input
                         placeholder="Millage at time of purchase"
                         name="millage"
@@ -299,8 +358,7 @@ class CardExample extends React.Component {
                         value={this.state.millage}
                         onChange={this.handleChange}
                       />
-                      <label for="first_name">millage</label>
-
+                      {this.displayError("Millage", ["millageEmpty", "millageNegative"])}
                       <br />
                       <br />
                       <button
@@ -321,5 +379,4 @@ class CardExample extends React.Component {
     );
   }
 }
-
 export default CardExample;

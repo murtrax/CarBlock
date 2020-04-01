@@ -100,7 +100,7 @@ function validateCarAndOwnerInput(data) {
     errors.ownerCNICEmpty = "CNIC is required";
   }
   //Owner checks
-  if (Validator.isLength(data.ownerCNIC, { min: 13, max: 13 })) {
+  if (Validator.isLength(data.ownerCNIC, { min: 12, max: 12 })) {
     errors.ownerCNICLength = "CNIC should be 13 digits";
   }
 

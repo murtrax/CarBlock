@@ -113,9 +113,12 @@ router.post("/searchCar", (req, res) => {
 
 router.post("/CarEntry", (req, res) => {
   const data = req.body;
-
   const { errors, isValid } = carAndOwnerValidate(data);
-
+  if (!isValid) {
+    console.log(errors);
+    return res.status(400).json({errors: errors, isValid: isValid});
+  }
+  
   //Check validation
   if (!isValid) {
     return res.status(400).json(errors);
