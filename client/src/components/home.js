@@ -20,7 +20,7 @@ import axios from "axios";
 class JumbotronPage extends React.Component {
   state = {
     number: "",
-    selectedOpt: "vin",
+    selectedOpt: "vin"
   };
 
   clearFields = () => {
@@ -54,13 +54,12 @@ class JumbotronPage extends React.Component {
       })
         .then(response => {
           console.log(response.data);
+          this.setState({ dataRecieved: response.data });
         })
         .catch(err => {
           console.log(err.response.data);
         });
       this.clearFields();
-    } else {
-      //show alert that is empty
     }
   };
 
@@ -144,7 +143,6 @@ class JumbotronPage extends React.Component {
             </MDBJumbotron>
           </MDBCol>
         </MDBRow>
-
         <MDBContainer>
           <MDBRow>
             <SearchResults />
