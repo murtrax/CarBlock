@@ -22,6 +22,7 @@ import Alert from "./alert";
 import Transfer from "./ownerTransfer";
 import log from "./../images/block.png";
 import newCar from "./addNewCar";
+import carResults from "./homeComponents/carResults";
 
 class NavbarPage extends Component {
   state = {
@@ -48,31 +49,31 @@ class NavbarPage extends Component {
           <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
             <MDBNavbarNav right>
               <MDBNavItem active>
-                <MDBNavLink to="home">Home</MDBNavLink>
+                <MDBNavLink to="/home">Home</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="about">About</MDBNavLink>
+                <MDBNavLink to="/about">About</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="login">Login</MDBNavLink>
+                <MDBNavLink to="/login">Login</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="signup">Signup</MDBNavLink>
+                <MDBNavLink to="/signup">Signup</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="report">Report</MDBNavLink>
+                <MDBNavLink to="/report">Report</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="dashboard">DashBoard</MDBNavLink>
+                <MDBNavLink to="/dashboard">DashBoard</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="alert">Alerts</MDBNavLink>
+                <MDBNavLink to="/alert">Alerts</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="transfer">Transfer Owner</MDBNavLink>
+                <MDBNavLink to="/transfer">Transfer Owner</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="newCar">Add New Car</MDBNavLink>
+                <MDBNavLink to="/newCar">Add New Car</MDBNavLink>
               </MDBNavItem>
             </MDBNavbarNav>
             <MDBNavbarNav right>
@@ -94,14 +95,15 @@ class NavbarPage extends Component {
           <Route path="/" exact component={Home} />
           <Route path="/home" exact component={Home} />
           <Route path="/about" exact component={About} />
-          <Route path="/signup" component={SignUpUser} />
-          <Route path="/login" component={LogInUser} />
-          <Route path="/workshop" component={Workshop} />
-          <Route path="/report" component={Report} />
-          <Route path="/dashboard" component={DashBoard} />
-          <Route path="/alert" component={Alert} />
-          <Route path="/transfer" component={Transfer} />
-          <Route path="/newCar" component={newCar} />
+          <Route path="/signup" exact component={SignUpUser} />
+          <Route path="/login" exact component={LogInUser} />
+          <Route path="/workshop" exact component={Workshop} />
+          <Route path="/report" exact component={Report} />
+          <Route path="/dashboard" exact component={DashBoard} />
+          <Route path="/alert" exact component={Alert} />
+          <Route path="/transfer" exact component={Transfer} />
+          <Route path="/newCar" exact component={newCar} />
+          <Route path="/searchResults/:opt&:id" exact component={carResults} />
         </Switch>
       </Router>
     );
