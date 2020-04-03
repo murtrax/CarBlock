@@ -1,6 +1,6 @@
 const express = require("express");
-const router = express.Router();
 
+const router = express.Router();
 const userSignUp = require("./../models/userSignUp");
 const workshopRegistration = require("./../models/workshopRegistration");
 const carDetails = require("./../models/carSchema/carDetails");
@@ -11,6 +11,8 @@ const carAndOwnerValidate = require("./../validation/addNewCarValidation");
 const ownerTransferValidate = require("./../validation/ownerTransferValidation");
 const loginValidation = require("./../validation/loginValidation");
 const workshopTempValidation = require("./../validation/workshopTempValidation");
+
+//./../client/src/components/homeComponents/carResults.js
 
 /** ROUTES */
 
@@ -77,13 +79,9 @@ router.post("/workshopSignUp", (req, res) => {
 
 });
 
-/*
-  This request handles search of a vehicle by vin and reg number. 
-  Model access: Car Details / Accident History / Service History / Owner History
-*/
 router.post("/searchCar", (req, res) => {
   const data = req.body;
-  console.log(data);
+  //console.log(data);
   let returnedCar = null;
   let ownership = null;
 
@@ -134,7 +132,7 @@ router.post("/searchCar", (req, res) => {
             ownership = owner;
           }
           //retrieve data and send back to the client
-          res.json(returnedCar);
+          res.json({ owner: ownership, car: returnedCar });
         });
     });
   }
@@ -145,9 +143,9 @@ router.post("/CarEntry", (req, res) => {
   const { errors, isValid } = carAndOwnerValidate(data);
   if (!isValid) {
     console.log(errors);
-    return res.status(400).json({errors: errors, isValid: isValid});
+    return res.status(400).json({ errors: errors, isValid: isValid });
   }
-  
+
   //Check validation
   if (!isValid) {
     return res.status(400).json(errors);

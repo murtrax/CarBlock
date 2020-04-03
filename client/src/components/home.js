@@ -20,7 +20,9 @@ import axios from "axios";
 class JumbotronPage extends React.Component {
   state = {
     number: "",
-    selectedOpt: "vin"
+    selectedOpt: "vin",
+    owner: {},
+    car: {}
   };
 
   clearFields = () => {
@@ -47,19 +49,8 @@ class JumbotronPage extends React.Component {
     };
 
     if (this.isValid(payload)) {
-      axios({
-        url: "/searchCar",
-        method: "post",
-        data: payload
-      })
-        .then(response => {
-          console.log(response.data);
-          this.setState({ dataRecieved: response.data });
-        })
-        .catch(err => {
-          console.log(err.response.data);
-        });
-      this.clearFields();
+      window.location =
+        "/searchResults/" + payload.selectedOpt + "&" + payload.number;
     }
   };
 
@@ -143,11 +134,11 @@ class JumbotronPage extends React.Component {
             </MDBJumbotron>
           </MDBCol>
         </MDBRow>
-        <MDBContainer>
-          <MDBRow>
+        {/*}<MDBContainer>
+           <MDBRow>
             <SearchResults />
-          </MDBRow>
-        </MDBContainer>
+              </MDBRow>
+        </MDBContainer>*/}
       </div>
     );
   }
