@@ -9,6 +9,8 @@ const serviceHistory = require("./../models/carSchema/serviceHistory");
 const accidentHistory = require("./../models/carSchema/accidentHistory");
 const carAndOwnerValidate = require("./../validation/addNewCarValidation");
 const ownerTransferValidate = require("./../validation/ownerTransferValidation");
+const loginValidation = require("./../validation/loginValidation");
+const workshopTempValidation = require("./../validation/workshopTempValidation");
 
 /** ROUTES */
 
@@ -29,23 +31,50 @@ router.post("/userSignUp", (req, res) => {
   res.json(data);
 });
 
-//a post request to handle workshop signup
-router.post("/workshopSignUp", (req, res) => {
+
+
+//a get request to handle  signup
+router.post("/signUp", (req, res) => {
+
   const data = req.body;
+  const { errors, isValid } = loginValidation(data);
+  if (!isValid) {
+    console.log(errors);
+    return res.status(400).json({errors: errors, isValid: isValid});
+  }
 
-  //Parse Data to make 3 objects to save in 3 tables
-  //HASH PASSWORD
+  else {
+    res.json({success: "You are logged in"})
+  }
+  /* NEED TO IMPLEMENT USER LOGIN DETS */
 
-  /*const newRegistration = new workshopRegistration(data);
-  newRegistration.save(error => {
-    if (!error) {
-      res.json("save successfull!");
-    } else {
-      res.json("error occurred in saving!");
-    }});*/
+  /*login.find({email: data.email, password: data.password})
+  .then({
 
-  console.log(data);
-  res.json(data);
+  })*/
+
+});
+
+//a get request to handle WORKSHOP REG
+router.post("/workshopSignUp", (req, res) => {
+
+  const data = req.body;
+  const { errors, isValid } = workshopTempValidation(data);
+  if (!isValid) {
+    console.log(errors);
+    return res.status(400).json({errors: errors, isValid: isValid});
+  }
+
+  else {
+    res.json({success: "We will contact you soon!!!"})
+  }
+  /* NEED TO IMPLEMENT USER LOGIN DETS */
+  
+  /*login.find({email: data.email, password: data.password})
+  .then({
+
+  })*/
+
 });
 
 /*
@@ -180,7 +209,7 @@ router.post("/OwnerTransfer", (req, res) => {
 
   const { errors, isValid } = ownerTransferValidate(data);
   if (!isValid) {
-    return res.status(400).json(errors);
+    return res.status(400).json({errors: errors, isValid: isValid});
   } else {
     //save in db
     console.log(data);

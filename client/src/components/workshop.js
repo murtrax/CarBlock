@@ -24,7 +24,9 @@ class FormPage extends React.Component {
     companyAddress: "",
     companyCity: "",
     companyZip: "",
-    passError: ""
+    passError: "",
+    errorBool: "",
+    errors: []
   };
 
   //This method handles the change in form fields and updates state accordingly
@@ -50,7 +52,9 @@ class FormPage extends React.Component {
       companyAddress: "",
       companyCity: "",
       companyZip: "",
-      passError: ""
+      passError: "", 
+      errorBool: "",
+      errors: []
     });
   };
 
@@ -69,6 +73,34 @@ class FormPage extends React.Component {
     //CNIC check - 15 digits with 2 dashes
   };
 
+  displayError = (errorType)=> {
+
+    let labels= [];
+    let condition = "false"
+
+    if (this.state.errorBool == "true")
+    {
+        for (var x=0; x < errorType.length; x++)
+        {
+            if (this.state.errors[errorType[x]])
+            {
+              condition = "true"
+              labels[x] = (
+              <React.Fragment><label style={{color: "red"}} >{this.state.errors[errorType[x]]}</label></React.Fragment>)
+            }
+        }
+        if (condition === "false") {
+            return null
+        }
+        else {
+            return labels
+        }
+    }
+    else {
+      return null;
+    }
+  }
+
   submitForm = e => {
     e.preventDefault();
     if (this.isValid()) {
@@ -80,10 +112,12 @@ class FormPage extends React.Component {
         companyName: this.state.companyName,
         companyEmail: this.state.companyEmail,
         companyPassword: this.state.companyPassword,
+        companyConfirm: this.state.companyConfirm,
         companyContact: this.state.companyContact,
         companyAddress: this.state.companyAddress,
         companyCity: this.state.companyCity,
-        companyZip: this.state.companyZip
+        companyZip: this.state.companyZip,
+        passError: "FALSE"
       };
 
       axios({
@@ -91,8 +125,16 @@ class FormPage extends React.Component {
         method: "post",
         data: payload
       })
-        .then(() => console.log("send successfull!"))
-        .catch(() => console.log("error occured!"));
+        .then(response => console.log(response))
+        .catch(error => {
+          console.log(error.response.data)
+          this.setState({
+            errors: error.response.data.errors
+          })
+          this.setState({
+            errorBool: "true"
+          })
+        });
 
       this.clearFields();
     }
@@ -138,6 +180,7 @@ class FormPage extends React.Component {
                       value={this.state.companyName}
                       onChange={this.handleChange}
                     />
+                     {this.displayError(["companyName"])}
                     <MDBInput
                       label="Company Email"
                       icon="envelope"
@@ -150,6 +193,7 @@ class FormPage extends React.Component {
                       value={this.state.companyEmail}
                       onChange={this.handleChange}
                     />
+                    {this.displayError(["companyEmail"])}
                     <MDBInput
                       label="Password"
                       icon="lock"
@@ -161,6 +205,7 @@ class FormPage extends React.Component {
                       onChange={this.handleChange}
                       style={styles}
                     />
+                    {this.displayError(["companyPassword"])}
                     <MDBInput
                       label="Confirm Password"
                       icon="lock"
@@ -172,6 +217,7 @@ class FormPage extends React.Component {
                       onChange={this.handleChange}
                       style={styles}
                     />
+                    {this.displayError(["companyConfirm"])}
                     {/* Render error message if passwords do not match */}
                     {this.state.passError ? (
                       <div
@@ -197,6 +243,7 @@ class FormPage extends React.Component {
                       value={this.state.companyContact}
                       onChange={this.handleChange}
                     />
+                    {this.displayError(["companyContact", "companyContactNegative", "companyContactLength"])}
                     <MDBInput
                       label="Address"
                       icon="map-marked-alt"
@@ -209,6 +256,7 @@ class FormPage extends React.Component {
                       value={this.state.companyAddress}
                       onChange={this.handleChange}
                     />
+                    {this.displayError(["companyAddress"])}
                     <MDBInput
                       label="City"
                       icon="city"
@@ -221,6 +269,7 @@ class FormPage extends React.Component {
                       value={this.state.companyCity}
                       onChange={this.handleChange}
                     />
+                    {this.displayError(["companyCity"])}
                     <MDBInput
                       label="Zip Code"
                       icon="envelope-open-text"
@@ -233,6 +282,7 @@ class FormPage extends React.Component {
                       value={this.state.companyZip}
                       onChange={this.handleChange}
                     />
+                    {this.displayError(["companyZip", "companyZipNegative"])}
                   </div>
                 </MDBCardBody>
               </MDBCard>
@@ -255,6 +305,7 @@ class FormPage extends React.Component {
                       value={this.state.ownerName}
                       onChange={this.handleChange}
                     />
+                    {this.displayError(["ownerName"])}
                     <MDBInput
                       label="Designation"
                       icon="user"
@@ -267,7 +318,7 @@ class FormPage extends React.Component {
                       value={this.state.ownerPosition}
                       onChange={this.handleChange}
                     />
-
+                    {this.displayError(["ownerPosition"])}
                     <MDBInput
                       label="Contact Number"
                       icon="phone"
@@ -280,6 +331,7 @@ class FormPage extends React.Component {
                       value={this.state.ownerContact}
                       onChange={this.handleChange}
                     />
+                    {this.displayError(["ownerContact","ownerContactNegative","ownerContactLength"])}
                     <MDBInput
                       label="CNIC"
                       icon="fingerprint"
@@ -289,6 +341,7 @@ class FormPage extends React.Component {
                       value={this.state.ownerCNIC}
                       onChange={this.handleChange}
                     />
+                    {this.displayError(["ownerCNIC", "ownerCNICLength", "ownerCNICNegative"])}
                   </div>
                 </MDBCardBody>
               </MDBCard>
@@ -309,5 +362,4 @@ class FormPage extends React.Component {
     );
   }
 }
-
 export default FormPage;

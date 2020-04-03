@@ -23,6 +23,7 @@ import Transfer from "./ownerTransfer";
 import log from "./../images/block.png";
 import newCar from "./addNewCar";
 
+
 class NavbarPage extends Component {
   state = {
     isOpen: false
@@ -73,6 +74,9 @@ class NavbarPage extends Component {
               </MDBNavItem>
               <MDBNavItem>
                 <MDBNavLink to="newCar">Add New Car</MDBNavLink>
+              </MDBNavItem>
+              <MDBNavItem>
+                <MDBNavLink to="Workshop">Workshop Reg</MDBNavLink>
               </MDBNavItem>
             </MDBNavbarNav>
             <MDBNavbarNav right>

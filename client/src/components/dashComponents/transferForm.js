@@ -20,7 +20,9 @@ class FormPage extends React.Component {
     city: "",
     ownerState: "",
     millage: "",
-    year: ""
+    year: "",
+    errors: [],
+    errorBool: ""
   };
 
   handleChange = e => {
@@ -31,7 +33,26 @@ class FormPage extends React.Component {
     });
   };
 
+  resetFields = ()=> {
+
+    this.setState({
+    vinNumber: "",
+    regNumber: "",
+    name: "",
+    cnic: "",
+    contact: "",
+    city: "",
+    ownerState: "",
+    millage: "",
+    year: "",
+    errors: [],
+    errorBool: ""
+    })
+  }
+
   submitForm = e => {
+
+    const date = new Date();
     e.preventDefault();
     const payload = {
       vinNumber: this.state.vinNumber,
@@ -42,7 +63,7 @@ class FormPage extends React.Component {
       city: this.state.city,
       ownerState: this.state.ownerState,
       millage: this.state.millage,
-      year: this.state.year
+      year: date.getFullYear()
     };
 
     axios({
@@ -52,11 +73,46 @@ class FormPage extends React.Component {
     })
       .then(response => {
         console.log(response.data);
+        this.resetFields();
       })
       .catch(err => {
-        console.log(err.response.data);
+        console.log(err.response.data.errors);
+        this.setState({
+          errors: err.response.data.errors,
+        })
+        this.setState({
+          errorBool: "true"
+        })
       });
   };
+
+  displayError = (message, errorType)=> {
+
+    let labels= [];
+    let condition = "false"
+
+    if (this.state.errorBool == "true")
+    {
+        for (var x=0; x < errorType.length; x++)
+        {
+            if (this.state.errors[errorType[x]])
+            {
+              condition = "true"
+              labels[x] = (
+              <React.Fragment><label style={{color: "red"}} >{this.state.errors[errorType[x]]}</label></React.Fragment>)
+            }
+        }
+        if (condition === "false") {
+            return <label for="first_name">{message}</label>
+        }
+        else {
+            return labels
+        }
+    }
+    else {
+      return <label for="first_name">{message}</label>
+    }
+  }
 
   render() {
     return (
@@ -76,7 +132,7 @@ class FormPage extends React.Component {
                     value={this.state.vinNumber}
                     onChange={this.handleChange}
                   />
-                  <label for="first_name">Enter Vin Number</label>
+                  {this.displayError("Enter Vin Number", ["vinNumber"])}
 
                   <input
                     placeholder="Registration Number of the Car"
@@ -86,7 +142,7 @@ class FormPage extends React.Component {
                     value={this.state.regNumber}
                     onChange={this.handleChange}
                   />
-                  <label for="first_name">Enter Registration Number</label>
+                  {this.displayError("Enter Registration Number", ["regNumber"])}
 
                   <input
                     placeholder="Owner's Name"
@@ -96,7 +152,8 @@ class FormPage extends React.Component {
                     value={this.state.name}
                     onChange={this.handleChange}
                   />
-                  <label for="first_name">Full Name</label>
+                  {this.displayError("Full Name", ["name"])}
+
 
                   <input
                     placeholder="CNIC"
@@ -106,7 +163,8 @@ class FormPage extends React.Component {
                     value={this.state.cnic}
                     onChange={this.handleChange}
                   />
-                  <label for="first_name">CNIC</label>
+                  {this.displayError("CNIC", ["cnicEmpty", "cnicLength", "cnicNegative"])}
+
 
                   <input
                     placeholder="Contact Number"
@@ -116,7 +174,8 @@ class FormPage extends React.Component {
                     value={this.state.contact}
                     onChange={this.handleChange}
                   />
-                  <label for="first_name">Contact Number</label>
+                  {this.displayError("Contact Number", ["contactEmpty", "contactNegative"])}
+
 
                   <input
                     placeholder="City"
@@ -126,7 +185,8 @@ class FormPage extends React.Component {
                     value={this.state.city}
                     onChange={this.handleChange}
                   />
-                  <label for="first_name">City</label>
+                  {this.displayError("City", ["city"])}
+
 
                   <input
                     placeholder="State"
@@ -136,7 +196,8 @@ class FormPage extends React.Component {
                     value={this.state.ownerState}
                     onChange={this.handleChange}
                   />
-                  <label for="first_name">State</label>
+                  {this.displayError("State", ["ownerState"])}
+
 
                   <input
                     placeholder="Millage"
@@ -146,17 +207,8 @@ class FormPage extends React.Component {
                     value={this.state.millage}
                     onChange={this.handleChange}
                   />
-                  <label for="first_name">Millage</label>
+                  {this.displayError("Millage", ["millageEmpty", "millageNegative"])}
 
-                  <input
-                    placeholder="Year"
-                    name="year"
-                    type="text"
-                    className="validate"
-                    value={this.state.year}
-                    onChange={this.handleChange}
-                  />
-                  <label for="first_name">Year of transfer</label>
 
                   <button
                     class="btn waves-effect waves-light"

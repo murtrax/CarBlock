@@ -9,11 +9,14 @@ import {
   MDBCardBody
 } from "mdbreact";
 import Scard from "./signinComponents/signinCard";
+import axios from "axios";
 
 class FormPage extends React.Component {
   state = {
     email: "",
-    password: ""
+    password: "",
+    errors: [],
+    errorBool: ""
   };
 
   //This method handles the change in form fields and updates state accordingly
@@ -23,7 +26,49 @@ class FormPage extends React.Component {
     this.setState({
       [name]: value
     });
+    console.log(this.state)
   };
+
+  resetFields=()=> {
+    this.setState({
+      email: "",
+    password: "",
+    errorBool: "",
+    errors: []
+    })
+  }
+
+  onSubmit = e=> {
+    e.preventDefault();
+    
+    const payload = {
+      email: this.state.email,
+      password: this.state.password
+    }
+
+    axios({
+      url: "/signUp",
+      method: "post",
+      data: payload
+    })
+    .then(response=> {
+      console.log(response)
+      this.resetFields()
+    })
+    .catch(error=> {
+      if (!error.response.data.isValid)
+      {
+          this.setState ({
+            errors: error.response.data.errors
+          })
+          console.log(this.state.errors)
+
+          this.setState({
+            errorBool: "true"
+          })
+        }
+    })
+  }
 
   render() {
     return (
@@ -35,7 +80,7 @@ class FormPage extends React.Component {
           <MDBCol md="8" sm="10" lg="5">
             <MDBCard>
               <MDBCardBody>
-                <form>
+                <form onSubmit={this.onSubmit}>
                   <p className="h4 text-center py-4">Log In</p>
                   <div className="grey-text">
                     <MDBInput
@@ -50,6 +95,8 @@ class FormPage extends React.Component {
                       value={this.state.email}
                       onChange={this.handleChange}
                     />
+                    <label style={{color: "red"}}>{this.state.errors.email}</label>
+
                     <MDBInput
                       label="Password"
                       icon="lock"
@@ -60,6 +107,7 @@ class FormPage extends React.Component {
                       value={this.state.password}
                       onChange={this.handleChange}
                     />
+                    <label style={{color: "red"}}>{this.state.errors.password}</label>
                   </div>
                   <div className="text-center py-4 mt-3">
                     <MDBBtn color="cyan" type="submit">

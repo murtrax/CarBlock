@@ -5,6 +5,8 @@ function ownerTransferValidate(data) {
   let errors = {};
 
   const date = new Date();
+  year = data.year 
+  year = year.toString()
 
   //Vin Number checks
   if (Validator.isEmpty(data.vinNumber)) {
@@ -57,16 +59,18 @@ function ownerTransferValidate(data) {
     errors.millageEmpty = "Millage is required";
   }
 
+  /*   GET OLD Millage and compared with the new one, make sure not less   */
   if (data.millage < 0) {
     errors.millageNegative = "Millage cannot be a negative number";
   }
 
   //Year checks
-  if (Validator.isEmpty(data.year)) {
+  if (Validator.isEmpty(year)) {
+    
     errors.YearsEmpty = "Year is required";
   }
 
-  if (data.year > date.getFullYear() + 1) {
+  if (data.year > date.getFullYear()) {
     errors.YearsInvalid = "Year not valid";
   }
 
