@@ -9,7 +9,7 @@ import {
   MDBInput,
   MDBAnimation,
   MDBContainer,
-  MDBFormInline
+  MDBFormInline,
 } from "mdbreact";
 import Radio from "./homeComponents/radioBtn";
 import SearchResults from "./homeComponents/searchResults";
@@ -22,16 +22,16 @@ class JumbotronPage extends React.Component {
     number: "",
     selectedOpt: "vin",
     owner: {},
-    car: {}
+    car: {},
   };
 
   clearFields = () => {
     this.setState({
-      number: ""
+      number: "",
     });
   };
 
-  isValid = data => {
+  isValid = (data) => {
     if (validator.isEmpty(data.number)) {
       return false;
     } else {
@@ -40,12 +40,12 @@ class JumbotronPage extends React.Component {
   };
 
   //send data to server and recieve appropriate response
-  submitForm = e => {
+  submitForm = (e) => {
     e.preventDefault();
 
     const payload = {
       number: this.state.number,
-      selectedOpt: this.state.selectedOpt
+      selectedOpt: this.state.selectedOpt,
     };
 
     if (this.isValid(payload)) {
@@ -55,17 +55,17 @@ class JumbotronPage extends React.Component {
   };
 
   //Manages data in the state
-  handleChange = e => {
+  handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   };
 
-  handleBtnChange = e => {
+  handleBtnChange = (e) => {
     this.setState({
-      selectedOpt: e.target.value
+      selectedOpt: e.target.value,
     });
   };
 
@@ -79,7 +79,7 @@ class JumbotronPage extends React.Component {
                 className="text-white text-center py-3 px-4"
                 style={{
                   opacity: "",
-                  backgroundImage: `url(https://miro.medium.com/max/3200/1*CvjclMDwgh9AqED_h5UVCA.jpeg)`
+                  backgroundImage: `url(https://miro.medium.com/max/3200/1*CvjclMDwgh9AqED_h5UVCA.jpeg)`,
                 }}
               >
                 <MDBCol className="py-5 text-center">
