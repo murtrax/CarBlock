@@ -34,20 +34,15 @@ router.post("/userSignUp", (req, res) => {
   res.json(data);
 });
 
-
-
 //a get request to handle  signup
 router.post("/signUp", (req, res) => {
-
   const data = req.body;
   const { errors, isValid } = loginValidation(data);
   if (!isValid) {
     console.log(errors);
-    return res.status(400).json({errors: errors, isValid: isValid});
-  }
-
-  else {
-    res.json({success: "You are logged in"})
+    return res.status(400).json({ errors: errors, isValid: isValid });
+  } else {
+    res.json({ success: "You are logged in" });
   }
   /* NEED TO IMPLEMENT USER LOGIN DETS */
 
@@ -55,7 +50,6 @@ router.post("/signUp", (req, res) => {
   .then({
 
   })*/
-
 });
 
 router.get("/getWorkshopsTemp", (req,res)=> {
@@ -119,11 +113,11 @@ router.post("/saveWorkshop", (req,res)=> {
 })
 //a get request to handle WORKSHOP REG
 router.post("/workshopSignUp", (req, res) => {
-
   const data = req.body;
   const { errors, isValid } = workshopTempValidation(data);
   if (!isValid) {
     console.log(errors);
+<<<<<<< HEAD
     return res.status(400).json({errors: errors, isValid: isValid});
   }
   else {
@@ -149,6 +143,18 @@ router.post("/workshopSignUp", (req, res) => {
       }
     })
   }
+=======
+    return res.status(400).json({ errors: errors, isValid: isValid });
+  } else {
+    res.json({ success: "We will contact you soon!!!" });
+  }
+  /* NEED TO IMPLEMENT USER LOGIN DETS */
+
+  /*login.find({email: data.email, password: data.password})
+  .then({
+
+  })*/
+>>>>>>> Hassaan
 });
 
 router.post("/searchCar", (req, res) => {
@@ -279,7 +285,7 @@ router.post("/OwnerTransfer", (req, res) => {
 
   const { errors, isValid } = ownerTransferValidate(data);
   if (!isValid) {
-    return res.status(400).json({errors: errors, isValid: isValid});
+    return res.status(400).json({ errors: errors, isValid: isValid });
   } else {
     //save in db
     console.log(data);

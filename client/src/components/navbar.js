@@ -7,7 +7,11 @@ import {
   MDBNavLink,
   MDBNavbarToggler,
   MDBCollapse,
-  MDBIcon
+  MDBIcon,
+  MDBDropdown,
+  MDBDropdownItem,
+  MDBDropdownToggle,
+  MDBDropdownMenu,
 } from "mdbreact";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
@@ -23,11 +27,11 @@ import Transfer from "./ownerTransfer";
 import log from "./../images/block.png";
 import newCar from "./addNewCar";
 import carResults from "./homeComponents/carResults";
-
+import repairWorkshop from "./repairWorkshop";
 
 class NavbarPage extends Component {
   state = {
-    isOpen: false
+    isOpen: false,
   };
 
   toggleCollapse = () => {
@@ -42,7 +46,7 @@ class NavbarPage extends Component {
             <img
               src={log}
               style={{ width: "7rem" }}
-              className="rounded mx-auto d-block mb-2"
+              className="rounded mx-auto d-block"
               alt="aligment"
             />
           </MDBNavbarBrand>
@@ -59,8 +63,21 @@ class NavbarPage extends Component {
                 <MDBNavLink to="/login">Login</MDBNavLink>
               </MDBNavItem>
               <MDBNavItem>
-                <MDBNavLink to="/signup">Signup</MDBNavLink>
+                <MDBDropdown>
+                  <MDBDropdownToggle nav caret>
+                    Register
+                  </MDBDropdownToggle>
+                  <MDBDropdownMenu>
+                    <MDBNavLink to="/signup">
+                      <MDBDropdownItem>User</MDBDropdownItem>
+                    </MDBNavLink>
+                    <MDBNavLink to="/Workshop">
+                      <MDBDropdownItem>Workshop</MDBDropdownItem>
+                    </MDBNavLink>
+                  </MDBDropdownMenu>
+                </MDBDropdown>
               </MDBNavItem>
+
               <MDBNavItem>
                 <MDBNavLink to="/report">Report</MDBNavLink>
               </MDBNavItem>
@@ -75,9 +92,6 @@ class NavbarPage extends Component {
               </MDBNavItem>
               <MDBNavItem>
                 <MDBNavLink to="/newCar">Add New Car</MDBNavLink>
-              </MDBNavItem>
-              <MDBNavItem>
-                <MDBNavLink to="Workshop">Workshop Reg</MDBNavLink>
               </MDBNavItem>
             </MDBNavbarNav>
             <MDBNavbarNav right>
@@ -108,6 +122,7 @@ class NavbarPage extends Component {
           <Route path="/transfer" exact component={Transfer} />
           <Route path="/newCar" exact component={newCar} />
           <Route path="/searchResults/:opt&:id" exact component={carResults} />
+          <Route path="/workshopRepair" exact component={repairWorkshop} />
         </Switch>
       </Router>
     );

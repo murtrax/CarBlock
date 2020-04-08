@@ -6,7 +6,7 @@ import {
   MDBInput,
   MDBBtn,
   MDBCard,
-  MDBCardBody
+  MDBCardBody,
 } from "mdbreact";
 import axios from "axios";
 
@@ -26,15 +26,15 @@ class FormPage extends React.Component {
     companyZip: "",
     passError: "",
     errorBool: "",
-    errors: []
+    errors: [],
   };
 
   //This method handles the change in form fields and updates state accordingly
-  handleChange = e => {
+  handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -52,9 +52,9 @@ class FormPage extends React.Component {
       companyAddress: "",
       companyCity: "",
       companyZip: "",
-      passError: "", 
+      passError: "",
       errorBool: "",
-      errors: []
+      errors: [],
     });
   };
 
@@ -64,7 +64,7 @@ class FormPage extends React.Component {
       this.setState({
         companyPassword: "",
         companyConfirm: "",
-        passError: "Passwords do not match!"
+        passError: "Passwords do not match!",
       });
       return false;
     } else return true;
@@ -73,35 +73,34 @@ class FormPage extends React.Component {
     //CNIC check - 15 digits with 2 dashes
   };
 
-  displayError = (errorType)=> {
+  displayError = (errorType) => {
+    let labels = [];
+    let condition = "false";
 
-    let labels= [];
-    let condition = "false"
-
-    if (this.state.errorBool == "true")
-    {
-        for (var x=0; x < errorType.length; x++)
-        {
-            if (this.state.errors[errorType[x]])
-            {
-              condition = "true"
-              labels[x] = (
-              <React.Fragment><label style={{color: "red"}} >{this.state.errors[errorType[x]]}</label></React.Fragment>)
-            }
+    if (this.state.errorBool == "true") {
+      for (var x = 0; x < errorType.length; x++) {
+        if (this.state.errors[errorType[x]]) {
+          condition = "true";
+          labels[x] = (
+            <React.Fragment>
+              <label style={{ color: "red" }}>
+                {this.state.errors[errorType[x]]}
+              </label>
+            </React.Fragment>
+          );
         }
-        if (condition === "false") {
-            return null
-        }
-        else {
-            return labels
-        }
-    }
-    else {
+      }
+      if (condition === "false") {
+        return null;
+      } else {
+        return labels;
+      }
+    } else {
       return null;
     }
-  }
+  };
 
-  submitForm = e => {
+  submitForm = (e) => {
     e.preventDefault();
     if (this.isValid()) {
       const payload = {
@@ -117,26 +116,36 @@ class FormPage extends React.Component {
         companyAddress: this.state.companyAddress,
         companyCity: this.state.companyCity,
         companyZip: this.state.companyZip,
+<<<<<<< HEAD
         approved: false
+=======
+        passError: "FALSE",
+>>>>>>> Hassaan
       };
 
       axios({
         url: "/workshopSignUp",
         method: "post",
-        data: payload
+        data: payload,
       })
+<<<<<<< HEAD
         .then(response => {
           console.log(response)
           this.clearFields();
         })
         .catch(error => {
           console.log(error.response.data)
+=======
+        .then((response) => console.log(response))
+        .catch((error) => {
+          console.log(error.response.data);
+>>>>>>> Hassaan
           this.setState({
-            errors: error.response.data.errors
-          })
+            errors: error.response.data.errors,
+          });
           this.setState({
-            errorBool: "true"
-          })
+            errorBool: "true",
+          });
         });
 
       
@@ -148,11 +157,11 @@ class FormPage extends React.Component {
 
     if (this.state.passError) {
       styles = {
-        borderBottom: "1px solid red"
+        borderBottom: "1px solid red",
       };
     } else {
       styles = {
-        borderBottom: ""
+        borderBottom: "",
       };
     }
 
@@ -160,7 +169,7 @@ class FormPage extends React.Component {
       <MDBContainer className="mt-4">
         <MDBRow className="text-center">
           <MDBCol>
-            <p className="h3 text-center py-4">Workshop Details</p>
+            <p className="h3 text-center py-4">Workshop Registration</p>
           </MDBCol>
         </MDBRow>
 
@@ -183,7 +192,7 @@ class FormPage extends React.Component {
                       value={this.state.companyName}
                       onChange={this.handleChange}
                     />
-                     {this.displayError(["companyName"])}
+                    {this.displayError(["companyName"])}
                     <MDBInput
                       label="Company Email"
                       icon="envelope"
@@ -227,7 +236,7 @@ class FormPage extends React.Component {
                         style={{
                           color: "red",
                           fontSize: "12pt",
-                          textAlign: "center"
+                          textAlign: "center",
                         }}
                       >
                         {this.state.passError}
@@ -246,7 +255,11 @@ class FormPage extends React.Component {
                       value={this.state.companyContact}
                       onChange={this.handleChange}
                     />
-                    {this.displayError(["companyContact", "companyContactNegative", "companyContactLength"])}
+                    {this.displayError([
+                      "companyContact",
+                      "companyContactNegative",
+                      "companyContactLength",
+                    ])}
                     <MDBInput
                       label="Address"
                       icon="map-marked-alt"
@@ -334,7 +347,11 @@ class FormPage extends React.Component {
                       value={this.state.ownerContact}
                       onChange={this.handleChange}
                     />
-                    {this.displayError(["ownerContact","ownerContactNegative","ownerContactLength"])}
+                    {this.displayError([
+                      "ownerContact",
+                      "ownerContactNegative",
+                      "ownerContactLength",
+                    ])}
                     <MDBInput
                       label="CNIC"
                       icon="fingerprint"
@@ -344,7 +361,11 @@ class FormPage extends React.Component {
                       value={this.state.ownerCNIC}
                       onChange={this.handleChange}
                     />
-                    {this.displayError(["ownerCNIC", "ownerCNICLength", "ownerCNICNegative"])}
+                    {this.displayError([
+                      "ownerCNIC",
+                      "ownerCNICLength",
+                      "ownerCNICNegative",
+                    ])}
                   </div>
                 </MDBCardBody>
               </MDBCard>
