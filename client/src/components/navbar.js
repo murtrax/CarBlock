@@ -93,6 +93,9 @@ class NavbarPage extends Component {
               <MDBNavItem>
                 <MDBNavLink to="/newCar">Add New Car</MDBNavLink>
               </MDBNavItem>
+              <MDBNavItem>
+                <MDBNavLink to="/workshopRepair">Workshop Repair</MDBNavLink>
+              </MDBNavItem>
             </MDBNavbarNav>
             <MDBNavbarNav right>
               <MDBNavItem>

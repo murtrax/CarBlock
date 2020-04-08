@@ -1,28 +1,81 @@
 import React, { Component } from "react";
-import { MDBContainer, MDBTabPane, MDBTabContent, MDBNav, MDBNavItem, MDBNavLink, MDBRow, MDBCol } from "mdbreact";
-import M from 'materialize-css/dist/js/materialize'
+import {
+  MDBContainer,
+  MDBTabPane,
+  MDBTabContent,
+  MDBNav,
+  MDBNavItem,
+  MDBNavLink,
+  MDBRow,
+  MDBCol,
+} from "mdbreact";
+import M from "materialize-css/dist/js/materialize";
+import axios from "axios";
 
 class TabsDefault extends Component {
-
   componentDidMount() {
-    document.addEventListener('DOMContentLoaded', function () {
-      var elems = document.querySelectorAll('.datepicker');
+    document.addEventListener("DOMContentLoaded", function () {
+      var elems = document.querySelectorAll(".datepicker");
       var instances = M.Datepicker.init(elems, {});
     });
   }
 
-
-
   state = {
-    activeItem: "1"
+    activeItem: "1",
+    millage: "",
+    comments: "",
+    reg: "",
   };
 
-  toggle = tab => e => {
+  clearFields = () => {
+    this.setState({
+      millage: "",
+      comments: "",
+      reg: "",
+    });
+  };
+
+  toggle = (tab) => (e) => {
     if (this.state.activeItem !== tab) {
       this.setState({
-        activeItem: tab
+        activeItem: tab,
+      });
+      this.setState({
+        millage: "",
+        comments: "",
+        reg: "",
       });
     }
+  };
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    this.setState({
+      [name]: value,
+    });
+  };
+
+  submitForm = (e) => {
+    e.preventDefault();
+    const payload = {
+      millage: this.state.millage,
+      comments: this.state.comments,
+      reg: this.state.reg,
+      activeItem: this.state.activeItem,
+    };
+    axios({
+      url: "/AccidentAndService",
+      method: "post",
+      data: payload,
+    })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+
+    this.clearFields();
   };
 
   render() {
@@ -33,41 +86,80 @@ class TabsDefault extends Component {
             <MDBContainer>
               <MDBNav className="nav-tabs mt-5 text-center">
                 <MDBNavItem>
-                  <MDBNavLink link to="#" active={this.state.activeItem === "1"} onClick={this.toggle("1")} role="tab" >
+                  <MDBNavLink
+                    link
+                    to="#"
+                    active={this.state.activeItem === "1"}
+                    onClick={this.toggle("1")}
+                    role="tab"
+                  >
                     Service
-                </MDBNavLink>
+                  </MDBNavLink>
                 </MDBNavItem>
                 <MDBNavItem>
-                  <MDBNavLink link to="#" active={this.state.activeItem === "2"} onClick={this.toggle("2")} role="tab" >
+                  <MDBNavLink
+                    link
+                    to="#"
+                    active={this.state.activeItem === "2"}
+                    onClick={this.toggle("2")}
+                    role="tab"
+                  >
                     Accident
-                </MDBNavLink>
+                  </MDBNavLink>
                 </MDBNavItem>
               </MDBNav>
-              <MDBTabContent className="mt-5" activeItem={this.state.activeItem} >
+              <MDBTabContent
+                className="mt-5"
+                activeItem={this.state.activeItem}
+              >
                 <MDBTabPane tabId="1" role="tabpanel">
                   <div className="row mt-3">
-                    <form className="col s12">
+                    <form className="col s12" onSubmit={this.submitForm}>
                       <div className="row">
                         <div class="input-field col s6">
                           <i class="material-icons prefix">motorcycle</i>
-                          <input id="icon_prefix" type="text" class="validate" />
+                          <input
+                            id="icon_prefix"
+                            type="number"
+                            name="millage"
+                            value={this.state.millage}
+                            onChange={this.handleChange}
+                          />
                           <label for="icon_prefix">Milage</label>
                         </div>
+
                         <div class="input-field col s6">
-                          <i class="material-icons prefix">date_range</i>
-                          <input type="text" class="datepicker" />
-                          <label for="icon_telephone">Date</label>
+                          <i class="material-icons prefix">motorcycle</i>
+                          <input
+                            id="icon_prefix"
+                            type="text"
+                            name="reg"
+                            value={this.state.reg}
+                            onChange={this.handleChange}
+                          />
+                          <label for="icon_prefix">Reg #</label>
                         </div>
                       </div>
                       <div className="row">
                         <div class="input-field col s6">
                           <i class="material-icons prefix">mode_edit</i>
-                          <textarea id="icon_prefix2" class="materialize-textarea"></textarea>
+                          <textarea
+                            id="icon_prefix2"
+                            class="materialize-textarea"
+                            name="comments"
+                            value={this.state.comments}
+                            onChange={this.handleChange}
+                          ></textarea>
                           <label for="icon_prefix2">Comments</label>
                         </div>
                       </div>
                       <div className="row text-center">
-                        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                        <button
+                          class="btn waves-effect waves-light"
+                          type="submit"
+                          name="action"
+                        >
+                          Submit
                           <i class="material-icons right">send</i>
                         </button>
                       </div>
@@ -76,28 +168,51 @@ class TabsDefault extends Component {
                 </MDBTabPane>
                 <MDBTabPane tabId="2" role="tabpanel">
                   <div className="row mt-3">
-                    <form className="col s12">
+                    <form className="col s12" onSubmit={this.submitForm}>
                       <div className="row">
                         <div class="input-field col s6">
                           <i class="material-icons prefix">motorcycle</i>
-                          <input id="icon_prefix" type="text" class="validate" />
+                          <input
+                            id="icon_prefix"
+                            type="text"
+                            name="millage"
+                            value={this.state.millage}
+                            onChange={this.handleChange}
+                          />
                           <label for="icon_prefix">Milage</label>
                         </div>
                         <div class="input-field col s6">
-                          <i class="material-icons prefix">date_range</i>
-                          <input type="text" class="datepicker" />
-                          <label for="icon_telephone">Date</label>
+                          <i class="material-icons prefix">motorcycle</i>
+                          <input
+                            id="icon_prefix"
+                            type="text"
+                            name="reg"
+                            value={this.state.reg}
+                            onChange={this.handleChange}
+                          />
+                          <label for="icon_prefix">Reg #</label>
                         </div>
                       </div>
                       <div className="row">
                         <div class="input-field col s6">
                           <i class="material-icons prefix">mode_edit</i>
-                          <textarea id="icon_prefix2" class="materialize-textarea"></textarea>
-                          <label for="icon_prefix2">First Name</label>
+                          <textarea
+                            id="icon_prefix2"
+                            class="materialize-textarea"
+                            name="comments"
+                            value={this.state.comments}
+                            onChange={this.handleChange}
+                          ></textarea>
+                          <label for="icon_prefix2">Comments</label>
                         </div>
                       </div>
                       <div className="row text-center">
-                        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                        <button
+                          class="btn waves-effect waves-light"
+                          type="submit"
+                          name="action"
+                        >
+                          Submit
                           <i class="material-icons right">send</i>
                         </button>
                       </div>

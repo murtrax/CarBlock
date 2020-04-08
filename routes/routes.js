@@ -11,6 +11,7 @@ const carAndOwnerValidate = require("./../validation/addNewCarValidation");
 const ownerTransferValidate = require("./../validation/ownerTransferValidation");
 const loginValidation = require("./../validation/loginValidation");
 const workshopTempValidation = require("./../validation/workshopTempValidation");
+const AccidentAndServiceHistoryValidate = require("./../validation/AccidentAndServiceHistoryValidate");
 
 //./../client/src/components/homeComponents/carResults.js
 
@@ -76,7 +77,7 @@ router.post("/searchCar", (req, res) => {
   let ownership = null;
 
   if (data.selectedOpt === "vin") {
-    carDetails.findOne({ vin: data.number }).then(car => {
+    carDetails.findOne({ vin: data.number }).then((car) => {
       //If car does not exist then
       if (!car) {
         return res.status(400).send("Car does not exist");
@@ -89,7 +90,7 @@ router.post("/searchCar", (req, res) => {
           { vin: data.number },
           { yearPurchased: 1, millage: 1, city: 1, state: 1 }
         )
-        .then(owner => {
+        .then((owner) => {
           if (!owner) {
             return res.status(400).send("Ownership history does not exist");
           } else {
@@ -102,7 +103,7 @@ router.post("/searchCar", (req, res) => {
   }
 
   if (data.selectedOpt === "reg") {
-    carDetails.findOne({ reg: data.number }).then(car => {
+    carDetails.findOne({ reg: data.number }).then((car) => {
       //If car does not exist then
       if (!car) {
         return res.status(400).send("Car does not exist");
@@ -115,7 +116,7 @@ router.post("/searchCar", (req, res) => {
           { reg: data.number },
           { yearPurchased: 1, millage: 1, city: 1, state: 1 }
         )
-        .then(owner => {
+        .then((owner) => {
           if (!owner) {
             return res.status(400).send("Ownership history does not exist");
           } else {
@@ -142,7 +143,7 @@ router.post("/CarEntry", (req, res) => {
   } else {
     carDetails
       .findOne({ $or: [{ reg: data.regNumber }, { vin: data.vinNumber }] })
-      .then(car => {
+      .then((car) => {
         if (car) {
           return res
             .status(400)
@@ -157,7 +158,7 @@ router.post("/CarEntry", (req, res) => {
             varaint: data.variant,
             type: data.type,
             fuel: data.fuel,
-            drive: data.drive
+            drive: data.drive,
           };
           const ownerData = {
             vin: data.vinNumber,
@@ -168,18 +169,18 @@ router.post("/CarEntry", (req, res) => {
             state: data.ownerState,
             ownerName: data.FullName,
             ownerCNIC: data.ownerCNIC,
-            ownerContact: data.ownerContact
+            ownerContact: data.ownerContact,
           };
           const newCarDetails = new carDetails(carData);
           const newOwner = new ownershipHistory(ownerData);
-          newCarDetails.save(error => {
+          newCarDetails.save((error) => {
             if (error) {
               return res
                 .status(400)
                 .json({ error: "There was an error saving Car Details" });
             }
           });
-          newOwner.save(error => {
+          newOwner.save((error) => {
             if (error) {
               return res
                 .status(400)
@@ -202,6 +203,52 @@ router.post("/OwnerTransfer", (req, res) => {
     //save in db
     console.log(data);
     res.json(data);
+  }
+});
+
+router.post("/AccidentAndService", (req, res) => {
+  const data = req.body; //Extract data from body
+  const { errors, isValid } = AccidentAndServiceHistoryValidate(data); //Validate data
+  if (!isValid) {
+    return res.status(400).json({ errors: errors, isValid: isValid }); //Send error response to client with errors object
+  } else {
+    const todaysDate = Date.now(); //todays date
+    carDetails
+      .findOne({ reg: data.reg }, { vin: 1 })
+      .then((car) => {
+        const payload = {
+          vin: car.vin,
+          reg: data.reg,
+          millage: data.millage,
+          date: todaysDate,
+          comments: data.comments,
+        };
+
+        if (data.activeItem == "1") {
+          const serviceDetails = new serviceHistory(payload);
+          serviceDetails.save((error) => {
+            if (error) {
+              res.status(400).json({ error: "error in saving!" });
+            } else {
+              res.send("Saved in service history successfully!");
+            }
+          });
+        } else {
+          const accidentDetails = new accidentHistory(payload);
+          accidentDetails.save((error) => {
+            if (error) {
+              res.status(400).json({ error: "error in saving!" });
+            } else {
+              res.send("Saved in accident history successfully!");
+            }
+          });
+        }
+      })
+      .catch((error) =>
+        res
+          .status(400)
+          .json({ error: "No Car Found across this Registration Number!" })
+      );
   }
 });
 
