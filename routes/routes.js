@@ -2,11 +2,12 @@ const express = require("express");
 
 const router = express.Router();
 const userSignUp = require("./../models/userSignUp");
-const workshopRegistration = require("./../models/workshopRegistration");
 const carDetails = require("./../models/carSchema/carDetails");
 const ownershipHistory = require("./../models/carSchema/ownershipHistory");
 const serviceHistory = require("./../models/carSchema/serviceHistory");
 const accidentHistory = require("./../models/carSchema/accidentHistory");
+const companyRegistrationTemp = require("./../models/workshopTemp/workshopRegistrationTemp");
+const companyRegistration = require ("./../models/workshopRegistration");
 const carAndOwnerValidate = require("./../validation/addNewCarValidation");
 const ownerTransferValidate = require("./../validation/ownerTransferValidation");
 const loginValidation = require("./../validation/loginValidation");
@@ -57,6 +58,65 @@ router.post("/signUp", (req, res) => {
 
 });
 
+router.get("/getWorkshopsTemp", (req,res)=> {
+  const data = req.body;
+  console.log(data)
+
+  companyRegistrationTemp.find({approved: false, }, {companyPassword: 0}).then( workshops => {
+    res.json({workshops})
+  })
+
+})
+
+router.post("/saveWorkshop", (req,res)=> {
+  const data = req.body;
+  let companyInfo = null;
+  companyRegistrationTemp.findOne({companyEmail: data.companyEmail}, {__v: 0, approved: 0, _id: 0})
+  .then(company=> {
+    companyInfo = {
+      ownerName: company.ownerName,
+      ownerPosition: company.ownerPosition,
+      ownerContact: company.ownerContact,
+      ownerCNIC: company.ownerCNIC,
+      companyName: company.companyName,
+      companyEmail: company.companyEmail,
+      companyPassword: company.companyPassword,
+      companyContact: company.companyContact,
+      companyAddress: company.companyAddress,
+      companyCity: company.companyCity,
+      companyZip: company.companyZip
+    }
+    const newCompanyRegistration = new companyRegistration(companyInfo);
+    console.log(newCompanyRegistration)
+    companyRegistration.findOne({companyEmail: data.companyEmail})
+    .then(company=> {
+      if (company) {
+        res.status(400).json({error: "A database with this Email already exists in Database"})
+      }
+      else {
+        newCompanyRegistration.save(error=> {
+          if (error) { 
+            console.log(error);
+            res.status(400).json({error: "Error saving data"})
+          }
+          else {
+            companyRegistrationTemp.deleteOne({ companyEmail: data.companyEmail})
+            .then(()=> {
+                res.json({sucess: "Company sucessfully approved and saved"})
+              })
+            }
+        })
+      }
+    })
+
+  })
+  .catch(error=> {
+    console.log(error)
+  })
+
+
+
+})
 //a get request to handle WORKSHOP REG
 router.post("/workshopSignUp", (req, res) => {
 
@@ -66,17 +126,29 @@ router.post("/workshopSignUp", (req, res) => {
     console.log(errors);
     return res.status(400).json({errors: errors, isValid: isValid});
   }
-
   else {
-    res.json({success: "We will contact you soon!!!"})
+    console.log(data);
+    const newCompanyRegistrationTemp = new companyRegistrationTemp(data)
+
+    companyRegistrationTemp.findOne({companyEmail: data.companyEmail})
+    .then(company=> {
+      if (company)
+      {
+        return res.status(400).json({error: "You have already sent a registration email"})
+      }
+
+      else {
+        newCompanyRegistrationTemp.save(error=> {
+          if (error) {
+            return res.status(400).json({error: "Error saving data to database"})
+          }
+          else {
+            return res.json({sucess: "We have recived your application, We will contact you soon"})
+          }
+        })
+      }
+    })
   }
-  /* NEED TO IMPLEMENT USER LOGIN DETS */
-  
-  /*login.find({email: data.email, password: data.password})
-  .then({
-
-  })*/
-
 });
 
 router.post("/searchCar", (req, res) => {

@@ -117,7 +117,7 @@ class FormPage extends React.Component {
         companyAddress: this.state.companyAddress,
         companyCity: this.state.companyCity,
         companyZip: this.state.companyZip,
-        passError: "FALSE"
+        approved: false
       };
 
       axios({
@@ -125,7 +125,10 @@ class FormPage extends React.Component {
         method: "post",
         data: payload
       })
-        .then(response => console.log(response))
+        .then(response => {
+          console.log(response)
+          this.clearFields();
+        })
         .catch(error => {
           console.log(error.response.data)
           this.setState({
@@ -136,7 +139,7 @@ class FormPage extends React.Component {
           })
         });
 
-      this.clearFields();
+      
     }
   };
 
@@ -235,7 +238,7 @@ class FormPage extends React.Component {
                       label="Company Contact"
                       icon="phone"
                       group
-                      type="text"
+                      type="number"
                       validate
                       error="wrong"
                       success="right"
