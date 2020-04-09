@@ -118,7 +118,6 @@ router.post("/workshopSignUp", (req, res) => {
   const { errors, isValid } = workshopTempValidation(data);
   if (!isValid) {
     console.log(errors);
-<<<<<<< HEAD
     return res.status(400).json({errors: errors, isValid: isValid});
   }
   else {
@@ -144,46 +143,62 @@ router.post("/workshopSignUp", (req, res) => {
       }
     })
   }
-=======
-    return res.status(400).json({ errors: errors, isValid: isValid });
-  } else {
-    res.json({ success: "We will contact you soon!!!" });
-  }
-  /* NEED TO IMPLEMENT USER LOGIN DETS */
-
-  /*login.find({email: data.email, password: data.password})
-  .then({
-
-  })*/
->>>>>>> Hassaan
 });
 
 router.post("/searchCar", (req, res) => {
   const data = req.body;
-  //console.log(data);
+  console.log(data);
   let returnedCar = null;
-  let ownership = null;
+  let vin = null;
+  let reg = null;
+  let serviceDetails = null;
+  let ownershipDetails = null;
+  let accidentDetails = null;
+  let payload = [];
 
   if (data.selectedOpt === "vin") {
+    vin = data.number; 
     carDetails.findOne({ vin: data.number }).then((car) => {
       //If car does not exist then
       if (!car) {
         return res.status(400).send("Car does not exist");
       } else {
         returnedCar = car;
+        reg = returnedCar.reg;
       }
 
       ownershipHistory
         .findOne(
-          { vin: data.number },
+          { vin: vin, reg: reg },
           { yearPurchased: 1, millage: 1, city: 1, state: 1 }
         )
         .then((owner) => {
           if (!owner) {
-            return res.status(400).send("Ownership history does not exist");
+            //return res.status(400).send("Ownership history does not exist");
           } else {
-            ownership = owner;
-            res.json({ owner: ownership, car: returnedCar });
+            ownershipDetails = owner;
+            //res.json({ owner: ownership, car: returnedCar });
+            serviceHistory.find({vin: vin, reg: reg}).then(car => {
+              if (car) {
+                serviceDetails = car;
+              }
+              else {
+                console.log("Service History does not exist")
+              }
+
+              accidentHistory.find({vin: vin, reg: reg}).then(car => {
+                if (car) {
+                  accidentDetails = car;
+                }
+                else {
+                  console.log("Accident History does not exist")
+                  payload = [returnedCar, serviceDetails, ownershipDetails, accidentDetails];
+                  console.log(payload);
+                  res.json({car: payload})
+                }
+              })
+            })
+
           }
           //retrieve data and send back to the client
         });
@@ -191,27 +206,56 @@ router.post("/searchCar", (req, res) => {
   }
 
   if (data.selectedOpt === "reg") {
+    reg = data.number;
     carDetails.findOne({ reg: data.number }).then((car) => {
       //If car does not exist then
       if (!car) {
         return res.status(400).send("Car does not exist");
       } else {
         returnedCar = car;
+        vin = returnedCar.vin;
       }
 
       ownershipHistory
         .findOne(
-          { reg: data.number },
+          { reg: data.number, vin: vin},
           { yearPurchased: 1, millage: 1, city: 1, state: 1 }
         )
         .then((owner) => {
           if (!owner) {
             return res.status(400).send("Ownership history does not exist");
           } else {
-            ownership = owner;
+            ownershipDetails = owner;
+            //res.json({ owner: ownership, car: returnedCar });
+            serviceHistory.find({vin: vin, reg: reg}).then(car => {
+              if (car) {
+                serviceDetails = car;
+                console.log(serviceDetails);
+
+              }
+              else {
+                console.log("Service History does not exist")
+              }
+
+              accidentHistory.find({vin: vin, reg: reg}).then(car => {
+                if (car) {
+                  accidentDetails = car;
+                  payload = [returnedCar, serviceDetails, ownershipDetails, accidentDetails];
+                  console.log(payload);
+                  return res.json({car: payload})
+                }
+                else {
+                  console.log("Accident History does not exist")
+                  payload = [returnedCar, serviceDetails, ownershipDetails, accidentDetails];
+                  console.log(payload);
+                  return res.json({car: payload})
+                }
+              })
+            })
           }
           //retrieve data and send back to the client
-          res.json({ owner: ownership, car: returnedCar });
+          //res.json({ owner: ownership, car: returnedCar });
+
         });
     });
   }

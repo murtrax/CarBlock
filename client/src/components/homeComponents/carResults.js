@@ -26,7 +26,9 @@ class CarResults extends Component {
     })
       .then(response => {
         console.log(response.data);
-        this.setState({ owner: response.data.owner, car: response.data.car });
+        this.setState({ owner: response.data.car[2], car: response.data.car[0], 
+          service: response.data.car[1],  accident: response.data.car[3]});
+          console.log(this.state)
       })
       .catch(err => {
         console.log(err.response.data);
@@ -44,6 +46,10 @@ class CarResults extends Component {
         <h1>{this.state.car.model}</h1>
 
         <h1>{this.state.error}</h1>
+        <p>{this.state.car}</p>
+        <p>{this.state.owner}</p>
+        <p>{this.state.service}</p>
+        <p>{this.state.accident}</p>  
       </div>
     );
   }

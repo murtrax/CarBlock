@@ -25,6 +25,8 @@ class TabsDefault extends Component {
     millage: "",
     comments: "",
     reg: "",
+    errors: [],
+    errorBool: ""
   };
 
   clearFields = () => {
@@ -70,13 +72,50 @@ class TabsDefault extends Component {
     })
       .then((response) => {
         console.log(response.data);
+        this.clearFields();
       })
       .catch((err) => {
+        console.log("HERE")
         console.log(err.response.data);
+        this.setState({
+          errors: err.response.data.errors
+        },()=>{
+          this.setState({
+            errorBool: "true"
+          })
+        })
       });
 
-    this.clearFields();
+    
   };
+
+  displayError = (message, errorType) => {
+    let labels = [];
+    let condition = "false";
+
+    if (this.state.errorBool == "true") {
+      for (var x = 0; x < errorType.length; x++) {
+        if (this.state.errors[errorType[x]]) {
+          condition = "true";
+          labels[x] = (
+            <React.Fragment>
+              <label style={{ color: "red" }}>
+                {this.state.errors[errorType[x]]}
+              </label>
+            </React.Fragment>
+          );
+        }
+      }
+      if (condition === "false") {
+        return message;
+      } else {
+        return labels;
+      }
+    } else {
+      return message;
+    }
+  };
+
 
   render() {
     return (
@@ -125,8 +164,9 @@ class TabsDefault extends Component {
                             value={this.state.millage}
                             onChange={this.handleChange}
                           />
-                          <label for="icon_prefix">Milage</label>
+                          <label for="icon_prefix">{this.displayError("Millage", ["millageEmpty"])}</label>
                         </div>
+                        
 
                         <div class="input-field col s6">
                           <i class="material-icons prefix">motorcycle</i>
@@ -137,7 +177,7 @@ class TabsDefault extends Component {
                             value={this.state.reg}
                             onChange={this.handleChange}
                           />
-                          <label for="icon_prefix">Reg #</label>
+                          <label for="icon_prefix">{this.displayError("Reg #", ["regEmpty"])}</label>
                         </div>
                       </div>
                       <div className="row">
@@ -150,7 +190,7 @@ class TabsDefault extends Component {
                             value={this.state.comments}
                             onChange={this.handleChange}
                           ></textarea>
-                          <label for="icon_prefix2">Comments</label>
+                          <label for="icon_prefix2">{this.displayError("Comments", ["commentsEmpty"])}</label>
                         </div>
                       </div>
                       <div className="row text-center">
@@ -179,7 +219,7 @@ class TabsDefault extends Component {
                             value={this.state.millage}
                             onChange={this.handleChange}
                           />
-                          <label for="icon_prefix">Milage</label>
+                          <label for="icon_prefix">{this.displayError("Millage", ["millageEmpty"])}</label>
                         </div>
                         <div class="input-field col s6">
                           <i class="material-icons prefix">motorcycle</i>
@@ -190,7 +230,7 @@ class TabsDefault extends Component {
                             value={this.state.reg}
                             onChange={this.handleChange}
                           />
-                          <label for="icon_prefix">Reg #</label>
+                          <label for="icon_prefix">{this.displayError("Reg #", ["regEmpty"])}</label>
                         </div>
                       </div>
                       <div className="row">
@@ -203,7 +243,7 @@ class TabsDefault extends Component {
                             value={this.state.comments}
                             onChange={this.handleChange}
                           ></textarea>
-                          <label for="icon_prefix2">Comments</label>
+                          <label for="icon_prefix2">{this.displayError("Comments", ["commentsEmpty"])}</label>
                         </div>
                       </div>
                       <div className="row text-center">

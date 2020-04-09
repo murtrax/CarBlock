@@ -116,11 +116,7 @@ class FormPage extends React.Component {
         companyAddress: this.state.companyAddress,
         companyCity: this.state.companyCity,
         companyZip: this.state.companyZip,
-<<<<<<< HEAD
         approved: false
-=======
-        passError: "FALSE",
->>>>>>> Hassaan
       };
 
       axios({
@@ -128,18 +124,12 @@ class FormPage extends React.Component {
         method: "post",
         data: payload,
       })
-<<<<<<< HEAD
         .then(response => {
           console.log(response)
           this.clearFields();
         })
         .catch(error => {
           console.log(error.response.data)
-=======
-        .then((response) => console.log(response))
-        .catch((error) => {
-          console.log(error.response.data);
->>>>>>> Hassaan
           this.setState({
             errors: error.response.data.errors,
           });
