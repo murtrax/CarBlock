@@ -45,11 +45,7 @@ class CarResults extends Component {
         <h1>{this.state.car.make}</h1>
         <h1>{this.state.car.model}</h1>
 
-        <h1>{this.state.error}</h1>
-        <p>{this.state.car}</p>
-        <p>{this.state.owner}</p>
-        <p>{this.state.service}</p>
-        <p>{this.state.accident}</p>  
+
       </div>
     );
   }

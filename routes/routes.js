@@ -189,6 +189,9 @@ router.post("/searchCar", (req, res) => {
               accidentHistory.find({vin: vin, reg: reg}).then(car => {
                 if (car) {
                   accidentDetails = car;
+                  payload = [returnedCar, serviceDetails, ownershipDetails, accidentDetails];
+                  console.log(payload);
+                  return res.json({car: payload})
                 }
                 else {
                   console.log("Accident History does not exist")
