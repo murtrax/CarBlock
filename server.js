@@ -3,7 +3,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const routes = require("./routes/routes");
 
-//Declare an express app
+//Declare an express app app
 const app = express();
 
 //declare port
