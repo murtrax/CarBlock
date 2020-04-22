@@ -11,6 +11,13 @@ import {
 import Scard from "./signinComponents/signinCard";
 import axios from "axios";
 
+// Redux imports (DANIAL)
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { loginUser } from "../actions/authActions";
+import classnames from "classnames";
+
 class FormPage extends React.Component {
   state = {
     email: "",
@@ -18,6 +25,27 @@ class FormPage extends React.Component {
     errors: [],
     errorBool: ""
   };
+
+  // (DANIAL)
+  componentDidMount() {
+    // If logged in and user navigates to Register page, should redirect them to dashboard
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+  }
+
+  // (DANIAL)
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      this.props.history.push("/dashboard"); // Push user to dashboard after login (DANIAL)
+    }
+
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
+  }
 
   //This method handles the change in form fields and updates state accordingly
   handleChange = e => {
@@ -46,6 +74,10 @@ class FormPage extends React.Component {
       password: this.state.password
     }
 
+    // (DANIAL)
+    this.props.loginUser(payload);
+    
+    /*
     axios({
       url: "/signUp",
       method: "post",
@@ -68,9 +100,14 @@ class FormPage extends React.Component {
           })
         }
     })
+    */
+
   }
 
   render() {
+
+    
+
     return (
       <MDBContainer className="mt-5">
         <MDBRow className="justify-content-center">
@@ -94,9 +131,10 @@ class FormPage extends React.Component {
                       name="email"
                       value={this.state.email}
                       onChange={this.handleChange}
+                    
                     />
                     <label style={{color: "red"}}>{this.state.errors.email}</label>
-
+                    
                     <MDBInput
                       label="Password"
                       icon="lock"
@@ -106,8 +144,10 @@ class FormPage extends React.Component {
                       name="password"
                       value={this.state.password}
                       onChange={this.handleChange}
+                      
                     />
                     <label style={{color: "red"}}>{this.state.errors.password}</label>
+                    
                   </div>
                   <div className="text-center py-4 mt-3">
                     <MDBBtn color="cyan" type="submit">
@@ -124,4 +164,23 @@ class FormPage extends React.Component {
   }
 }
 
-export default FormPage;
+// Defining propTypes. (DANIAL)
+FormPage.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+
+// Getting the state from Redux and mapping it to props which we can use in components. (DANIAL)
+const mapStateToProps = state => ({
+  auth:state.auth,
+  errors: state.errors
+});
+
+
+// Connecting the Register Component (signup) to the Redux Store using "connect" (DANIAL)
+export default connect(
+  mapStateToProps,
+  { loginUser }
+) (FormPage);

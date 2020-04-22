@@ -18,6 +18,13 @@ const AccidentAndServiceHistoryValidate = require("./../validation/AccidentAndSe
 
 /** ROUTES */
 
+// Login route
+router.post("/login", (req, res) => {
+  console.log('Love saim');
+  res.json(req.body);
+});
+
+
 //a post require to handle user sign up
 router.post("/userSignUp", (req, res) => {
   const data = req.body;
