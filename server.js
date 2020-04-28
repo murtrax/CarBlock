@@ -2,6 +2,9 @@ const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const routes = require("./routes/routes");
+const passport = require("passport");
+
+// Saim is bundal.
 
 //Declare an express app
 const app = express();
@@ -12,7 +15,7 @@ const port = 8080;
 /* Database Connection to Mongo */
 mongoose.connect("mongodb://localhost:27017/CarBlock", {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
 mongoose.connection.on("connected", () => {
   console.log("Database connection established!");
@@ -23,6 +26,12 @@ app.use(express.urlencoded({ extended: false }));
 
 //log for each request on the console
 app.use(morgan("tiny"));
+
+// Passport middleware
+app.use(passport.initialize());
+
+// Passport config
+require("./config/passport")(passport);
 
 //add a router
 app.use("/", routes);

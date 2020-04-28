@@ -7,7 +7,7 @@ const userSignUpSchema = new Schema({
   fullName: String,
   email: String,
   userName: String,
-  password: String
+  password: String,
 });
 
 //create a model with schema
