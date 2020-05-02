@@ -1,12 +1,6 @@
 import React from "react";
 import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBInput,
-  MDBBtn,
-  MDBCard,
-  MDBCardBody,
+  MDBContainer, MDBRow,MDBCol, MDBInput,MDBBtn,MDBCard,MDBCardBody,
 } from "mdbreact";
 
 // Redux imports (DANIAL)
@@ -20,8 +14,30 @@ class FormPage extends React.Component {
   state = {
     email: "",
     password: "",
-    errors: {},
+    errors: [],
     errorBool: "",
+  };
+
+  displayError = (message, errorType) => {
+    let labels = [];
+    let condition = "false";
+
+    if (this.state.errorBool == "true") {
+      for (var x = 0; x < errorType.length; x++) {
+        console.log(this.state.errors.errors)
+        if (this.state.errors.errors[errorType[x]]) {
+          condition = "true";
+          return <span style= {{color: "red"}}> {this.state.errors.errors[errorType[x]] }</span>
+        }
+      }
+      if (condition === "false") {
+        return message;
+      } else {
+        return labels;
+      }
+    } else {
+      return message;
+    }
   };
 
   // (DANIAL)
@@ -41,6 +57,11 @@ class FormPage extends React.Component {
     if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors,
+        
+      },()=> {
+        this.setState({
+          errorBool: "true"
+        })
       });
     }
   }
@@ -52,7 +73,7 @@ class FormPage extends React.Component {
     this.setState({
       [name]: value,
     });
-    console.log(this.state);
+    //console.log(this.state);
   };
 
   resetFields = () => {
@@ -79,7 +100,8 @@ class FormPage extends React.Component {
 
   render() {
     const { errors } = this.state;
-    console.log(errors);
+    console.log("print errors");
+    //console.log(errors);
 
     return (
       <MDBContainer className="mt-5">
@@ -94,7 +116,7 @@ class FormPage extends React.Component {
                   <p className="h4 text-center py-4">Log In</p>
                   <div className="grey-text">
                     <MDBInput
-                      label="Email"
+                      label={this.displayError("Email", ["emailEmpty", "emailInvalid"])}
                       icon="envelope"
                       group
                       type="email"
@@ -105,9 +127,10 @@ class FormPage extends React.Component {
                     <label style={{ color: "red" }}>
                       {this.state.errors.email}
                     </label>
+                    
 
                     <MDBInput
-                      label="Password"
+                      label={this.displayError("Password", ["password"])}
                       icon="lock"
                       group
                       type="password"
