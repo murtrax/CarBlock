@@ -39,8 +39,19 @@ export const registerUser = (userData, history) => (dispatch) => {
 
 // Login - get user token
 export const loginUser = (userData) => (dispatch) => {
+  let path = "/";
+  if (userData.typeOfUser == "Workshop") {
+    path = "/login";
+  }
+  if (userData.typeOfUser == "Public User") {
+    path = "/login";
+  }
+  if (userData.typeOfUser == "Registration Auth") {
+    //path = "/regLogin";
+    path = "/login";
+  }
   axios
-    .post("/login", userData)
+    .post(path, userData)
     .then((res) => {
       // ------- Save to localStorage ---------
       // Set token to localStorage

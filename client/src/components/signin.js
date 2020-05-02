@@ -42,16 +42,27 @@ class FormPage extends React.Component {
 
   // (DANIAL)
   componentDidMount() {
-    // If logged in and user navigates to Register page, should redirect them to dashboard
+    // If logged in and user navigates to Login page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {
-      this.props.history.push("/dashboard");
+      const { type } = this.props.auth.user;
+      if (type === "Workshop" || type === "Public User") {
+        this.props.history.push("/workshopRepair"); // Push user to dashboard after login
+      }
+      if (type === "Registration Auth") {
+        this.props.history.push("/dashboardWorkshop");
+      }
     }
   }
 
-  // (DANIAL)
   componentWillReceiveProps(nextProps) {
+    const { type } = nextProps.auth.user;
     if (nextProps.auth.isAuthenticated) {
-      this.props.history.push("/dashboardWorkshop"); // Push user to dashboard after login (DANIAL)
+      if (type === "Workshop" || type === "Public User") {
+        this.props.history.push("/workshopRepair"); // Push user to dashboard after login (DANIAL)
+      }
+      if (type === "Registration Auth") {
+        this.props.history.push("/dashboardWorkshop");
+      }
     }
 
     if (nextProps.errors) {
@@ -82,6 +93,7 @@ class FormPage extends React.Component {
       password: "",
       errorBool: "",
       errors: {},
+      typeOfUser: "",
     });
   };
 
@@ -90,6 +102,7 @@ class FormPage extends React.Component {
     const payload = {
       email: this.state.email,
       password: this.state.password,
+      typeOfUser: this.state.typeOfUser,
     };
 
     this.props.loginUser(payload);
@@ -106,15 +119,31 @@ class FormPage extends React.Component {
     return (
       <MDBContainer className="mt-5">
         <MDBRow className="justify-content-center">
-          {/*}<MDBCol md="6">
-            <Scard/>
-          </MDBCol>*/}
           <MDBCol md="8" sm="10" lg="5">
             <MDBCard>
               <MDBCardBody>
                 <form onSubmit={this.onSubmit}>
                   <p className="h4 text-center py-4">Log In</p>
+
                   <div className="grey-text">
+                    <MDBRow className="justify-content-center">
+                      <MDBCol md="8" sm="12" lg="8">
+                        <select
+                          className="browser-default custom-select"
+                          value={this.state.typeOfUser}
+                          onChange={this.handleChange}
+                          name="typeOfUser"
+                        >
+                          <option>Choose your option</option>
+                          <option value="Workshop">Workshop</option>
+                          <option value="Public User">Public User</option>
+                          <option value="Registration Auth">
+                            Registration Auth
+                          </option>
+                        </select>
+                      </MDBCol>
+                    </MDBRow>
+
                     <MDBInput
                       label={this.displayError("Email", ["emailEmpty", "emailInvalid"])}
                       icon="envelope"
@@ -157,7 +186,7 @@ class FormPage extends React.Component {
   }
 }
 
-// Defining propTypes. (DANIAL)
+// Defining propTypes
 FormPage.propTypes = {
   loginUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,

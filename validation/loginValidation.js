@@ -7,8 +7,8 @@ module.exports = function validateLoginInput(data) {
   //Convert empty fields to an empty string so we can use validator
   (data.email = !isEmpty(data.email) ? data.email : ""),
     (data.password = !isEmpty(data.password) ? data.password : "");
+  data.typeOfUser = !isEmpty(data.typeOfUser) ? data.typeOfUser : "";
 
-  //Email checks
   //Email checks
   if (Validator.isEmpty(data.email)) {
     errors.emailEmpty = "Email is required";
@@ -20,6 +20,11 @@ module.exports = function validateLoginInput(data) {
   //Password check
   if (Validator.isEmpty(data.password)) {
     errors.password = "Password field is required";
+  }
+
+  //Type Checks
+  if (Validator.isEmpty(data.typeOfUser)) {
+    errors.typeOfUser = "Please select an option to Login";
   }
 
   return {

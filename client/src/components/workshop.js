@@ -37,7 +37,13 @@ class FormPage extends React.Component {
   componentDidMount() {
     // If logged in and user navigates to Register page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {
-      this.props.history.push("/dashboard");
+      const { type } = this.props.auth.user;
+      if (type == "Workshop" || type == "Public User") {
+        this.props.history.push("/workshopRepair"); // Push user to dashboard after login (DANIAL)
+      }
+      if (type == "Registration Auth") {
+        this.props.history.push("/dashboardWorkshop");
+      }
     }
   }
 

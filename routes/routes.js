@@ -10,6 +10,9 @@ const serviceHistory = require("./../models/carSchema/serviceHistory");
 const accidentHistory = require("./../models/carSchema/accidentHistory");
 const companyRegistrationTemp = require("./../models/workshopTemp/workshopRegistrationTemp");
 const companyRegistration = require("./../models/workshopRegistration");
+
+const adminLogin = require("./../models/adminLogin"); //YET TO BE CREATED
+
 //validation
 const carAndOwnerValidate = require("./../validation/addNewCarValidation");
 const ownerTransferValidate = require("./../validation/ownerTransferValidation");
@@ -19,6 +22,55 @@ const AccidentAndServiceHistoryValidate = require("./../validation/AccidentAndSe
 const userSignUpValidate = require("./../validation/userSignUpValidation");
 
 //Routes
+
+//Login for registration auth
+router.post("/regLogin", (req, res) => {
+  //console.log(req.body);
+  //console.log(req.body.typeOfUser);
+  const data = req.body;
+  const { errors, isValid } = loginValidation(data);
+  if (!isValid) {
+    return res.status(400).json({ errors: errors, isValid: isValid });
+  } else {
+    //Log the Reg Auth In
+    adminLogin.findOne({ email: data.email }).then((admin) => {
+      if (!admin) {
+        return res
+          .status(400)
+          .json({ error: "No User with this email exists!" });
+      } else {
+        bcrypt.compare(data.password, admin.password, function (err, isMatch) {
+          if (err) {
+            throw err;
+          } else if (!isMatch) {
+            return res.status(400).json({ error: "Incorrect Password" });
+          } else {
+            //JWT Payload
+            const payload = {
+              id: admin.id,
+              name: admin.fullName,
+              type: "reg",
+            };
+            // Sign token
+            jwt.sign(
+              payload,
+              "secret",
+              {
+                expiresIn: 50000,
+              },
+              (err, token) => {
+                res.json({
+                  success: true,
+                  token: "Bearer " + token,
+                });
+              }
+            );
+          }
+        });
+      }
+    });
+  }
+});
 
 // Login route for users
 router.post("/login", (req, res) => {
@@ -51,6 +103,7 @@ router.post("/login", (req, res) => {
               const payload = {
                 id: workshop.id,
                 name: workshop.companyName,
+                type: data.typeOfUser,
               };
               // Sign token
               jwt.sign(
