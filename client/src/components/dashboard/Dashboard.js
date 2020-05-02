@@ -10,6 +10,15 @@ class Dashboard extends Component {
   };
   render() {
     const { user } = this.props.auth;
+
+    /**
+     *
+     *
+     * NO ONE DELETE THIS FILE TILL THE END
+     * - SAIM
+     *
+     *
+     */
     return (
       <div style={{ height: "75vh" }} className="container valign-wrapper">
         <div className="row">

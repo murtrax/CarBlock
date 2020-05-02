@@ -15,19 +15,20 @@ import {
 } from "mdbreact";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import Home from "./home";
-import About from "./about";
-import SignUpUser from "./signup";
-import LogInUser from "./signin";
-import Workshop from "./workshop";
-import Report from "./report";
-import DashBoard from "./dashboard";
-import Alert from "./alert";
-import Transfer from "./ownerTransfer";
+import Home from "./home"; //Home Page
+import About from "./about"; //About Page
+import SignUpUser from "./signup"; //User SignUp
+import LogInUser from "./signin"; //Sign In (Workshop)
+import Workshop from "./workshop"; //Workshop Sign Up
+import Report from "./report"; //Display Report (dummy for now)
+import DashBoard from "./dashboard"; //Workshop Dashboard
+import Alert from "./alert"; //alert
+import Transfer from "./ownerTransfer"; //transfer owner (reg auth)
 import log from "./../images/block.png";
-import newCar from "./addNewCar";
-import carResults from "./homeComponents/carResults";
-import repairWorkshop from "./repairWorkshop";
+import newCar from "./addNewCar"; //add new car form (workshop)
+import carResults from "./homeComponents/carResults"; //(display car report)
+import repairWorkshop from "./repairWorkshop"; //add service and acc details
+import DashboardWorkshop from "./dashboard/Dashboard"; //DUMMY dashboard
 
 // Importing React Redux and Redux Store and other important imports (DANIAL)
 import { Provider } from "react-redux";
@@ -35,10 +36,8 @@ import store from "../store";
 import jwt_decode from "jwt-decode";
 import setAuthToken from "../utils/setAuthToken";
 import { setCurrentUser, logoutUser } from "../actions/authActions";
-import Register from "./signup";
-import Login from "./signin";
 import PrivateRoute from "./private-route/PrivateRoute";
-import DashboardWorkshop from "./dashboard/Dashboard";
+import PrivateRouteRegAuth from "./private-route/PrivateRouteRegAuth";
 
 // (DANIAL)
 // Check for token to keep user logged in
@@ -67,6 +66,7 @@ if (localStorage.jwtToken) {
 class NavbarPage extends Component {
   state = {
     isOpen: false,
+    isLoggedIn: false,
   };
 
   toggleCollapse = () => {
@@ -117,9 +117,9 @@ class NavbarPage extends Component {
                 <MDBNavItem>
                   <MDBNavLink to="/report">Report</MDBNavLink>
                 </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink to="/dashboard">DashBoard</MDBNavLink>
-                </MDBNavItem>
+                {/*}<MDBNavItem>
+                  <MDBNavLink to="/dashboardWorkshop">DashBoard</MDBNavLink>
+    </MDBNavItem>*/}
                 <MDBNavItem>
                   <MDBNavLink to="/alert">Alerts</MDBNavLink>
                 </MDBNavItem>
@@ -156,14 +156,16 @@ class NavbarPage extends Component {
             <Route path="/login" exact component={LogInUser} />
             <Route path="/workshop" exact component={Workshop} />
             <Route path="/report" exact component={Report} />
-
-            <PrivateRoute
+            <PrivateRouteRegAuth
               exact
               path="/dashboardWorkshop"
-              component={DashboardWorkshop}
+              component={DashBoard}
             />
-
-            <Route path="/dashboard" exact component={DashBoard} />
+            <PrivateRoute
+              exact
+              path="/workshopRepair"
+              component={repairWorkshop}
+            />
             <Route path="/alert" exact component={Alert} />
             <Route path="/transfer" exact component={Transfer} />
             <Route path="/newCar" exact component={newCar} />
@@ -172,13 +174,16 @@ class NavbarPage extends Component {
               exact
               component={carResults}
             />
-            <Route path="/workshopRepair" exact component={repairWorkshop} />
+            {
+              //}<Route path="/workshopRepair" exact component={repairWorkshop} />
+            }{" "}
           </Switch>
         </Router>
       </Provider>
     );
   }
 }
+
 export default NavbarPage;
 
 /*

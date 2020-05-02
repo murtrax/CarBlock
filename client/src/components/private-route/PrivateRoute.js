@@ -1,3 +1,7 @@
+/**
+ * This is a file to manage private routes of workshops
+ */
+
 import React, { Component } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
@@ -7,7 +11,8 @@ const PrivateRoute = ({ component: Component, auth, ...rest }) => (
   <Route
     {...rest}
     render={(props) =>
-      auth.isAuthenticated === true ? (
+      auth.isAuthenticated === true &&
+      (auth.user.type === "Workshop" || auth.user.type === "Public User") ? (
         <Component {...props} />
       ) : (
         <Redirect to="/login" />

@@ -11,8 +11,20 @@ import {
 } from "mdbreact";
 import M from "materialize-css/dist/js/materialize";
 import axios from "axios";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logoutUser } from "./../actions/authActions";
 
 class TabsDefault extends Component {
+  state = {
+    activeItem: "1",
+    millage: "",
+    comments: "",
+    reg: "",
+    errors: [],
+    errorBool: "",
+  };
+
   componentDidMount() {
     document.addEventListener("DOMContentLoaded", function () {
       var elems = document.querySelectorAll(".datepicker");
@@ -20,13 +32,9 @@ class TabsDefault extends Component {
     });
   }
 
-  state = {
-    activeItem: "1",
-    millage: "",
-    comments: "",
-    reg: "",
-    errors: [],
-    errorBool: ""
+  logout = (e) => {
+    e.preventDefault();
+    this.props.logoutUser(this.props.history);
   };
 
   clearFields = () => {
@@ -75,18 +83,19 @@ class TabsDefault extends Component {
         this.clearFields();
       })
       .catch((err) => {
-        console.log("HERE")
+        console.log("HERE");
         console.log(err.response.data);
-        this.setState({
-          errors: err.response.data.errors
-        },()=>{
-          this.setState({
-            errorBool: "true"
-          })
-        })
+        this.setState(
+          {
+            errors: err.response.data.errors,
+          },
+          () => {
+            this.setState({
+              errorBool: "true",
+            });
+          }
+        );
       });
-
-    
   };
 
   displayError = (message, errorType) => {
@@ -115,7 +124,6 @@ class TabsDefault extends Component {
       return message;
     }
   };
-
 
   render() {
     return (
@@ -164,9 +172,10 @@ class TabsDefault extends Component {
                             value={this.state.millage}
                             onChange={this.handleChange}
                           />
-                          <label for="icon_prefix">{this.displayError("Millage", ["millageEmpty"])}</label>
+                          <label for="icon_prefix">
+                            {this.displayError("Millage", ["millageEmpty"])}
+                          </label>
                         </div>
-                        
 
                         <div class="input-field col s6">
                           <i class="material-icons prefix">motorcycle</i>
@@ -177,7 +186,9 @@ class TabsDefault extends Component {
                             value={this.state.reg}
                             onChange={this.handleChange}
                           />
-                          <label for="icon_prefix">{this.displayError("Reg #", ["regEmpty"])}</label>
+                          <label for="icon_prefix">
+                            {this.displayError("Reg #", ["regEmpty"])}
+                          </label>
                         </div>
                       </div>
                       <div className="row">
@@ -190,7 +201,9 @@ class TabsDefault extends Component {
                             value={this.state.comments}
                             onChange={this.handleChange}
                           ></textarea>
-                          <label for="icon_prefix2">{this.displayError("Comments", ["commentsEmpty"])}</label>
+                          <label for="icon_prefix2">
+                            {this.displayError("Comments", ["commentsEmpty"])}
+                          </label>
                         </div>
                       </div>
                       <div className="row text-center">
@@ -201,6 +214,13 @@ class TabsDefault extends Component {
                         >
                           Submit
                           <i class="material-icons right">send</i>
+                        </button>
+                        <button
+                          class="btn waves-effect waves-light"
+                          type="button"
+                          onClick={this.logout}
+                        >
+                          Logout
                         </button>
                       </div>
                     </form>
@@ -219,7 +239,9 @@ class TabsDefault extends Component {
                             value={this.state.millage}
                             onChange={this.handleChange}
                           />
-                          <label for="icon_prefix">{this.displayError("Millage", ["millageEmpty"])}</label>
+                          <label for="icon_prefix">
+                            {this.displayError("Millage", ["millageEmpty"])}
+                          </label>
                         </div>
                         <div class="input-field col s6">
                           <i class="material-icons prefix">motorcycle</i>
@@ -230,7 +252,9 @@ class TabsDefault extends Component {
                             value={this.state.reg}
                             onChange={this.handleChange}
                           />
-                          <label for="icon_prefix">{this.displayError("Reg #", ["regEmpty"])}</label>
+                          <label for="icon_prefix">
+                            {this.displayError("Reg #", ["regEmpty"])}
+                          </label>
                         </div>
                       </div>
                       <div className="row">
@@ -243,7 +267,9 @@ class TabsDefault extends Component {
                             value={this.state.comments}
                             onChange={this.handleChange}
                           ></textarea>
-                          <label for="icon_prefix2">{this.displayError("Comments", ["commentsEmpty"])}</label>
+                          <label for="icon_prefix2">
+                            {this.displayError("Comments", ["commentsEmpty"])}
+                          </label>
                         </div>
                       </div>
                       <div className="row text-center">
@@ -254,6 +280,13 @@ class TabsDefault extends Component {
                         >
                           Submit
                           <i class="material-icons right">send</i>
+                        </button>
+                        <button
+                          class="btn waves-effect waves-light"
+                          type="button"
+                          onClick={this.logout}
+                        >
+                          Logout
                         </button>
                       </div>
                     </form>
@@ -267,4 +300,14 @@ class TabsDefault extends Component {
     );
   }
 }
-export default TabsDefault;
+
+TabsDefault.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { logoutUser })(TabsDefault);
