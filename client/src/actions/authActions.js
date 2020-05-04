@@ -39,7 +39,7 @@ export const registerUser = (userData, history) => (dispatch) => {
 
 // Login - get user token
 export const loginUser = (userData) => (dispatch) => {
-  let path = "/";
+  let path = "/login";
   if (userData.typeOfUser == "Workshop") {
     path = "/login";
   }

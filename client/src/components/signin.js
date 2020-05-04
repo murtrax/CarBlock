@@ -16,28 +16,40 @@ class FormPage extends React.Component {
     password: "",
     errors: [],
     errorBool: "",
+    typeOfUser: "",
+    color: ""
   };
 
   displayError = (message, errorType) => {
-    let labels = [];
-    let condition = "false";
 
-    if (this.state.errorBool == "true") {
-      for (var x = 0; x < errorType.length; x++) {
-        console.log(this.state.errors.errors)
-        if (this.state.errors.errors[errorType[x]]) {
-          condition = "true";
-          return <span style= {{color: "red"}}> {this.state.errors.errors[errorType[x]] }</span>
-        }
-      }
-      if (condition === "false") {
-        return message;
-      } else {
-        return labels;
-      }
-    } else {
-      return message;
+    if (this.state.typeOfUser == "")
+    {
+      this.state.color = "red"
     }
+    else {
+      this.state.color = ""
+    }
+
+      let labels = [];
+      let condition = "false";
+
+      if (this.state.errorBool == "true") {
+        for (var x = 0; x < errorType.length; x++) {
+          console.log(this.state.errors.errors)
+          if (this.state.errors.errors[errorType[x]]) {
+            condition = "true";
+            return <span style= {{color: "red"}}> {this.state.errors.errors[errorType[x]] }</span>
+          }
+        }
+        if (condition === "false") {
+          return message;
+        } else {
+          return labels;
+        }
+      } else {
+        return message;
+      }
+  
   };
 
   // (DANIAL)
@@ -113,8 +125,7 @@ class FormPage extends React.Component {
 
   render() {
     const { errors } = this.state;
-    console.log("print errors");
-    //console.log(errors);
+
 
     return (
       <MDBContainer className="mt-5">
@@ -133,11 +144,12 @@ class FormPage extends React.Component {
                           value={this.state.typeOfUser}
                           onChange={this.handleChange}
                           name="typeOfUser"
+                          style={{color: this.state.color}}
                         >
-                          <option>Choose your option</option>
-                          <option value="Workshop">Workshop</option>
-                          <option value="Public User">Public User</option>
-                          <option value="Registration Auth">
+                          <option value = "">Choose your option</option>
+                          <option value = "Workshop">Workshop</option>
+                          <option value = "Public User">Public User</option>
+                          <option value = "Registration Auth">
                             Registration Auth
                           </option>
                         </select>
