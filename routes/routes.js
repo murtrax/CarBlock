@@ -97,7 +97,7 @@ router.post("/login", (req, res) => {
             if (err) {
               throw err;
             } else if (!isMatch) {
-              return res.status(400).json({ error: "Incorrect Password" });
+              return res.status(400).json({ errors: "Incorrect Password" });
             } else {
               //JWT Payload
               const payload = {
@@ -200,6 +200,23 @@ router.get("/getWorkshopsTemp", (req, res) => {
       res.json({ workshops });
     });
 });
+
+
+router.post("/deleteWorkshop", (req,res) => {
+  const data = req.body;
+  console.log(data);
+  console.log("HERE")
+  companyRegistrationTemp.deleteOne({companyEmail: data.companyEmail})
+  .then(()=>{
+    res.json({success: "Workshop deleted from database"})
+  })
+  .catch(()=>{
+    res.status(400).json({
+      error: "A database with this Email doesn't exist within the database",
+    });
+  })
+});
+
 
 router.post("/saveWorkshop", (req, res) => {
   const data = req.body;

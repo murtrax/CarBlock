@@ -273,8 +273,32 @@ class JumbotronPage extends React.Component {
         .catch((error) => {
           console.log(error);
         });
+
     } else if (status == "Not Approved") {
       workshopsTemp[select].approved = false;
+      workshopsTemp.splice(select, 1);
+
+      if (workshopsTemp.length == 0) {
+        this.setState({
+          ownerName: "",
+          ownerPosition: "",
+          ownerContact: "",
+          ownerCNIC: "",
+          companyName: "",
+          companyEmail: "",
+          companyContact: "",
+          companyAddress: "",
+          companyCity: "",
+          companyZip: "",
+          approved: "",
+          selection: "",
+          statusColor: "",
+          numberOfRecords: "",
+          workshops: [],
+          disabled: "disabled",
+        });
+      } else {
+      
       this.setState(
         {
           approved: "Not Approved",
@@ -285,6 +309,18 @@ class JumbotronPage extends React.Component {
           this.updateData(this.state.selection);
         }
       );
+      }
+      axios({
+        url: "/deleteWorkshop",
+        method: "POST",
+        data: payload,
+      })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 

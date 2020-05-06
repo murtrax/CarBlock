@@ -14,13 +14,15 @@ class FormPage extends React.Component {
   state = {
     email: "",
     password: "",
-    errors: [],
+    errors: {},
     errorBool: "",
     typeOfUser: "",
-    color: ""
+    color: "",
+    submit: "false"
   };
 
   displayError = (message, errorType) => {
+    console.log(this.state.errors)
 
     if (this.state.typeOfUser == "")
     {
@@ -34,10 +36,16 @@ class FormPage extends React.Component {
       let condition = "false";
 
       if (this.state.errorBool == "true") {
+        if (this.state.errors.errors === "Incorrect Password" && errorType[1] == this.state.errors.errors){
+          condition = "true";
+          return <span style= {{color: "red"}}> {this.state.errors.errors }</span>
+        }
+        else {
         for (var x = 0; x < errorType.length; x++) {
-          console.log(this.state.errors.errors)
+
           if (this.state.errors.errors[errorType[x]]) {
             condition = "true";
+            console.log()
             return <span style= {{color: "red"}}> {this.state.errors.errors[errorType[x]] }</span>
           }
         }
@@ -46,9 +54,12 @@ class FormPage extends React.Component {
         } else {
           return labels;
         }
-      } else {
+      } 
+    }
+    else {
         return message;
       }
+    
   
   };
 
@@ -110,6 +121,9 @@ class FormPage extends React.Component {
   };
 
   onSubmit = (e) => {
+    this.setState({
+      submit : "true"
+    })
     e.preventDefault();
     const payload = {
       email: this.state.email,
@@ -120,11 +134,19 @@ class FormPage extends React.Component {
     this.props.loginUser(payload);
     if (this.state.errors == {}) {
       this.resetFields();
+      this.state.errorBool = "false";
     }
   };
 
   render() {
     const { errors } = this.state;
+    if (this.state.typeOfUser == "")
+    {
+      this.state.color = "red"
+    }
+    else {
+      this.state.color = ""
+    }
 
 
     return (
@@ -144,7 +166,7 @@ class FormPage extends React.Component {
                           value={this.state.typeOfUser}
                           onChange={this.handleChange}
                           name="typeOfUser"
-                          style={{color: this.state.color}}
+                          style={{color: this.state.typeOfUser == "" && this.state.submit == "true"? "red" : ""}}
                         >
                           <option value = "">Choose your option</option>
                           <option value = "Workshop">Workshop</option>
@@ -171,7 +193,7 @@ class FormPage extends React.Component {
                     
 
                     <MDBInput
-                      label={this.displayError("Password", ["password"])}
+                      label={this.displayError("Password", ["password", "Incorrect Password"])}
                       icon="lock"
                       group
                       type="password"
