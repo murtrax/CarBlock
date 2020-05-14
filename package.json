@@ -25,6 +25,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "sugar": "^2.0.6",
-    "validator": "^13.0.0"
+    "validator": "^13.0.0",
+    "web3": "^1.2.7"
   }
 }

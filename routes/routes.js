@@ -1,7 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const web3 = require("web3");
 const router = express.Router();
+
 //models
 const userSignUp = require("./../models/userSignUp");
 const carDetails = require("./../models/carSchema/carDetails");
@@ -10,6 +12,7 @@ const serviceHistory = require("./../models/carSchema/serviceHistory");
 const accidentHistory = require("./../models/carSchema/accidentHistory");
 const companyRegistrationTemp = require("./../models/workshopTemp/workshopRegistrationTemp");
 const companyRegistration = require("./../models/workshopRegistration");
+const informationHash = require("./../models/informationHash");
 
 const adminLogin = require("./../models/adminLogin"); //YET TO BE CREATED
 
@@ -20,6 +23,7 @@ const loginValidation = require("./../validation/loginValidation");
 const workshopTempValidation = require("./../validation/workshopTempValidation");
 const AccidentAndServiceHistoryValidate = require("./../validation/AccidentAndServiceHistoryValidate");
 const userSignUpValidate = require("./../validation/userSignUpValidation");
+const hash = require("object-hash");
 
 //Routes
 
@@ -201,22 +205,21 @@ router.get("/getWorkshopsTemp", (req, res) => {
     });
 });
 
-
-router.post("/deleteWorkshop", (req,res) => {
+router.post("/deleteWorkshop", (req, res) => {
   const data = req.body;
   console.log(data);
-  console.log("HERE")
-  companyRegistrationTemp.deleteOne({companyEmail: data.companyEmail})
-  .then(()=>{
-    res.json({success: "Workshop deleted from database"})
-  })
-  .catch(()=>{
-    res.status(400).json({
-      error: "A database with this Email doesn't exist within the database",
+  console.log("HERE");
+  companyRegistrationTemp
+    .deleteOne({ companyEmail: data.companyEmail })
+    .then(() => {
+      res.json({ success: "Workshop deleted from database" });
+    })
+    .catch(() => {
+      res.status(400).json({
+        error: "A database with this Email doesn't exist within the database",
+      });
     });
-  })
 });
-
 
 router.post("/saveWorkshop", (req, res) => {
   const data = req.body;
@@ -492,6 +495,32 @@ router.post("/CarEntry", (req, res) => {
             ownerCNIC: data.ownerCNIC,
             ownerContact: data.ownerContact,
           };
+
+          const hashData = hash({
+            carDetails: carData,
+            ownerDetails: ownerData,
+          });
+          console.log(hashData);
+          /*
+          //Call smart contract with this data
+          //recieve block number back
+          const blockNumber;
+
+          //save block number into db
+          const infoHash = {
+            vin: data.vinNumber,
+            reg: reg.vinNumber,
+            block: blockNumber
+          }
+          const newInformationHash = new informationHash(infoHash);
+          newInformationHash.save(error => {
+            if (error) {
+              return res
+                .status(400)
+                .json({ error: "There was an error saving Car Information!" });
+            }
+          });*/
+
           const newCarDetails = new carDetails(carData);
           const newOwner = new ownershipHistory(ownerData);
           newCarDetails.save((error) => {
@@ -529,41 +558,103 @@ router.post("/OwnerTransfer", (req, res) => {
 
 router.post("/AccidentAndService", (req, res) => {
   const data = req.body; //Extract data from body
+
+  const dataToBeHashed = {
+    carDetails: {},
+    ownerDetails: {},
+    service: [],
+    accident: [],
+  };
+
   const { errors, isValid } = AccidentAndServiceHistoryValidate(data); //Validate data
   if (!isValid) {
     return res.status(400).json({ errors: errors, isValid: isValid }); //Send error response to client with errors object
   } else {
-    const todaysDate = Date.now(); //todays date
+    //todays date
+    const todaysDate = Date.now();
+    //search car details for coressponding car
     carDetails
-      .findOne({ reg: data.reg }, { vin: 1 })
+      .findOne({ reg: data.reg } /*, { vin: 1 }*/)
       .then((car) => {
-        const payload = {
-          vin: car.vin,
-          reg: data.reg,
-          millage: data.millage,
-          date: todaysDate,
-          comments: data.comments,
-        };
+        //add car data to data to be hashed
+        dataToBeHashed.carDetails = car;
+        //search owner details of the car
+        ownershipHistory
+          .findOne({ vin: car.vin, reg: car.reg })
+          .then((owner) => {
+            //add owner data to data to be hashed
+            dataToBeHashed.ownerDetails = owner;
+            serviceHistory
+              .find({ vin: car.vin, reg: car.reg })
+              .then((sHistory) => {
+                if (sHistory) {
+                  //add old service history records to data to be hashed
+                  dataToBeHashed.service = sHistory;
+                } else {
+                  dataToBeHashed.service = [];
+                }
+                accidentHistory
+                  .find({ vin: car.vin, reg: car.reg })
+                  .then((aHistory) => {
+                    if (aHistory) {
+                      //add old accident history records to data to be hashed
+                      dataToBeHashed.accident = aHistory;
+                    } else {
+                      dataToBeHashed.accident = [];
+                    }
+                    //make payload
+                    const payload = {
+                      vin: car.vin,
+                      reg: data.reg,
+                      millage: data.millage,
+                      date: todaysDate,
+                      comments: data.comments,
+                    };
+                    //if the user selected to enter service history then
+                    if (data.activeItem == "1") {
+                      //add latest record to service history object
+                      dataToBeHashed.service.push(payload);
+                      const hashedData = hash(dataToBeHashed);
 
-        if (data.activeItem == "1") {
-          const serviceDetails = new serviceHistory(payload);
-          serviceDetails.save((error) => {
-            if (error) {
-              res.status(400).json({ error: "error in saving!" });
-            } else {
-              res.send("Saved in service history successfully!");
-            }
+                      /**
+                       * send the hashed data to smart contract
+                       * Receive Block number and do accordingly
+                       */
+
+                      const serviceDetails = new serviceHistory(payload);
+                      serviceDetails.save((error) => {
+                        if (error) {
+                          res.status(400).json({ error: "error in saving!" });
+                        } else {
+                          res.send("Saved in service history successfully!");
+                        }
+                      });
+                    }
+                    //if the user selected to enter accident history then
+                    else {
+                      //add latest record to accident history object
+                      dataToBeHashed.accident.push(payload);
+                      const hashedData = hash(dataToBeHashed);
+                      /**
+                       * send hashed data to smart contract
+                       * Receive Block number and do accordingly
+                       */
+
+                      const accidentDetails = new accidentHistory(payload);
+                      accidentDetails.save((error) => {
+                        if (error) {
+                          res.status(400).json({ error: "error in saving!" });
+                        } else {
+                          res.send("Saved in accident history successfully!");
+                        }
+                      });
+                    }
+                  });
+              });
+          })
+          .catch((error) => {
+            res.status(400).json({ error: "No Owner Found across this Car!" });
           });
-        } else {
-          const accidentDetails = new accidentHistory(payload);
-          accidentDetails.save((error) => {
-            if (error) {
-              res.status(400).json({ error: "error in saving!" });
-            } else {
-              res.send("Saved in accident history successfully!");
-            }
-          });
-        }
       })
       .catch((error) =>
         res
