@@ -13,7 +13,11 @@ const ownershipHistorySchema = new Schema({
   state: String,
   ownerName: String,
   ownerCNIC: String,
-  ownerContact: String
+  ownerContact: String,
+  date: {
+    type: String,
+    required: true,
+  },
 });
 
 const ownershipHistory = mongoose.model(

@@ -25,6 +25,105 @@ const AccidentAndServiceHistoryValidate = require("./../validation/AccidentAndSe
 const userSignUpValidate = require("./../validation/userSignUpValidation");
 const hash = require("object-hash");
 
+//hashing or conversion
+const carDataHashing = require("../hashingAndConversion/carDataHashing");
+const ownerDataHashing = require("../hashingAndConversion/ownerDataHashing");
+const serviceDataHashing = require("./../hashingAndConversion/serviceDataHashing");
+const addToOwnerHistory = require("./../hashingAndConversion/addtoOwnerHistory");
+const accidentDataHashing = require("./../hashingAndConversion/accidentDataHashing");
+
+/******************
+ * SMART CONTRACT CONFIGURATION
+ */
+const contractAbi = [
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "carDetailsHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "ownerDetailsHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "serviceDetailsHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "accidentDetailsHash",
+        type: "string",
+      },
+    ],
+    name: "Transferred",
+    type: "event",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "string",
+        name: "_carDetailsHash",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_ownerDetailsHash",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_serviceDetailsHash",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_accidentDetailsHash",
+        type: "string",
+      },
+    ],
+    name: "eventGenerator",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
+
+const contractAddress = "0xC845e757c1b7e226EE85130bfCC178d13d4228F2";
+const web3js = new web3();
+web3js.setProvider(new web3.providers.HttpProvider("http://localhost:9545"));
+const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
+
+let accounts = [];
+
+web3js.eth.getAccounts().then((_accounts) => {
+  accounts = _accounts;
+});
+
+/******************** */
+
 //Routes
 
 //Login for registration auth
@@ -207,8 +306,6 @@ router.get("/getWorkshopsTemp", (req, res) => {
 
 router.post("/deleteWorkshop", (req, res) => {
   const data = req.body;
-  console.log(data);
-  console.log("HERE");
   companyRegistrationTemp
     .deleteOne({ companyEmail: data.companyEmail })
     .then(() => {
@@ -221,6 +318,7 @@ router.post("/deleteWorkshop", (req, res) => {
     });
 });
 
+//save workshop into permanent table
 router.post("/saveWorkshop", (req, res) => {
   const data = req.body;
   let companyInfo = null;
@@ -453,26 +551,31 @@ router.post("/searchCar", (req, res) => {
   }
 });
 
+/**
+ * This route takes input from the ADD-NEW-CAR form and saves that information into two tables.
+ * Car details are saved in car details table and owner details in their own table.
+ * Smart Contract saves hashes of all 4 types of car data
+ * Block Number of transaction/data is saved in information hashes table
+ */
 router.post("/CarEntry", (req, res) => {
   const data = req.body;
+  //Validate proper format of data
   const { errors, isValid } = carAndOwnerValidate(data);
+  //if data is not valid, send errors back to front end
   if (!isValid) {
-    console.log(errors);
     return res.status(400).json({ errors: errors, isValid: isValid });
-  }
-
-  //Check validation
-  if (!isValid) {
-    return res.status(400).json(errors);
   } else {
+    //if data is in proper valid format than check if a car with this vin and reg# already exists in the db
     carDetails
       .findOne({ $or: [{ reg: data.regNumber }, { vin: data.vinNumber }] })
       .then((car) => {
+        //if car exists send error message
         if (car) {
           return res
             .status(400)
             .send("A vehicle with this VIN or Reg Number already exists");
         } else {
+          //Object of car details
           const carData = {
             vin: data.vinNumber,
             reg: data.regNumber,
@@ -484,6 +587,7 @@ router.post("/CarEntry", (req, res) => {
             fuel: data.fuel,
             drive: data.drive,
           };
+          //Object of owner details
           const ownerData = {
             vin: data.vinNumber,
             reg: data.regNumber,
@@ -494,113 +598,249 @@ router.post("/CarEntry", (req, res) => {
             ownerName: data.FullName,
             ownerCNIC: data.ownerCNIC,
             ownerContact: data.ownerContact,
+            date: Date.now().toString(),
           };
 
-          const hashData = hash({
-            carDetails: carData,
-            ownerDetails: ownerData,
-          });
-          console.log(hashData);
-          /*
-          //Call smart contract with this data
-          //recieve block number back
-          const blockNumber;
+          //Hash of all 4 types of car data ready to be passed into SC
+          const carDataHashed = hash(carData);
+          const ownerDataHashed = hash(ownerData);
+          const serviceDataHashed = hash([]);
+          const accidentDataHashed = hash([]);
 
-          //save block number into db
-          const infoHash = {
-            vin: data.vinNumber,
-            reg: reg.vinNumber,
-            block: blockNumber
-          }
-          const newInformationHash = new informationHash(infoHash);
-          newInformationHash.save(error => {
-            if (error) {
-              return res
-                .status(400)
-                .json({ error: "There was an error saving Car Information!" });
-            }
-          });*/
+          //Call SC with this data
+          hashingTestSC.methods
+            .eventGenerator(
+              carDataHashed,
+              ownerDataHashed,
+              serviceDataHashed,
+              accidentDataHashed
+            )
+            .send({ from: accounts[0], gas: 3000000 })
+            .then((response) => {
+              //After receiving transaction reciept back, save the blockNumber of transaction in info hashes table
+              const blockNumberInfoForDb = {
+                vin: data.vinNumber,
+                reg: data.regNumber,
+                block: response.events.Transferred.blockNumber,
+              };
+              const newInformationHash = new informationHash(
+                blockNumberInfoForDb
+              );
+              newInformationHash.save((error) => {
+                if (error) {
+                  return res.status(400).json({
+                    error: "There was an error saving Block Number!",
+                  });
+                }
+              });
 
-          const newCarDetails = new carDetails(carData);
-          const newOwner = new ownershipHistory(ownerData);
-          newCarDetails.save((error) => {
-            if (error) {
-              return res
-                .status(400)
-                .json({ error: "There was an error saving Car Details" });
-            }
-          });
-          newOwner.save((error) => {
-            if (error) {
-              return res
-                .status(400)
-                .json({ error: "There was an error saving new Owner details" });
-            }
-          });
-          res.send("The new car entry was sucessfully saved");
-        }
-      });
-  }
-});
+              //Save car and owner details into their respective tables
+              const newCarDetails = new carDetails(carData);
+              const newOwner = new ownershipHistory(ownerData);
 
+              //Save car details
+              newCarDetails.save((error) => {
+                if (error) {
+                  return res
+                    .status(400)
+                    .json({ error: "There was an error saving Car Details" });
+                }
+              });
+
+              //Save owner details
+              newOwner.save((error) => {
+                if (error) {
+                  return res.status(400).json({
+                    error: "There was an error saving new Owner details",
+                  });
+                }
+              });
+              res.send("The new car entry was sucessfully saved");
+            }) //end then block of SC
+            .catch((err) => console.log(err));
+        } //end else
+      }); // end then block of car details
+  } //end else of validity
+}); //end route
+
+/**
+ * This method transfer ownership of a vehicle to another individual
+ * All 4 types of data hashes are computed and stored into a smart contract again
+ * Block Number of updated transaction is stored in info hashes table as an updated record
+ */
 router.post("/OwnerTransfer", (req, res) => {
   const data = req.body;
-
+  //check for valid data format and errors
   const { errors, isValid } = ownerTransferValidate(data);
+  //if data is not valid, send error message to front end
   if (!isValid) {
     return res.status(400).json({ errors: errors, isValid: isValid });
   } else {
-    //save in db
-    console.log(data);
-    res.json(data);
-  }
+    //find if this car exists in the database
+    carDetails
+      .findOne({ vin: data.vinNumber, reg: data.regNumber })
+      .then((car) => {
+        //if car exists then retrieve its owner details
+        if (car) {
+          ownershipHistory
+            .find({ vin: data.vinNumber, reg: data.regNumber })
+            .then((response) => {
+              //if owner data exists in the db
+              if (response) {
+                //make data object for new owner
+                const newOwnerData = {
+                  vin: data.vinNumber,
+                  reg: data.regNumber,
+                  yearPurchased: data.year,
+                  millage: data.millage,
+                  city: data.city,
+                  state: data.ownerState,
+                  ownerName: data.name,
+                  ownerCNIC: data.cnic,
+                  ownerContact: data.contact,
+                  date: Date.now().toString(),
+                };
+
+                //Hashed car object
+                const carDataHashed = carDataHashing(car);
+                //Hash updated owner data
+                const ownerDataHashed = addToOwnerHistory(
+                  response,
+                  newOwnerData
+                );
+                //search service history for car
+                serviceHistory
+                  .find({ vin: data.vinNumber, reg: data.regNumber })
+                  .then((service) => {
+                    let serviceDataHashed = null;
+                    //if service records exist then calculate their hash else find hash of empty array
+                    if (service) {
+                      serviceDataHashed = serviceDataHashing(service);
+                    } else {
+                      serviceDataHashed = hash([]);
+                    }
+                    //search accident history for car
+                    accidentHistory
+                      .find({ vin: data.vinNumber, reg: data.regNumber })
+                      .then((accident) => {
+                        let accidentDataHashed = null;
+                        //if accident records exist then calculate their hash else find hash of empty array
+                        if (accident) {
+                          accidentDataHashed = accidentDataHashing(accident);
+                        } else {
+                          accidentDataHashed = hash([]);
+                        }
+
+                        //Call smart contract with hashed data to store in event
+                        hashingTestSC.methods
+                          .eventGenerator(
+                            carDataHashed,
+                            ownerDataHashed,
+                            serviceDataHashed,
+                            accidentDataHashed
+                          )
+                          .send({ from: accounts[0], gas: 3000000 })
+                          .then((response) => {
+                            //Check if a record across this car already exists
+                            informationHash
+                              .findOne({
+                                vin: data.vinNumber,
+                                reg: data.regNumber,
+                              })
+                              .then((record) => {
+                                //if record exists update it else create new record
+                                updateOrCreateEntryInHashTable(
+                                  record,
+                                  response,
+                                  data.vinNumber,
+                                  data.regNumber
+                                );
+                                console.log("Transaction Completed!");
+
+                                //save new owner into db
+                                const OwnerTransfer = new ownershipHistory(
+                                  newOwnerData
+                                );
+                                OwnerTransfer.save();
+                                res.send("Owner Transferred Successfully!");
+                              });
+                          });
+                      });
+                  });
+              } else {
+                //if owner dasta doesnt exist in database
+                res.status(400).json({
+                  error: "Data corrupt! No owner for this car exists!",
+                });
+              }
+            });
+        } else {
+          //if car does not exists then return error msg
+          res.status(400).json({
+            error: "No such car exists in the database!",
+          });
+        }
+      }) // end then block of car details
+      .catch((err) => {
+        console.log("Error fetching car from DB!");
+      });
+  } //end else of validity
 });
 
+/**
+ * This route adds a record to accident and service history depending on selected option
+ * All 4 types of data hashes are computed again and stored into blockchain smart contract
+ * BlockNumber updated in info hashes table
+ */
 router.post("/AccidentAndService", (req, res) => {
   const data = req.body; //Extract data from body
-
-  const dataToBeHashed = {
-    carDetails: {},
-    ownerDetails: {},
-    service: [],
-    accident: [],
-  };
-
   const { errors, isValid } = AccidentAndServiceHistoryValidate(data); //Validate data
+  //if data is not valid then send errors to front end
   if (!isValid) {
     return res.status(400).json({ errors: errors, isValid: isValid }); //Send error response to client with errors object
   } else {
     //todays date
-    const todaysDate = Date.now();
+    const todaysDate = Date.now().toString();
+
     //search car details for coressponding car
     carDetails
       .findOne({ reg: data.reg } /*, { vin: 1 }*/)
       .then((car) => {
-        //add car data to data to be hashed
-        dataToBeHashed.carDetails = car;
+        //create hash of car data
+        const carDataHashed = carDataHashing(car);
         //search owner details of the car
         ownershipHistory
           .findOne({ vin: car.vin, reg: car.reg })
           .then((owner) => {
-            //add owner data to data to be hashed
-            dataToBeHashed.ownerDetails = owner;
+            //create hash of owner data
+            const ownerDataHashed = ownerDataHashing(owner);
             serviceHistory
               .find({ vin: car.vin, reg: car.reg })
               .then((sHistory) => {
+                let serviceData = [];
                 if (sHistory) {
                   //add old service history records to data to be hashed
-                  dataToBeHashed.service = sHistory;
-                } else {
-                  dataToBeHashed.service = [];
+                  if (sHistory.length > 1) {
+                    serviceData = sHistory;
+                  } else if (sHistory.length === 1) {
+                    serviceData.push(sHistory[0]);
+                  } else {
+                    serviceData = [];
+                  }
                 }
                 accidentHistory
                   .find({ vin: car.vin, reg: car.reg })
                   .then((aHistory) => {
+                    let accidentData = [];
                     if (aHistory) {
                       //add old accident history records to data to be hashed
-                      dataToBeHashed.accident = aHistory;
-                    } else {
-                      dataToBeHashed.accident = [];
+                      if (aHistory.length > 1) {
+                        accidentData = aHistory;
+                      } else if (aHistory.length === 1) {
+                        accidentData.push(aHistory[0]);
+                      } else {
+                        accidentData = [];
+                      }
                     }
                     //make payload
                     const payload = {
@@ -613,41 +853,124 @@ router.post("/AccidentAndService", (req, res) => {
                     //if the user selected to enter service history then
                     if (data.activeItem == "1") {
                       //add latest record to service history object
-                      dataToBeHashed.service.push(payload);
-                      const hashedData = hash(dataToBeHashed);
+                      serviceData.push(payload);
+                      const serviceDataHashed = serviceDataHashing(serviceData);
+                      const accidentDataHashed = accidentDataHashing(
+                        accidentData
+                      );
 
-                      /**
-                       * send the hashed data to smart contract
-                       * Receive Block number and do accordingly
-                       */
+                      //This code prints out all 4 hashes. This is for debugging purposes to see updates in block chain with multiple updates
+                      /*console.log(
+                        "C: " +
+                          carDataHashed +
+                          " O: " +
+                          ownerDataHashed +
+                          " S: " +
+                          serviceDataHashed +
+                          " A: " +
+                          accidentDataHashed
+                      );*/
 
-                      const serviceDetails = new serviceHistory(payload);
-                      serviceDetails.save((error) => {
-                        if (error) {
-                          res.status(400).json({ error: "error in saving!" });
-                        } else {
-                          res.send("Saved in service history successfully!");
-                        }
-                      });
+                      //call smart contract
+                      hashingTestSC.methods
+                        .eventGenerator(
+                          carDataHashed,
+                          ownerDataHashed,
+                          serviceDataHashed,
+                          accidentDataHashed
+                        )
+                        .send({ from: accounts[0], gas: 3000000 })
+                        .then((response) => {
+                          // check if entry across this car exists in info hash table
+                          informationHash
+                            .findOne({ vin: car.vin, reg: car.reg })
+                            .then((record) => {
+                              //if record doesnt exist then add new record. If it exists then update
+                              updateOrCreateEntryInHashTable(
+                                record,
+                                response,
+                                car.vin,
+                                data.reg
+                              );
+
+                              //Save Service data into table
+                              const serviceDetails = new serviceHistory(
+                                payload
+                              );
+                              serviceDetails.save((error) => {
+                                if (error) {
+                                  res
+                                    .status(400)
+                                    .json({ error: "error in saving!" });
+                                } else {
+                                  res.send(
+                                    "Saved in service history successfully!"
+                                  );
+                                }
+                              });
+                            });
+                        })
+                        .catch((err) => console.log(err));
                     }
                     //if the user selected to enter accident history then
                     else {
                       //add latest record to accident history object
-                      dataToBeHashed.accident.push(payload);
-                      const hashedData = hash(dataToBeHashed);
-                      /**
-                       * send hashed data to smart contract
-                       * Receive Block number and do accordingly
-                       */
+                      accidentData.push(payload);
+                      const serviceDataHashed = serviceDataHashing(serviceData);
+                      const accidentDataHashed = accidentDataHashing(
+                        accidentData
+                      );
+                      //This code prints out all 4 hashes. This is for debugging purposes to see updates in block chain with multiple updates
+                      /*console.log(
+                        "C: " +
+                          carDataHashed +
+                          " O: " +
+                          ownerDataHashed +
+                          " S: " +
+                          serviceDataHashed +
+                          " A: " +
+                          accidentDataHashed
+                      );*/
+                      hashingTestSC.methods
+                        .eventGenerator(
+                          carDataHashed,
+                          ownerDataHashed,
+                          serviceDataHashed,
+                          accidentDataHashed
+                        )
+                        .send({ from: accounts[0], gas: 3000000 })
+                        .then((response) => {
+                          // check if entry across this car exists in info hash table
+                          informationHash
+                            .findOne({ vin: car.vin, reg: car.reg })
+                            .then((record) => {
+                              updateOrCreateEntryInHashTable(
+                                record,
+                                response,
+                                car.vin,
+                                car.reg
+                              );
 
-                      const accidentDetails = new accidentHistory(payload);
-                      accidentDetails.save((error) => {
-                        if (error) {
-                          res.status(400).json({ error: "error in saving!" });
-                        } else {
-                          res.send("Saved in accident history successfully!");
-                        }
-                      });
+                              //save accident data into table
+                              const accidentDetails = new accidentHistory(
+                                payload
+                              );
+                              accidentDetails.save((error) => {
+                                if (error) {
+                                  res
+                                    .status(400)
+                                    .json({ error: "error in saving!" });
+                                } else {
+                                  res.send(
+                                    "Saved in accident history successfully!"
+                                  );
+                                }
+                              });
+                            });
+                        })
+                        .catch((err) =>
+                          console.log("Error in recieving blockNumber!\n" + err)
+                        );
                     }
                   });
               });
@@ -663,5 +986,32 @@ router.post("/AccidentAndService", (req, res) => {
       );
   }
 });
+
+//This function checks if a record against a car exists in the info hashes table
+//If it exists then updates the record else it creates a new record
+function updateOrCreateEntryInHashTable(record, response, vinNum, regNum) {
+  if (record) {
+    //Update the record
+    informationHash
+      .updateOne(
+        { _id: record._id },
+        {
+          $set: {
+            block: response.events.Transferred.blockNumber,
+          },
+        }
+      )
+      .then((responseUpdate) => console.log("Record Updated"));
+  } else {
+    //Create new record for this car
+    const blockNumberInfoForDb = {
+      vin: vinNum,
+      reg: regNum,
+      block: response.events.Transferred.blockNumber,
+    };
+    const newInformationHash = new informationHash(blockNumberInfoForDb);
+    newInformationHash.save();
+  }
+}
 
 module.exports = router;

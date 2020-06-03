@@ -117,9 +117,6 @@ class NavbarPage extends Component {
                 <MDBNavItem>
                   <MDBNavLink to="/report">Report</MDBNavLink>
                 </MDBNavItem>
-                {/*}<MDBNavItem>
-                  <MDBNavLink to="/dashboardWorkshop">DashBoard</MDBNavLink>
-    </MDBNavItem>*/}
                 <MDBNavItem>
                   <MDBNavLink to="/alert">Alerts</MDBNavLink>
                 </MDBNavItem>
@@ -185,14 +182,3 @@ class NavbarPage extends Component {
 }
 
 export default NavbarPage;
-
-/*
-            <MDBNavItem>
-              <MDBNavLink className="waves-effect waves-light text-center" to="#!">
-              <a href="#!"><MDBIcon fab icon="facebook" className = "white-text" />&ensp;&ensp; </a>
-              <a href="#!"><MDBIcon fab icon="instagram" className = "white-text" />&ensp;&ensp; </a>
-              <a href="#!"><MDBIcon fab icon="linkedin" className = "white-text" />&ensp;&ensp; </a>
-              <a href="#!"><MDBIcon icon="at" className = "white-text" />&ensp;&ensp; </a>
-              </MDBNavLink>
-            </MDBNavItem>
-*/
