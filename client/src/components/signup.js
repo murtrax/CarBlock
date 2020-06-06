@@ -16,6 +16,9 @@ import { connect } from "react-redux";
 import { registerUser } from "../actions/authActions";
 import classnames from "classnames";
 
+import styles from "./styles/form.module.css";
+import signupIllustration from "../images/illustrations/signup.svg";
+
 class FormPage extends React.Component {
   state = {
     fullName: "",
@@ -81,71 +84,127 @@ class FormPage extends React.Component {
   render() {
     console.log(this.state.errors);
     return (
-      <MDBContainer className="mt-5">
-        <MDBRow className="justify-content-center">
-          <MDBCol md="8" sm="10" lg="5">
-            <MDBCard>
-              <MDBCardBody>
-                <form onSubmit={this.submitForm}>
-                  <p className="h4 text-center py-4">Sign up</p>
-                  <div className="grey-text">
-                    <MDBInput
-                      label="Full name"
-                      icon="user"
-                      group
-                      type="text"
-                      name="fullName"
-                      value={this.state.fullName}
-                      onChange={this.handleChange}
-                    />
-                    <MDBInput
-                      label="Email"
-                      icon="envelope"
-                      group
-                      type="email"
-                      name="email"
-                      value={this.state.email}
-                      onChange={this.handleChange}
-                    />
-                    <MDBInput
-                      label="User name"
-                      icon="user"
-                      group
-                      type="text"
-                      name="userName"
-                      value={this.state.userName}
-                      onChange={this.handleChange}
-                    />
-                    <MDBInput
-                      label="Password"
-                      icon="lock"
-                      group
-                      type="password"
-                      name="password"
-                      value={this.state.password}
-                      onChange={this.handleChange}
-                    />
-                    <MDBInput
-                      label="Confirm password"
-                      icon="lock"
-                      group
-                      type="password"
-                      name="confirmPassword"
-                      value={this.state.confirmPassword}
-                      onChange={this.handleChange}
-                    />
-                  </div>
-                  <div className="text-center py-4 mt-3">
-                    <MDBBtn color="cyan" type="submit">
-                      Register
-                    </MDBBtn>
-                  </div>
-                </form>
-              </MDBCardBody>
-            </MDBCard>
+      <div>
+        <MDBRow>
+          <MDBCol className={styles.color1} md="1" lg="1">
+            &ensp;
+          </MDBCol>
+          <MDBCol className={styles.color2} md="11" lg="11">
+            &ensp;
           </MDBCol>
         </MDBRow>
-      </MDBContainer>
+        <MDBRow className={styles.color4}>
+          <MDBCol className={styles.color3} md="1" lg="1">
+            &ensp;
+          </MDBCol>
+          <MDBCol
+            className={`justify-content-center mx-auto text-right `}
+            md="5"
+            lg="5"
+          >
+            <img
+              alt="Illustration"
+              className={`mt-3 img-fluid ${styles.illustrationHeight2}`}
+              src={signupIllustration}
+            />
+          </MDBCol>
+          <MDBCol className={"pt-4 pb-4"} md="6" lg="6">
+            <MDBContainer className="mt-5">
+              <MDBRow className="justify-content-center">
+                <MDBCol md="12" sm="12" lg="12">
+                  <MDBCard>
+                    <MDBCardBody>
+                      <form onSubmit={this.submitForm}>
+                        <p
+                          className={`h4 text-center py-4 ${styles.underline}`}
+                        >
+                          Sign up
+                        </p>
+                        <div className="grey-text mt-4">
+                          <input
+                            placeholder="Full Name"
+                            label="Full name"
+                            icon="user"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="fullName"
+                            value={this.state.fullName}
+                            onChange={this.handleChange}
+                          />
+
+                          <input
+                            placeholder="Email"
+                            label="Email"
+                            icon="envelope"
+                            group
+                            type="email"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="email"
+                            value={this.state.email}
+                            onChange={this.handleChange}
+                          />
+
+                          <input
+                            placeholder="User Name"
+                            label="User name"
+                            icon="user"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="userName"
+                            value={this.state.userName}
+                            onChange={this.handleChange}
+                          />
+
+                          <input
+                            placeholder="Password"
+                            label="Password"
+                            icon="lock"
+                            group
+                            type="password"
+                            validate
+                            name="password"
+                            value={this.state.password}
+                            onChange={this.handleChange}
+                          />
+
+                          <input
+                            placeholder="Confirm Password"
+                            label="Confirm password"
+                            icon="lock"
+                            group
+                            type="password"
+                            validate
+                            name="confirmPassword"
+                            value={this.state.confirmPassword}
+                            onChange={this.handleChange}
+                          />
+                        </div>
+                        <div className="text-center py-2 mt-3">
+                          <MDBBtn
+                            className={`justify-content-center mt-2 ${styles.btn}`}
+                            color="elegant"
+                            type="submit"
+                          >
+                            <span className={``}>Sign up</span>
+                          </MDBBtn>
+                        </div>
+                      </form>
+                    </MDBCardBody>
+                  </MDBCard>
+                </MDBCol>
+              </MDBRow>
+            </MDBContainer>
+          </MDBCol>
+        </MDBRow>
+      </div>
     );
   }
 }

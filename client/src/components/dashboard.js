@@ -7,7 +7,7 @@ import { logoutUser } from "./../actions/authActions";
 import Fab from "./dashComponents/fab";
 import SideNav from "./dashComponents/sideNav";
 import Workshop from "./dashComponents/workshopDetails";
-import Profile from "./dashComponents/profile";
+import styles from "./styles/dashboard.module.css";
 
 class Dashboard extends React.Component {
   state = {};
@@ -17,10 +17,9 @@ class Dashboard extends React.Component {
   };
   render() {
     return (
-      <div class="mt-5">
-        <MDBRow>
+      <div className={styles.formback}>
+        <MDBRow className="pt-5">
           <MDBCol sm="3">
-            <Profile user={this.props.auth.user.name} />
             <SideNav logout={this.onLogoutClick} />
           </MDBCol>
           <MDBCol sm="9">

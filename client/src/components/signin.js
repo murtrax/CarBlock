@@ -1,14 +1,22 @@
 import React from "react";
 import {
-  MDBContainer, MDBRow,MDBCol, MDBInput,MDBBtn,MDBCard,MDBCardBody,
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBInput,
+  MDBBtn,
+  MDBCard,
+  MDBCardBody,
 } from "mdbreact";
-
-// Redux imports (DANIAL)
+// Redux imports
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../actions/authActions";
 import classnames from "classnames";
+import styles from "./styles/form.module.css";
+
+import loginIllustration from "../images/illustrations/signin.svg";
 
 class FormPage extends React.Component {
   state = {
@@ -18,35 +26,41 @@ class FormPage extends React.Component {
     errorBool: "",
     typeOfUser: "",
     color: "",
-    submit: "false"
+    submit: "false",
   };
 
   displayError = (message, errorType) => {
-    console.log(this.state.errors)
+    console.log(this.state.errors);
 
-    if (this.state.typeOfUser == "")
-    {
-      this.state.color = "red"
-    }
-    else {
-      this.state.color = ""
+    if (this.state.typeOfUser == "") {
+      this.state.color = "red";
+    } else {
+      this.state.color = "";
     }
 
-      let labels = [];
-      let condition = "false";
+    let labels = [];
+    let condition = "false";
 
-      if (this.state.errorBool == "true") {
-        if (this.state.errors.errors === "Incorrect Password" && errorType[1] == this.state.errors.errors){
-          condition = "true";
-          return <span style= {{color: "red"}}> {this.state.errors.errors }</span>
-        }
-        else {
+    if (this.state.errorBool == "true") {
+      if (
+        this.state.errors.errors === "Incorrect Password" &&
+        errorType[1] == this.state.errors.errors
+      ) {
+        condition = "true";
+        return (
+          <span style={{ color: "red" }}> {this.state.errors.errors}</span>
+        );
+      } else {
         for (var x = 0; x < errorType.length; x++) {
-
           if (this.state.errors.errors[errorType[x]]) {
             condition = "true";
-            console.log()
-            return <span style= {{color: "red"}}> {this.state.errors.errors[errorType[x]] }</span>
+            console.log();
+            return (
+              <span style={{ color: "red" }}>
+                {" "}
+                {this.state.errors.errors[errorType[x]]}
+              </span>
+            );
           }
         }
         if (condition === "false") {
@@ -54,13 +68,10 @@ class FormPage extends React.Component {
         } else {
           return labels;
         }
-      } 
-    }
-    else {
-        return message;
       }
-    
-  
+    } else {
+      return message;
+    }
   };
 
   // (DANIAL)
@@ -89,14 +100,16 @@ class FormPage extends React.Component {
     }
 
     if (nextProps.errors) {
-      this.setState({
-        errors: nextProps.errors,
-        
-      },()=> {
-        this.setState({
-          errorBool: "true"
-        })
-      });
+      this.setState(
+        {
+          errors: nextProps.errors,
+        },
+        () => {
+          this.setState({
+            errorBool: "true",
+          });
+        }
+      );
     }
   }
 
@@ -122,8 +135,8 @@ class FormPage extends React.Component {
 
   onSubmit = (e) => {
     this.setState({
-      submit : "true"
-    })
+      submit: "true",
+    });
     e.preventDefault();
     const payload = {
       email: this.state.email,
@@ -140,82 +153,134 @@ class FormPage extends React.Component {
 
   render() {
     const { errors } = this.state;
-    if (this.state.typeOfUser == "")
-    {
-      this.state.color = "red"
+    if (this.state.typeOfUser == "") {
+      this.state.color = "red";
+    } else {
+      this.state.color = "";
     }
-    else {
-      this.state.color = ""
-    }
-
 
     return (
-      <MDBContainer className="mt-5">
-        <MDBRow className="justify-content-center">
-          <MDBCol md="8" sm="10" lg="5">
-            <MDBCard>
-              <MDBCardBody>
-                <form onSubmit={this.onSubmit}>
-                  <p className="h4 text-center py-4">Log In</p>
-
-                  <div className="grey-text">
-                    <MDBRow className="justify-content-center">
-                      <MDBCol md="8" sm="12" lg="8">
-                        <select
-                          className="browser-default custom-select"
-                          value={this.state.typeOfUser}
-                          onChange={this.handleChange}
-                          name="typeOfUser"
-                          style={{color: this.state.typeOfUser == "" && this.state.submit == "true"? "red" : ""}}
-                        >
-                          <option value = "">Choose your option</option>
-                          <option value = "Workshop">Workshop</option>
-                          <option value = "Public User">Public User</option>
-                          <option value = "Registration Auth">
-                            Registration Auth
-                          </option>
-                        </select>
-                      </MDBCol>
-                    </MDBRow>
-
-                    <MDBInput
-                      label={this.displayError("Email", ["emailEmpty", "emailInvalid"])}
-                      icon="envelope"
-                      group
-                      type="email"
-                      name="email"
-                      value={this.state.email}
-                      onChange={this.handleChange}
-                    />
-                    <label style={{ color: "red" }}>
-                      {this.state.errors.email}
-                    </label>
-                    
-
-                    <MDBInput
-                      label={this.displayError("Password", ["password", "Incorrect Password"])}
-                      icon="lock"
-                      group
-                      type="password"
-                      name="password"
-                      value={this.state.password}
-                      onChange={this.handleChange}
-                    />
-                    <label style={{ color: "red" }}>
-                      {this.state.errors.password}
-                    </label>
-                  </div>
-                  <div className="text-center py-4 mt-3">
-                    <MDBBtn color="cyan" type="submit">
-                      Login
-                    </MDBBtn>
-                  </div>
-                </form>
-              </MDBCardBody>
-            </MDBCard>
+      <div>
+        <MDBRow>
+          <MDBCol className={styles.color1} md="1" lg="1">
+            &ensp;
+          </MDBCol>
+          <MDBCol className={styles.color2} md="11" lg="11">
+            &ensp;
           </MDBCol>
         </MDBRow>
-      </MDBContainer>
+        <MDBRow className={styles.color4}>
+          <MDBCol className={styles.color3} md="1" lg="1">
+            &ensp;
+          </MDBCol>
+          <MDBCol
+            className={`justify-content-center mx-auto text-right `}
+            md="5"
+            lg="5"
+          >
+            <img
+              alt="illustration"
+              className={`mt-3 img-fluid ${styles.illustrationHeight}`}
+              src={loginIllustration}
+            />
+          </MDBCol>
+          <MDBCol className={"pt-4 pb-4"} md="6" lg="6">
+            <MDBContainer className="mt-5">
+              <MDBRow className="justify-content-center">
+                <MDBCol md="12" sm="12" lg="11">
+                  <MDBCard>
+                    <MDBCardBody>
+                      <form onSubmit={this.onSubmit}>
+                        <p
+                          className={`h4 text-center py-4 ${styles.underline}`}
+                        >
+                          Log In
+                        </p>
+
+                        <div className="grey-text mt-5">
+                          <MDBRow className="justify-content-center">
+                            <MDBCol md="8" sm="12" lg="8">
+                              <select
+                                className="browser-default custom-select"
+                                value={this.state.typeOfUser}
+                                onChange={this.handleChange}
+                                name="typeOfUser"
+                                style={{
+                                  color:
+                                    this.state.typeOfUser == "" &&
+                                    this.state.submit == "true"
+                                      ? "red"
+                                      : "",
+                                }}
+                              >
+                                <option value="">Choose your option</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Public User">Public User</option>
+                                <option value="Registration Auth">
+                                  Registration Auth
+                                </option>
+                              </select>
+                            </MDBCol>
+                          </MDBRow>
+
+                          <input
+                            placeholder="Email"
+                            label={this.displayError("Email", [
+                              "emailEmpty",
+                              "emailInvalid",
+                            ])}
+                            icon="envelope"
+                            group
+                            type="email"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="email"
+                            value={this.state.email}
+                            onChange={this.handleChange}
+                            className="mt-3"
+                          />
+                          <label style={{ color: "red" }}>
+                            {this.state.errors.email}
+                          </label>
+
+                          <input
+                            placeholder="Password"
+                            label={this.displayError("Password", [
+                              "password",
+                              "Incorrect Password",
+                            ])}
+                            icon="lock"
+                            group
+                            type="password"
+                            validate
+                            name="password"
+                            value={this.state.password}
+                            onChange={this.handleChange}
+                            className="mt-5"
+                          />
+                          <label style={{ color: "red" }}>
+                            {this.state.errors.password}
+                          </label>
+                        </div>
+                        <div className="text-center">
+                          <MDBBtn
+                            className={`justify-content-center mt-5 ${styles.btn}`}
+                            color="elegant"
+                            type="submit"
+                          >
+                            <span className={``}>Login</span>
+                          </MDBBtn>
+                        </div>
+                      </form>
+                    </MDBCardBody>
+                  </MDBCard>
+                </MDBCol>
+              </MDBRow>
+            </MDBContainer>
+          </MDBCol>
+        </MDBRow>
+      </div>
     );
   }
 }

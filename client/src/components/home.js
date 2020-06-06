@@ -5,17 +5,14 @@ import {
   MDBRow,
   MDBCol,
   MDBCardTitle,
-  MDBIcon,
   MDBInput,
-  MDBAnimation,
-  MDBContainer,
   MDBFormInline,
 } from "mdbreact";
-import Radio from "./homeComponents/radioBtn";
-import SearchResults from "./homeComponents/searchResults";
 import validator from "validator";
-import isEmpty from "is-empty";
-import axios from "axios";
+import About from "./homeComponents/aboutCompany";
+import Service from "./homeComponents/service";
+import Team from "./homeComponents/team";
+import styles from "./styles/home.module.css";
 
 class JumbotronPage extends React.Component {
   state = {
@@ -72,15 +69,15 @@ class JumbotronPage extends React.Component {
   render() {
     return (
       <div>
-        <MDBRow>
-          <MDBCol>
-            <MDBJumbotron style={{ padding: 0 }} className="text-center mw-100">
+        <div className={`${styles.back}`}>
+          <MDBRow classNAme={` ${styles.maxWidth} `}>
+            <MDBCol
+              md="10"
+              lg="10"
+              className={` justify-content-center mx-auto text-center ${styles.searchWidth} pb-5`}
+            >
               <MDBCol
-                className="text-white text-center py-3 px-4"
-                style={{
-                  opacity: "",
-                  backgroundImage: `url(https://miro.medium.com/max/3200/1*CvjclMDwgh9AqED_h5UVCA.jpeg)`,
-                }}
+                className={`text-white text-center py-3 justify-content-center mx-auto text-center`}
               >
                 <MDBCol className="py-5 text-center">
                   <MDBCardTitle className="h1-responsive pt-3 m-5 font-bold">
@@ -101,16 +98,17 @@ class JumbotronPage extends React.Component {
                       onChange={this.handleChange}
                     />
                     {/*}<Radio />*/}
-                    <MDBFormInline className="text-center">
+                    <MDBFormInline className="text-center mx-auto justify-content-center pt-2">
                       <p className="text-center">
                         <label>
                           <input
                             type="radio"
                             value="vin"
+                            className={styles.radio}
                             checked={this.state.selectedOpt === "vin"}
                             onChange={this.handleBtnChange}
                           />
-                          <span>Vin Number</span>
+                          <span className={styles.white}>Vin Number</span>
                         </label>
                       </p>
                       <p className="ml-3">
@@ -118,27 +116,31 @@ class JumbotronPage extends React.Component {
                           <input
                             type="radio"
                             value="reg"
+                            className={`${styles.radio} ${styles.input}`}
                             checked={this.state.selectedOpt === "reg"}
                             onChange={this.handleBtnChange}
                           />
-                          <span>Registration Number</span>
+                          <span className={styles.white}>Reg Number</span>
                         </label>
                       </p>
                     </MDBFormInline>
-                    <MDBBtn color="cyan" type="submit">
-                      Search
+                    <MDBBtn
+                      className={`justify-content-center mt-4 ${styles.btn}`}
+                      color="elegant"
+                      type="submit"
+                    >
+                      <span className={``}>Search</span>
                     </MDBBtn>
                   </form>
                 </MDBCol>
               </MDBCol>
-            </MDBJumbotron>
-          </MDBCol>
-        </MDBRow>
-        {/*}<MDBContainer>
-           <MDBRow>
-            <SearchResults />
-              </MDBRow>
-        </MDBContainer>*/}
+            </MDBCol>
+          </MDBRow>
+
+          <Service></Service>
+        </div>
+        <About></About>
+        <Team></Team>
       </div>
     );
   }

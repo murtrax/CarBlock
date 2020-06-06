@@ -1,0 +1,87 @@
+.back{
+    background-color: #373F51;
+    top:-5.8rem;
+    position: sticky;
+    margin-bottom: -1.5rem;
+    margin-top: -1rem;
+}
+
+.sidenav{
+    padding-top: 2rem;
+    margin-top: -3rem;
+}
+.navhead{
+    padding-top: 0.1rem;
+    padding-right: 1rem;
+    height: 6rem;
+    border-bottom: 3px solid #437AD7;
+    background-color: #373F51;
+    color: white;
+}
+.navlink{
+    padding-top: 1.5rem;
+    padding-left: 2rem;
+    height: 5rem;
+    background-color: #373F51;
+    transition: 1.2s;
+}
+
+.navlink:hover{
+    padding-top: 1.5rem;
+    padding-left: 2rem;
+    height: 5rem;
+    background-color: rgb(48, 64, 102);
+    
+}
+
+
+.onhover{
+    opacity: 0;
+    position: absolute;
+    height: 3rem;
+    width: 16rem;
+}
+
+.onhover:hover{
+    border-radius: 0.31rem;
+    background-color: rgb(34, 69, 146);
+    height: 3rem;
+    opacity: 0.3;
+    padding-left: 10rem;
+    margin-right: 2rem;
+}
+
+.topBar{
+    background-color: #437AD7;
+    height: 4rem;
+}
+
+.icon{
+    color: white;
+    font-size: 1.4rem;
+}
+
+a:hover{
+    color: #437AD7;
+}
+
+.icon:hover{
+    color: #437AD7;
+}
+
+.iconText{
+    font-size: 1.2rem;
+    font-weight: bolder;
+    color: white;
+}
+.iconText:hover{
+    font-size: 1.2rem;
+    font-weight: bolder;
+    color: #437AD7;
+}
+
+.bckg{
+    background-color: #373F51;
+    height: 100%;
+    margin-left: -1rem;
+}

@@ -1,0 +1,99 @@
+.margin{
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 5rem;
+    margin-bottom: 0rem;
+    margin-top: -1.3rem;
+    background: -webkit-linear-gradient(64deg, rgba(67, 122, 215, 0.9) 43.4%,rgb(51, 51, 51)  0%);
+    text-align: center;
+}
+
+.maxWidth{
+    width: 100%;
+}
+.cardDark{
+    background-color: rgb(55, 63, 81);
+    color: white;
+    border-radius: 0.8rem;
+    height: 17rem;
+    width: 22rem;
+    margin-top: 5rem;
+}
+
+
+
+.underline{
+    padding-top: 3px;
+    padding-bottom: 7px;
+    border-bottom: 3px solid rgba(56, 126, 247, 0.9);
+    width: 70%;
+}
+
+.underline2{
+    color: white;
+    width: 100%;
+    padding-top: 1rem;
+    margin-top: 3rem;
+}
+
+.illustrationHeight{
+    height: 25rem;
+    padding-top: 1rem;
+    margin-top: -8rem;
+}
+
+.icon{
+    display: inline-block;
+    border-radius: 25rem;
+    position: relative;
+    background-color: white;
+    height: 10rem;
+    width: 10rem;
+    top: -5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border: 7px solid rgba(56, 126, 247, 0.9) ;
+}
+
+.icon1{
+    height: 10rem;
+}
+.icon2{
+    height: 10rem;
+    padding: 0.7rem;
+}
+
+@media only screen and (max-width: 600px) {
+
+.illustrationHeight{
+        padding-top: 10rem;
+        padding-bottom: 2rem;
+}
+
+.cardDark{
+    background-color: rgb(55, 63, 81);
+    color: white;
+    border-radius: 0.8rem;
+    height: 20rem;
+    width: 75%;
+    margin-left: 3.5rem;
+    margin-top: 5rem;
+    padding-top: 3rem;
+}
+.margin{
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 2rem;
+    margin-bottom: 0rem;
+    margin-top: -1.3rem;
+    background: -webkit-linear-gradient(60deg, rgba(67, 122, 215, 0.9) 36.5%,rgb(51, 51, 51)  0%);
+    text-align: center;
+}
+
+}
+
+@media  screen and (max-width: 1920px) {
+    /* insert styles here */
+
+ }
+

@@ -1,0 +1,66 @@
+.cardDark{
+    background-color: rgb(39, 50, 75);
+    color: white;
+    border-radius: 0.8rem;
+    height: 17rem;
+    width: 22rem;
+}
+
+.main {
+    background: rgb(67,122,215);
+    background: radial-gradient(circle, rgba(67,122,215,1) 0%, rgba(55,63,81,1) 75%);
+    padding-bottom: 8rem;
+    padding-top: 5rem;
+    margin-top: -1.3rem;
+}
+
+.underline{
+    border-bottom: 4px solid rgba(67, 122, 215, 0.9);
+    color: white;
+    width: 100%;
+    padding-top: 1rem;
+    margin-top: 3rem;
+    padding-bottom: 1px;
+}
+
+.underline2{
+    color: white;
+    width: 53%;
+    padding-top: 0rem;
+    margin-top: 3rem;
+}
+
+.textSpacing{
+    padding-right: 2rem;
+    padding-left: 3.5rem;
+    color: white;
+    font-size: 3.5rem;
+}
+
+.illustrationHeight{
+    height: 20rem;
+    padding-right: 7rem;
+    padding-top: 1rem;
+
+}
+
+.lineSpacing {
+    line-height: 1.8rem;
+}
+
+.text{
+    border-left: 3px solid rgba(67, 122, 215, 0.9);
+
+}
+
+@media only screen and (max-width: 600px) {
+
+.illustrationHeight{
+    height: 20rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    padding-top: 1rem;
+
+}
+
+}

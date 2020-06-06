@@ -1,0 +1,9 @@
+.top{
+    margin-top: -6;
+    background-color: rosybrown;
+}
+
+.formback{
+    background: rgb(67,122,215);
+    background: radial-gradient(circle, rgb(55, 106, 196) 0%, rgba(55,63,81,1) 75%);  
+}

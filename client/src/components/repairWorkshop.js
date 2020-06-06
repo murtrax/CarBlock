@@ -14,6 +14,8 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "./../actions/authActions";
+import styles from "./styles/form.module.css";
+import workshopIllustration from "../images/illustrations/workshop.svg";
 
 class TabsDefault extends Component {
   state = {
@@ -83,7 +85,6 @@ class TabsDefault extends Component {
         this.clearFields();
       })
       .catch((err) => {
-        console.log("HERE");
         console.log(err.response.data);
         this.setState(
           {
@@ -127,176 +128,216 @@ class TabsDefault extends Component {
 
   render() {
     return (
-      <MDBContainer className="nav-tabs mt-5">
+      <div>
         <MDBRow>
-          <MDBCol>
-            <MDBContainer>
-              <MDBNav className="nav-tabs mt-5 text-center">
-                <MDBNavItem>
-                  <MDBNavLink
-                    link
-                    to="#"
-                    active={this.state.activeItem === "1"}
-                    onClick={this.toggle("1")}
-                    role="tab"
+          <MDBCol className={styles.color1} md="1" lg="1">
+            &ensp;
+          </MDBCol>
+          <MDBCol className={styles.color2} md="11" lg="11">
+            &ensp;
+          </MDBCol>
+        </MDBRow>
+        <MDBRow className={styles.color4}>
+          <MDBCol className={styles.color3} md="1" lg="1">
+            &ensp;
+          </MDBCol>
+          <MDBCol
+            className={`justify-content-center mx-auto text-right`}
+            md="5"
+            lg="5"
+          >
+            <img
+              alt="illustrations"
+              className={`mt-3 img-fluid ${styles.illustrationHeight2}`}
+              src={workshopIllustration}
+            />
+          </MDBCol>
+          <MDBCol className={`pb-4`} md="6" lg="6">
+            <MDBContainer className={`nav-tabs mt-5 mb-5 ${styles.repairCard}`}>
+              <MDBRow>
+                <MDBCol>
+                  <MDBNav className="nav-tabs mt-5 text-center">
+                    <MDBNavItem>
+                      <MDBNavLink
+                        link
+                        to="#"
+                        active={this.state.activeItem === "1"}
+                        onClick={this.toggle("1")}
+                        role="tab"
+                      >
+                        Service
+                      </MDBNavLink>
+                    </MDBNavItem>
+                    <MDBNavItem>
+                      <MDBNavLink
+                        link
+                        to="#"
+                        active={this.state.activeItem === "2"}
+                        onClick={this.toggle("2")}
+                        role="tab"
+                      >
+                        Accident
+                      </MDBNavLink>
+                    </MDBNavItem>
+                  </MDBNav>
+                  <MDBTabContent
+                    className="mt-5"
+                    activeItem={this.state.activeItem}
                   >
-                    Service
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink
-                    link
-                    to="#"
-                    active={this.state.activeItem === "2"}
-                    onClick={this.toggle("2")}
-                    role="tab"
-                  >
-                    Accident
-                  </MDBNavLink>
-                </MDBNavItem>
-              </MDBNav>
-              <MDBTabContent
-                className="mt-5"
-                activeItem={this.state.activeItem}
-              >
-                <MDBTabPane tabId="1" role="tabpanel">
-                  <div className="row mt-3">
-                    <form className="col s12" onSubmit={this.submitForm}>
-                      <div className="row">
-                        <div class="input-field col s6">
-                          <i class="material-icons prefix">motorcycle</i>
-                          <input
-                            id="icon_prefix"
-                            type="number"
-                            name="millage"
-                            value={this.state.millage}
-                            onChange={this.handleChange}
-                          />
-                          <label for="icon_prefix">
-                            {this.displayError("Millage", ["millageEmpty"])}
-                          </label>
-                        </div>
+                    <MDBTabPane tabId="1" role="tabpanel">
+                      <div className="row mt-3">
+                        <form className="col s12" onSubmit={this.submitForm}>
+                          <div className="row">
+                            <div className="input-field col s6">
+                              <i className="material-icons prefix">
+                                motorcycle
+                              </i>
+                              <input
+                                id="icon_prefix"
+                                type="number"
+                                name="millage"
+                                value={this.state.millage}
+                                onChange={this.handleChange}
+                              />
+                              <label htmlFor="icon_prefix">
+                                {this.displayError("Millage", ["millageEmpty"])}
+                              </label>
+                            </div>
 
-                        <div class="input-field col s6">
-                          <i class="material-icons prefix">motorcycle</i>
-                          <input
-                            id="icon_prefix"
-                            type="text"
-                            name="reg"
-                            value={this.state.reg}
-                            onChange={this.handleChange}
-                          />
-                          <label for="icon_prefix">
-                            {this.displayError("Reg #", ["regEmpty"])}
-                          </label>
-                        </div>
+                            <div className="input-field col s6">
+                              <i className="material-icons prefix">
+                                motorcycle
+                              </i>
+                              <input
+                                id="icon_prefix"
+                                type="text"
+                                name="reg"
+                                value={this.state.reg}
+                                onChange={this.handleChange}
+                              />
+                              <label htmlFor="icon_prefix">
+                                {this.displayError("Reg #", ["regEmpty"])}
+                              </label>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="input-field col s6">
+                              <i className="material-icons prefix">mode_edit</i>
+                              <textarea
+                                id="icon_prefix2"
+                                className="materialize-textarea"
+                                name="comments"
+                                value={this.state.comments}
+                                onChange={this.handleChange}
+                              ></textarea>
+                              <label htmlFor="icon_prefix2">
+                                {this.displayError("Comments", [
+                                  "commentsEmpty",
+                                ])}
+                              </label>
+                            </div>
+                          </div>
+                          <div className="row text-center">
+                            <button
+                              className="btn waves-effect waves-light"
+                              type="submit"
+                              name="action"
+                            >
+                              Submit
+                              <i className="material-icons right">send</i>
+                            </button>
+                            <button
+                              class="btn waves-effect waves-light"
+                              type="button"
+                              onClick={this.logout}
+                            >
+                              Logout
+                            </button>
+                          </div>
+                        </form>
                       </div>
-                      <div className="row">
-                        <div class="input-field col s6">
-                          <i class="material-icons prefix">mode_edit</i>
-                          <textarea
-                            id="icon_prefix2"
-                            class="materialize-textarea"
-                            name="comments"
-                            value={this.state.comments}
-                            onChange={this.handleChange}
-                          ></textarea>
-                          <label for="icon_prefix2">
-                            {this.displayError("Comments", ["commentsEmpty"])}
-                          </label>
-                        </div>
+                    </MDBTabPane>
+                    <MDBTabPane tabId="2" role="tabpanel">
+                      <div className="row mt-3">
+                        <form className="col s12" onSubmit={this.submitForm}>
+                          <div className="row">
+                            <div className="input-field col s6">
+                              <i className="material-icons prefix">
+                                motorcycle
+                              </i>
+                              <input
+                                id="icon_prefix"
+                                type="text"
+                                name="millage"
+                                value={this.state.millage}
+                                onChange={this.handleChange}
+                              />
+                              <label htmlFor="icon_prefix">
+                                {this.displayError("Millage", ["millageEmpty"])}
+                              </label>
+                            </div>
+                            <div className="input-field col s6">
+                              <i className="material-icons prefix">
+                                motorcycle
+                              </i>
+                              <input
+                                id="icon_prefix"
+                                type="text"
+                                name="reg"
+                                value={this.state.reg}
+                                onChange={this.handleChange}
+                              />
+                              <label htmlFor="icon_prefix">
+                                {this.displayError("Reg #", ["regEmpty"])}
+                              </label>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="input-field col s6">
+                              <i className="material-icons prefix">mode_edit</i>
+                              <textarea
+                                id="icon_prefix2"
+                                className="materialize-textarea"
+                                name="comments"
+                                value={this.state.comments}
+                                onChange={this.handleChange}
+                              ></textarea>
+                              <label htmlFor="icon_prefix2">
+                                {this.displayError("Comments", [
+                                  "commentsEmpty",
+                                ])}
+                              </label>
+                            </div>
+                          </div>
+                          <div className="text-center py-2 mt-3 justify-content-center mx-auto">
+                            <div className="row text-center">
+                              <button
+                                className="btn waves-effect waves-light"
+                                type="submit"
+                                name="action"
+                              >
+                                Submit
+                                <i className="material-icons right">send</i>
+                              </button>
+                              <button
+                                class="btn waves-effect waves-light"
+                                type="button"
+                                onClick={this.logout}
+                              >
+                                Logout
+                              </button>
+                            </div>
+                          </div>
+                        </form>
                       </div>
-                      <div className="row text-center">
-                        <button
-                          class="btn waves-effect waves-light"
-                          type="submit"
-                          name="action"
-                        >
-                          Submit
-                          <i class="material-icons right">send</i>
-                        </button>
-                        <button
-                          class="btn waves-effect waves-light"
-                          type="button"
-                          onClick={this.logout}
-                        >
-                          Logout
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </MDBTabPane>
-                <MDBTabPane tabId="2" role="tabpanel">
-                  <div className="row mt-3">
-                    <form className="col s12" onSubmit={this.submitForm}>
-                      <div className="row">
-                        <div class="input-field col s6">
-                          <i class="material-icons prefix">motorcycle</i>
-                          <input
-                            id="icon_prefix"
-                            type="text"
-                            name="millage"
-                            value={this.state.millage}
-                            onChange={this.handleChange}
-                          />
-                          <label for="icon_prefix">
-                            {this.displayError("Millage", ["millageEmpty"])}
-                          </label>
-                        </div>
-                        <div class="input-field col s6">
-                          <i class="material-icons prefix">motorcycle</i>
-                          <input
-                            id="icon_prefix"
-                            type="text"
-                            name="reg"
-                            value={this.state.reg}
-                            onChange={this.handleChange}
-                          />
-                          <label for="icon_prefix">
-                            {this.displayError("Reg #", ["regEmpty"])}
-                          </label>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div class="input-field col s6">
-                          <i class="material-icons prefix">mode_edit</i>
-                          <textarea
-                            id="icon_prefix2"
-                            class="materialize-textarea"
-                            name="comments"
-                            value={this.state.comments}
-                            onChange={this.handleChange}
-                          ></textarea>
-                          <label for="icon_prefix2">
-                            {this.displayError("Comments", ["commentsEmpty"])}
-                          </label>
-                        </div>
-                      </div>
-                      <div className="row text-center">
-                        <button
-                          class="btn waves-effect waves-light"
-                          type="submit"
-                          name="action"
-                        >
-                          Submit
-                          <i class="material-icons right">send</i>
-                        </button>
-                        <button
-                          class="btn waves-effect waves-light"
-                          type="button"
-                          onClick={this.logout}
-                        >
-                          Logout
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </MDBTabPane>
-              </MDBTabContent>
+                    </MDBTabPane>
+                  </MDBTabContent>
+                </MDBCol>
+              </MDBRow>
             </MDBContainer>
           </MDBCol>
         </MDBRow>
-      </MDBContainer>
+      </div>
     );
   }
 }

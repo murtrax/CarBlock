@@ -1,42 +1,79 @@
 import React from "react";
-import {
-  MDBListGroup,
-  MDBListGroupItem,
-  MDBContainer,
-  MDBBadge,
-} from "mdbreact";
-
-class SideNav extends React.Component {
-  state = {};
+import styles from "../styles/sideNav.module.css";
+import { MDBIcon } from "mdbreact";
+class sideNav extends React.Component {
   render() {
     return (
-      <div class="ml-4 mt-2">
-        <MDBListGroup style={{ width: "18rem" }}>
-          <MDBListGroupItem className="d-flex justify-content-between align-items-center">
-            Alerts
-            <MDBBadge color="primary" pill>
-              0
-            </MDBBadge>
-          </MDBListGroupItem>
-          <MDBListGroupItem className="d-flex justify-content-between align-items-center">
-            Workshops
-            <MDBBadge color="primary" pill>
-              1
-            </MDBBadge>
-          </MDBListGroupItem>
-          <MDBListGroupItem className="d-flex justify-content-between align-items-center">
-            Ownership Transfer
-          </MDBListGroupItem>
-          <MDBListGroupItem className="d-flex justify-content-between align-items-center">
-            Add New Car
-          </MDBListGroupItem>
-          <MDBListGroupItem className="d-flex justify-content-between align-items-center">
-            <button onClick={this.props.logout}>Logout</button>
-          </MDBListGroupItem>
-        </MDBListGroup>
+      <div className={styles.bckg}>
+        <div className={styles.back}>
+          <div className={`${styles.sidenav}`}>
+            <div className={`justify-content-center ${styles.topBar}`}>
+              &ensp;
+            </div>
+            <div
+              className={`justify-content-center align-middle ${styles.navhead}`}
+            >
+              <h4 className="pl-2">Navigation</h4>
+            </div>
+            <div className={`justify-content-center a ${styles.navlink}`}>
+              <a href="/dashboardWorkshop">
+                <div>
+                  <MDBIcon className={styles.icon} size="2x" icon="building" />
+                  <span className={`ml-3 ${styles.iconText}`}>
+                    Approve Workshops
+                  </span>
+                </div>
+              </a>
+            </div>
+            <div className={styles.navlink}>
+              <a href="/alert">
+                <div>
+                  <MDBIcon
+                    className={styles.icon}
+                    size="2x"
+                    icon="exclamation-circle"
+                  />
+                  <span className={`ml-3 mb-2 ${styles.iconText}`}>Alerts</span>
+                </div>
+              </a>
+            </div>
+            <div className={styles.navlink}>
+              <a href="/transfer">
+                <div>
+                  <MDBIcon
+                    className={styles.icon}
+                    size="2x"
+                    icon="exchange-alt"
+                  />
+                  <span className={`ml-3 ${styles.iconText}`}>
+                    Transfer Ownership
+                  </span>
+                </div>
+              </a>
+            </div>
+            <div className={styles.navlink}>
+              <a href="/newCar">
+                <div>
+                  <MDBIcon className={styles.icon} size="2x" icon="car-side" />
+                  <span className={`ml-3 ${styles.iconText}`}>
+                    Add New Vehicle
+                  </span>
+                </div>
+              </a>
+            </div>
+            <div className={styles.navlink}>
+              <div onClick={this.props.logout}>
+                <div>
+                  <MDBIcon className={styles.icon} size="2x" icon="power-off" />
+                  <span className={`ml-3 ${styles.iconText}`}>Logout</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-export default SideNav;
+export default sideNav;

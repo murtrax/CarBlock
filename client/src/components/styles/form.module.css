@@ -1,0 +1,119 @@
+.color1{
+    background-color: rgb(55, 63, 81);
+    line-height:4rem;
+    margin-bottom: -2rem;
+}
+
+.color2{
+    background-color: #437AD7;
+    line-height: 4rem;
+    margin-bottom: -2rem;
+}
+
+.color3{
+    background-color: #212121;
+    margin-bottom: -2rem;
+    margin-top: 0.65rem;
+}
+
+.color4{
+    background: rgb(67,122,215);
+    background: radial-gradient(circle, rgb(55, 106, 196) 0%, rgba(55,63,81,1) 75%);
+    margin-bottom: -2rem;
+}
+
+.formback{
+    background: rgb(67,122,215);
+    background: radial-gradient(circle, rgb(55, 106, 196) 0%, rgba(55,63,81,1) 75%);
+}
+
+.underline{
+    padding-bottom: 7px;
+    border-bottom: 3px solid #437AD7;
+    font-weight: bolder;
+    color: #2E2E2E;
+}
+
+.underline2{
+    padding-bottom: 7px;
+    border-bottom: 3px solid #437AD7;
+    font-weight: bolder;
+    color: white;
+}
+
+
+.illustrationHeight{
+    height: 22rem;
+    padding-top: 8rem;
+
+}
+
+.illustrationHeight2{
+    height: 27rem;
+    padding-top: 10rem;
+
+}
+
+.illustrationHeight3{
+    height: 27rem;
+    padding-top: 10rem;
+
+}
+
+.padding{
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.repairCard{
+    background-color: rgb(255, 255, 255);
+    border-radius: 0.4rem;
+    box-shadow: 0px 1px 30px 15px rgb(68, 68, 68);
+}
+
+.alertBack{
+background-color: whitesmoke;
+}
+
+
+.bottom{
+    margin-bottom: 2rem;
+}
+
+.formHeading{
+    float: left;
+    width: 9rem;
+    background-color: white;
+    color: #333;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 550;
+    padding-left: 1rem;
+    padding-top: 0.2rem;
+    border: 1px solid rgb(95, 95, 95, 0.3);
+}
+
+.formHeading:hover{
+    box-shadow: 4px 6px 17px -9px rgba(0,0,0,0.75);
+}
+
+.sectionBack{
+    background-color: whitesmoke;
+}
+
+.vl {
+    border-left: 3px solid rgb(63, 63, 63);
+    height: 11.5rem;
+    position: absolute;
+
+  }
+
+  .vl2 {
+    border-left: 3px solid rgb(63, 63, 63);
+    height: 20.5rem;
+    position: absolute;
+  }
+
+.dashFormsWidthh{
+    width: 60rem;
+}

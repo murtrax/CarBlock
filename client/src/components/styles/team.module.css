@@ -1,0 +1,73 @@
+.teamImg{
+    border: 5px solid #437AD7;
+    border-radius: 25rem;
+    width : 5rem;
+}
+
+.cardDark{
+    background-color: rgb(55, 63, 81);
+    color: white;
+    border-radius: 0.5rem;
+}
+
+.underline{
+    padding-bottom: 5px;
+    border-bottom: 3px solid #437AD7;
+    width: 65%;
+}
+
+.underline2{
+    width: 64%;
+    color: white;
+}
+
+.bkg{
+    background-color: #437AD7;
+    color: white;
+    height: 3rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    border-radius: 0.5rem;
+}
+
+.white{
+    color: white;
+}
+
+a.white:hover{
+    color: #333;
+}
+
+.back{
+    padding-top: 3rem;
+    background: 
+    -webkit-linear-gradient(-58deg, rgb(51, 51, 51) 43.5%,rgba(67, 122, 215, 0.9)  0%);
+    margin-bottom: -1.5rem;
+}
+
+.illustrationHeight{
+    padding-top: 2rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    width: 90%;
+}
+
+.cardRight{
+    transform: rotate3d(.5,.866,0,15deg) rotateZ(-1deg);
+    box-shadow: -27.1px 62.5px 125px -25px rgba(50,50,93,.5), -16.2px 37.5px 75px -37.5px rgba(0,0,0,.6)
+}
+
+.cardLeft{
+    transform: rotate3d(.5,-.866,0,15deg) rotateZ(1deg);
+    box-shadow: -27.1px 62.5px 125px -25px rgba(50,50,93,.5), -16.2px 37.5px 75px -37.5px rgba(0,0,0,.6)
+}
+
+@media only screen and (max-width: 600px) {
+
+.underline2{
+    width: 80%;
+    color: white;
+
+}
+    
+}

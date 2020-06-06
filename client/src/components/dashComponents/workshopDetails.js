@@ -1,14 +1,7 @@
-import React, { Fragment } from "react";
-import {
-  MDBJumbotron,
-  MDBBtn,
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBIcon,
-} from "mdbreact";
+import React from "react";
+import { MDBJumbotron, MDBBtn, MDBRow, MDBCol, MDBIcon } from "mdbreact";
 import axios from "axios";
-import sugar from "sugar";
+import styles from "../styles/form.module.css";
 
 class JumbotronPage extends React.Component {
   state = {
@@ -273,7 +266,6 @@ class JumbotronPage extends React.Component {
         .catch((error) => {
           console.log(error);
         });
-
     } else if (status == "Not Approved") {
       workshopsTemp[select].approved = false;
       workshopsTemp.splice(select, 1);
@@ -298,17 +290,16 @@ class JumbotronPage extends React.Component {
           disabled: "disabled",
         });
       } else {
-      
-      this.setState(
-        {
-          approved: "Not Approved",
-          statusColor: "red",
-          workshops: workshopsTemp,
-        },
-        () => {
-          this.updateData(this.state.selection);
-        }
-      );
+        this.setState(
+          {
+            approved: "Not Approved",
+            statusColor: "red",
+            workshops: workshopsTemp,
+          },
+          () => {
+            this.updateData(this.state.selection);
+          }
+        );
       }
       axios({
         url: "/deleteWorkshop",
@@ -326,68 +317,70 @@ class JumbotronPage extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className={styles.bottom}>
         <MDBRow className="mt-2">
           <MDBCol>
-            <MDBJumbotron className="pt-1">
-              <h3 className="h3 display-4">Owner Details</h3>
-              <hr className="my-2" />
-              <div className="mt-3">
-                <kbd className="h4">Name:</kbd>{" "}
-                <span className="pl-3">{this.state.ownerName}</span>
+            <MDBJumbotron className={`pt-1 ${styles.sectionBack}`}>
+              <h5 className={`h2 display-5`}>Owner Details</h5>
+              <hr className="my-2 pb-4" />
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>Name:</span>
+                <span className={`ml-3 ${styles.vl}`} />
+                <span className="pl-5">{this.state.ownerName}</span>
+              </div>
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>Position:</span>
+                <span className="pl-5">{this.state.ownerPosition}</span>
+              </div>
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>Contact:</span>
+                <span className="pl-5">{this.state.ownerContact}</span>
               </div>
               <div className="mt-3">
-                <kbd className="h4">Positon:</kbd>{" "}
-                <span className="pl-3">{this.state.ownerPosition}</span>
-              </div>
-              <div className="mt-3">
-                <kbd className="h4">Contact:</kbd>{" "}
-                <span className="pl-3">{this.state.ownerContact}</span>
-              </div>
-              <div className="mt-3">
-                <kbd className="h4">CNIC:</kbd>{" "}
-                <span className="pl-3">{this.state.ownerCNIC}</span>
+                <span className={styles.formHeading}>CNIC:</span>
+                <span className="pl-5">{this.state.ownerCNIC}</span>
               </div>
             </MDBJumbotron>
           </MDBCol>
         </MDBRow>
         <MDBRow className="mt-1">
           <MDBCol>
-            <MDBJumbotron className="pt-1">
-              <h3 className="h3 display-4">Workshop Details</h3>
-              <hr className="my-2" />
-              <div className="mt-3">
-                <kbd className="h4">Name:</kbd>{" "}
-                <span className="pl-3">{this.state.companyName}</span>
+            <MDBJumbotron className={`pt-1 ${styles.sectionBack}`}>
+              <h5 className="h2 display-5">Workshop Details</h5>
+              <hr className="my-2 pb-4" />
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>Name:</span>
+                <span className={`ml-3 ${styles.vl2}`} />
+                <span className="pl-5">{this.state.companyName}</span>
+              </div>
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>Email:</span>
+                <span className="pl-5">{this.state.companyEmail}</span>
+              </div>
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>Contact:</span>
+                <span className="pl-5">{this.state.companyContact}</span>
+              </div>
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>Address:</span>
+                <span className="pl-5">{this.state.companyAddress}</span>
+              </div>
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>City:</span>
+                <span className="pl-5">{this.state.companyCity}</span>
+              </div>
+              <div className="mt-3 mb-4">
+                <span className={styles.formHeading}>Zip:</span>
+                <span className="pl-5">{this.state.companyZip}</span>
               </div>
               <div className="mt-3">
-                <kbd className="h4">Email:</kbd>{" "}
-                <span className="pl-3">{this.state.companyEmail}</span>
-              </div>
-              <div className="mt-3">
-                <kbd className="h4">Contact:</kbd>{" "}
-                <span className="pl-3">{this.state.companyContact}</span>
-              </div>
-              <div className="mt-3">
-                <kbd className="h4">Address:</kbd>{" "}
-                <span className="pl-3">{this.state.companyAddress}</span>
-              </div>
-              <div className="mt-3">
-                <kbd className="h4">City:</kbd>{" "}
-                <span className="pl-3">{this.state.companyCity}</span>
-              </div>
-              <div className="mt-3">
-                <kbd className="h4">Zip:</kbd>{" "}
-                <span className="pl-3">{this.state.companyZip}</span>
-              </div>
-              <div className="mt-3">
-                <kbd
-                  className="h4"
+                <span
+                  className={styles.formHeading}
                   style={{ backgroundColor: this.state.statusColor }}
                 >
                   Status:
-                </kbd>
-                <span className="pl-3">{this.state.approved}</span>
+                </span>
+                <span className="pl-5">{this.state.approved}</span>
               </div>
             </MDBJumbotron>
           </MDBCol>

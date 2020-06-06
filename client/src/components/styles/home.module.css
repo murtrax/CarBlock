@@ -1,0 +1,40 @@
+.homeBkg{
+    background-image: url('../../images/bg.png');
+    background-repeat: repeat-x repeat-y;
+    background-size: 100%;
+
+}
+
+.back{
+    background: rgb(67,122,215);
+    background: radial-gradient(circle, rgba(67,122,215,1) 0%, rgba(55,63,81,1) 75%);
+}
+
+.white {
+    color: white;
+}
+
+.input{
+    color: black;
+}
+
+.btn{
+height: 3rem;
+width: 12rem;
+vertical-align: middle;
+}
+
+.maxWidth {
+    width: 100%;
+    margin-right: -2rem;
+    margin-left: -2rem;
+    color: #232467;
+}
+
+.searchWidth{
+    width: 80%;
+}
+
+.radio{
+    background-color: rgb(55, 63, 81);
+}

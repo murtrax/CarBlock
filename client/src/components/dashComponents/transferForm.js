@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBInput,
-  MDBBtn,
-  MDBCard,
-  MDBCardBody
-} from "mdbreact";
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody } from "mdbreact";
 import axios from "axios";
+import styles from "../styles/form.module.css";
 
 class FormPage extends React.Component {
   state = {
@@ -22,36 +15,34 @@ class FormPage extends React.Component {
     millage: "",
     year: "",
     errors: [],
-    errorBool: ""
+    errorBool: "",
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   };
 
-  resetFields = ()=> {
-
+  resetFields = () => {
     this.setState({
-    vinNumber: "",
-    regNumber: "",
-    name: "",
-    cnic: "",
-    contact: "",
-    city: "",
-    ownerState: "",
-    millage: "",
-    year: "",
-    errors: [],
-    errorBool: ""
-    })
-  }
+      vinNumber: "",
+      regNumber: "",
+      name: "",
+      cnic: "",
+      contact: "",
+      city: "",
+      ownerState: "",
+      millage: "",
+      year: "",
+      errors: [],
+      errorBool: "",
+    });
+  };
 
-  submitForm = e => {
-
+  submitForm = (e) => {
     const date = new Date();
     e.preventDefault();
     const payload = {
@@ -63,56 +54,55 @@ class FormPage extends React.Component {
       city: this.state.city,
       ownerState: this.state.ownerState,
       millage: this.state.millage,
-      year: date.getFullYear()
+      year: date.getFullYear(),
     };
 
     axios({
       url: "/OwnerTransfer",
       method: "post",
-      data: payload
+      data: payload,
     })
-      .then(response => {
+      .then((response) => {
         console.log(response.data);
         this.resetFields();
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err.response.data.errors);
         this.setState({
           errors: err.response.data.errors,
-        })
+        });
         this.setState({
-          errorBool: "true"
-        })
+          errorBool: "true",
+        });
       });
   };
 
-  displayError = (message, errorType)=> {
+  displayError = (message, errorType) => {
+    let labels = [];
+    let condition = "false";
 
-    let labels= [];
-    let condition = "false"
-
-    if (this.state.errorBool == "true")
-    {
-        for (var x=0; x < errorType.length; x++)
-        {
-            if (this.state.errors[errorType[x]])
-            {
-              condition = "true"
-              labels[x] = (
-              <React.Fragment><label style={{color: "red"}} >{this.state.errors[errorType[x]]}</label></React.Fragment>)
-            }
+    if (this.state.errorBool === "true") {
+      for (var x = 0; x < errorType.length; x++) {
+        if (this.state.errors[errorType[x]]) {
+          condition = "true";
+          labels[x] = (
+            <React.Fragment>
+              <label style={{ color: "red" }}>
+                {this.state.errors[errorType[x]]}
+              </label>
+            </React.Fragment>
+          );
         }
-        if (condition === "false") {
-            return <label for="first_name">{message}</label>
-        }
-        else {
-            return labels
-        }
+      }
+      if (condition === "false") {
+        return <label for="first_name">{message}</label>;
+      } else {
+        return labels;
+      }
+    } else {
+      return <label for="first_name">{message}</label>;
     }
-    else {
-      return <label for="first_name">{message}</label>
-    }
-  }
+  };
 
   render() {
     return (
@@ -122,7 +112,9 @@ class FormPage extends React.Component {
             <MDBCard>
               <MDBCardBody>
                 <form onSubmit={this.submitForm}>
-                  <h4 classNameName="text-center">Owner Transfer Form</h4>
+                  <h4 className={`text-center ${styles.underline}`}>
+                    Owner Transfer Form
+                  </h4>
 
                   <input
                     placeholder="Vin Number of the Car"
@@ -142,7 +134,9 @@ class FormPage extends React.Component {
                     value={this.state.regNumber}
                     onChange={this.handleChange}
                   />
-                  {this.displayError("Enter Registration Number", ["regNumber"])}
+                  {this.displayError("Enter Registration Number", [
+                    "regNumber",
+                  ])}
 
                   <input
                     placeholder="Owner's Name"
@@ -154,7 +148,6 @@ class FormPage extends React.Component {
                   />
                   {this.displayError("Full Name", ["name"])}
 
-
                   <input
                     placeholder="CNIC"
                     name="cnic"
@@ -163,8 +156,11 @@ class FormPage extends React.Component {
                     value={this.state.cnic}
                     onChange={this.handleChange}
                   />
-                  {this.displayError("CNIC", ["cnicEmpty", "cnicLength", "cnicNegative"])}
-
+                  {this.displayError("CNIC", [
+                    "cnicEmpty",
+                    "cnicLength",
+                    "cnicNegative",
+                  ])}
 
                   <input
                     placeholder="Contact Number"
@@ -174,8 +170,10 @@ class FormPage extends React.Component {
                     value={this.state.contact}
                     onChange={this.handleChange}
                   />
-                  {this.displayError("Contact Number", ["contactEmpty", "contactNegative"])}
-
+                  {this.displayError("Contact Number", [
+                    "contactEmpty",
+                    "contactNegative",
+                  ])}
 
                   <input
                     placeholder="City"
@@ -187,7 +185,6 @@ class FormPage extends React.Component {
                   />
                   {this.displayError("City", ["city"])}
 
-
                   <input
                     placeholder="State"
                     name="ownerState"
@@ -198,7 +195,6 @@ class FormPage extends React.Component {
                   />
                   {this.displayError("State", ["ownerState"])}
 
-
                   <input
                     placeholder="Millage"
                     name="millage"
@@ -207,8 +203,10 @@ class FormPage extends React.Component {
                     value={this.state.millage}
                     onChange={this.handleChange}
                   />
-                  {this.displayError("Millage", ["millageEmpty", "millageNegative"])}
-
+                  {this.displayError("Millage", [
+                    "millageEmpty",
+                    "millageNegative",
+                  ])}
 
                   <button
                     class="btn waves-effect waves-light"

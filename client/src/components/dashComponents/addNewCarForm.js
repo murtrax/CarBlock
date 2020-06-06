@@ -1,19 +1,7 @@
 import React from "react";
 import axios from "axios";
 
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBInput,
-  MDBBtn,
-  MDBCard,
-  MDBCardBody,
-  MDBSelect,
-  MDBSelectInput,
-  MDBSelectOptions,
-  MDBSelectOption
-} from "mdbreact";
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody } from "mdbreact";
 
 class CardExample extends React.Component {
   state = {
@@ -33,44 +21,43 @@ class CardExample extends React.Component {
     fuel: "",
     drive: "",
     errors: [],
-    errorBool: ""
+    errorBool: "",
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   };
 
-  displayError = (message, errorType)=> {
+  displayError = (message, errorType) => {
+    let labels = [];
+    let condition = "false";
 
-    let labels= [];
-    let condition = "false"
-
-    if (this.state.errorBool == "true")
-    {
-        for (var x=0; x < errorType.length; x++)
-        {
-            if (this.state.errors[errorType[x]])
-            {
-              condition = "true"
-              labels[x] = (
-              <React.Fragment><label style={{color: "red"}} >{this.state.errors[errorType[x]]}</label></React.Fragment>)
-            }
+    if (this.state.errorBool === "true") {
+      for (var x = 0; x < errorType.length; x++) {
+        if (this.state.errors[errorType[x]]) {
+          condition = "true";
+          labels[x] = (
+            <React.Fragment>
+              <label style={{ color: "red" }}>
+                {this.state.errors[errorType[x]]}
+              </label>
+            </React.Fragment>
+          );
         }
-        if (condition === "false") {
-            return <label for="first_name">{message}</label>
-        }
-        else {
-            return labels
-        }
+      }
+      if (condition === "false") {
+        return <label for="first_name">{message}</label>;
+      } else {
+        return labels;
+      }
+    } else {
+      return <label for="first_name">{message}</label>;
     }
-    else {
-      return <label for="first_name">{message}</label>
-    }
-  }
+  };
   /*displayError = (message, errorType)=> {
     if (this.state.errorBool === "true") {
       if (!this.state.errors[errorType])
@@ -88,7 +75,7 @@ class CardExample extends React.Component {
     }
   }*/
 
-  submitForm = e => {
+  submitForm = (e) => {
     e.preventDefault();
 
     const payload = {
@@ -106,33 +93,31 @@ class CardExample extends React.Component {
       millage: this.state.millage,
       type: this.state.type,
       fuel: this.state.fuel,
-      drive: this.state.drive
+      drive: this.state.drive,
     };
     console.log(payload);
 
     axios({
       url: "/CarEntry",
       method: "POST",
-      data: payload
+      data: payload,
     })
-      .then(response => {
+      .then((response) => {
         console.log(response.data);
         this.resetFields();
       })
-      .catch(error => {
+      .catch((error) => {
         let valid = error.response.data.isValid;
         let errors = error.response.data.errors;
-        if (!valid)
-        {
+        if (!valid) {
           this.setState({
-            errors: errors
-          })
+            errors: errors,
+          });
           this.setState({
-            errorBool: "true"
-          })
-
+            errorBool: "true",
+          });
         }
-        console.log(this.state.errors)
+        console.log(this.state.errors);
       });
   };
 
@@ -154,7 +139,7 @@ class CardExample extends React.Component {
       fuel: "",
       drive: "",
       errors: [],
-      errorBool: ""
+      errorBool: "",
     });
   };
 
@@ -189,7 +174,9 @@ class CardExample extends React.Component {
                         value={this.state.regNumber}
                         onChange={this.handleChange}
                       />
-                      {this.displayError("Enter Registration Number", ["regNumber"])}
+                      {this.displayError("Enter Registration Number", [
+                        "regNumber",
+                      ])}
 
                       <input
                         placeholder="Make / Company"
@@ -201,7 +188,6 @@ class CardExample extends React.Component {
                       />
                       {this.displayError("Make / Company", ["make"])}
 
-
                       <input
                         placeholder="Model / Name"
                         name="model"
@@ -212,7 +198,6 @@ class CardExample extends React.Component {
                       />
                       {this.displayError("Model / Name", ["model"])}
 
-
                       <input
                         placeholder="Year of Manufacture"
                         name="year"
@@ -221,7 +206,10 @@ class CardExample extends React.Component {
                         value={this.state.year}
                         onChange={this.handleChange}
                       />
-                      {this.displayError("Year of Manufacture", ["YearsEmpty", "YearsInvalid"])}
+                      {this.displayError("Year of Manufacture", [
+                        "YearsEmpty",
+                        "YearsInvalid",
+                      ])}
                       <input
                         placeholder="Variant"
                         name="variant"
@@ -252,7 +240,6 @@ class CardExample extends React.Component {
                             <option value="Pickup Truck">Pickup Truck</option>
                           </select>
                           {this.displayError("Type", ["type"])}
-
                         </MDBCol>
                         <MDBCol md="6" lg="6" sm="12">
                           <select
@@ -268,7 +255,7 @@ class CardExample extends React.Component {
                             <option value="Electric">Electric</option>
                             <option value="Hybrid">Hybrid</option>
                           </select>
-                        {this.displayError("Fuel", ["fuel"])}
+                          {this.displayError("Fuel", ["fuel"])}
                         </MDBCol>
                         <MDBCol md="6" lg="6" sm="12">
                           <select
@@ -290,9 +277,8 @@ class CardExample extends React.Component {
                               4 Wheel Drive (4WD)
                             </option>
                           </select>
-                        {this.displayError("Drive", ["drive"])}
+                          {this.displayError("Drive", ["drive"])}
                         </MDBCol>
-                        
                       </MDBRow>
 
                       <br />
@@ -321,7 +307,11 @@ class CardExample extends React.Component {
                         value={this.state.ownerCNIC}
                         onChange={this.handleChange}
                       />
-                      {this.displayError("CNIC", ["ownerCNICEmpty","ownerCNICLength","ownerCNICNegative"])}
+                      {this.displayError("CNIC", [
+                        "ownerCNICEmpty",
+                        "ownerCNICLength",
+                        "ownerCNICNegative",
+                      ])}
                       <input
                         placeholder="Contact"
                         name="ownerContact"
@@ -330,7 +320,10 @@ class CardExample extends React.Component {
                         value={this.state.ownerContact}
                         onChange={this.handleChange}
                       />
-                      {this.displayError("Contact", ["ownerContactEmpty","ownerContactNegative"])}
+                      {this.displayError("Contact", [
+                        "ownerContactEmpty",
+                        "ownerContactNegative",
+                      ])}
                       <input
                         placeholder="City"
                         name="ownerCity"
@@ -358,14 +351,17 @@ class CardExample extends React.Component {
                         value={this.state.millage}
                         onChange={this.handleChange}
                       />
-                      {this.displayError("Millage", ["millageEmpty", "millageNegative"])}
+                      {this.displayError("Millage", [
+                        "millageEmpty",
+                        "millageNegative",
+                      ])}
                       <br />
                       <br />
                       <button
                         class="btn waves-effect waves-light"
                         type="submit"
                       >
-                        Transfer
+                        Add
                         <i class="material-icons right">send</i>
                       </button>
                     </MDBCardBody>

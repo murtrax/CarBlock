@@ -1,0 +1,43 @@
+
+.bkg1{
+    background-color: #333;
+    line-height: 5rem;
+}
+
+.bkg2{
+    background-color: #437AD7;
+    line-height: 4rem;
+}
+
+.bkg3{
+    background-color: #212121;
+    line-height: 5rem;
+}
+
+.footer{
+    padding-top: 15rem;
+}
+
+.marginTop{
+ margin-top: 0rem;
+}
+.marginBottom {
+    margin-bottom: 0rem;
+}
+
+.underline{
+    padding-bottom: 7px;
+    border-bottom: 3px solid #437AD7;
+}
+
+.illustrationHeight{
+    height: 17rem;
+}
+
+.widthLinks{
+    width: 10rem;
+}
+
+.hoverText:hover{
+    color: #333;
+}

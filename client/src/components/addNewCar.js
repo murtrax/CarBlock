@@ -2,18 +2,16 @@ import React from "react";
 import { MDBRow, MDBCol } from "mdbreact";
 import Fab from "./dashComponents/fab";
 import SideNav from "./dashComponents/sideNav";
-import TransForm from "./dashComponents/transferForm";
-import Profile from "./dashComponents/profile";
 import NewCarForm from "./dashComponents/addNewCarForm";
+import styles from "./styles/form.module.css";
 
 class CardExample extends React.Component {
   state = {};
   render() {
     return (
-      <div class="mt-5">
-        <MDBRow>
+      <div className={`${styles.formback}`}>
+        <MDBRow className="pt-5">
           <MDBCol sm="3">
-            <Profile />
             <SideNav />
             <Fab />
           </MDBCol>

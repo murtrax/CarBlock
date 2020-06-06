@@ -16,6 +16,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { registerWorkshop } from "../actions/authActions";
 
+import styles from "./styles/form.module.css";
+
 class FormPage extends React.Component {
   state = {
     ownerName: "",
@@ -160,180 +162,256 @@ class FormPage extends React.Component {
   render() {
     console.log(this.state.errors);
     return (
-      <MDBContainer className="mt-4">
-        <MDBRow className="text-center">
-          <MDBCol>
-            <p className="h3 text-center py-4">Workshop Registration</p>
+      <div>
+        <MDBRow>
+          <MDBCol className={styles.color1} md="1" lg="1">
+            &ensp;
+          </MDBCol>
+          <MDBCol className={styles.color2} md="11" lg="11">
+            &ensp;
           </MDBCol>
         </MDBRow>
 
-        <form onSubmit={this.submitForm}>
-          <MDBRow className="justify-content-center">
-            <MDBCol md="6" sm="10" className="mb-4">
-              <MDBCard>
-                <MDBCardBody>
-                  <p className="h4 text-center py-2">Company Details</p>
-                  <div className="grey-text">
-                    <MDBInput
-                      label="Company Name"
-                      icon="user"
-                      group
-                      type="text"
-                      name="companyName"
-                      value={this.state.companyName}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["companyName"])}
-                    <MDBInput
-                      label="Company Email"
-                      icon="envelope"
-                      group
-                      type="email"
-                      name="companyEmail"
-                      value={this.state.companyEmail}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["companyEmail"])}
-                    <MDBInput
-                      label="Password"
-                      icon="lock"
-                      group
-                      type="password"
-                      name="companyPassword"
-                      value={this.state.companyPassword}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["companyPassword"])}
-                    <MDBInput
-                      label="Confirm Password"
-                      icon="lock"
-                      group
-                      type="password"
-                      name="companyConfirm"
-                      value={this.state.companyConfirm}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["companyConfirm"])}
-
-                    <MDBInput
-                      label="Company Contact"
-                      icon="phone"
-                      group
-                      type="number"
-                      name="companyContact"
-                      value={this.state.companyContact}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError([
-                      "companyContact",
-                      "companyContactNegative",
-                      "companyContactLength",
-                    ])}
-                    <MDBInput
-                      label="Address"
-                      icon="map-marked-alt"
-                      group
-                      type="text"
-                      name="companyAddress"
-                      value={this.state.companyAddress}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["companyAddress"])}
-                    <MDBInput
-                      label="City"
-                      icon="city"
-                      group
-                      type="text"
-                      name="companyCity"
-                      value={this.state.companyCity}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["companyCity"])}
-                    <MDBInput
-                      label="Zip Code"
-                      icon="envelope-open-text"
-                      group
-                      type="text"
-                      name="companyZip"
-                      value={this.state.companyZip}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["companyZip", "companyZipNegative"])}
-                  </div>
-                </MDBCardBody>
-              </MDBCard>
-            </MDBCol>
-
-            <MDBCol md="6" sm="10" className="mb-4">
-              <MDBCard>
-                <MDBCardBody>
-                  <p className="h4 text-center py-2">Owner Details</p>
-                  <div className="grey-text">
-                    <MDBInput
-                      label="Full name"
-                      icon="user"
-                      group
-                      type="text"
-                      name="ownerName"
-                      value={this.state.ownerName}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["ownerName"])}
-                    <MDBInput
-                      label="Designation"
-                      icon="user"
-                      group
-                      type="text"
-                      name="ownerPosition"
-                      value={this.state.ownerPosition}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError(["ownerPosition"])}
-                    <MDBInput
-                      label="Contact Number"
-                      icon="phone"
-                      group
-                      type="text"
-                      name="ownerContact"
-                      value={this.state.ownerContact}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError([
-                      "ownerContact",
-                      "ownerContactNegative",
-                      "ownerContactLength",
-                    ])}
-                    <MDBInput
-                      label="CNIC"
-                      icon="fingerprint"
-                      group
-                      type="text"
-                      name="ownerCNIC"
-                      value={this.state.ownerCNIC}
-                      onChange={this.handleChange}
-                    />
-                    {this.displayError([
-                      "ownerCNIC",
-                      "ownerCNICLength",
-                      "ownerCNICNegative",
-                    ])}
-                  </div>
-                </MDBCardBody>
-              </MDBCard>
-
+        <MDBRow className={styles.color4}>
+          <MDBCol className={styles.color3} md="1" lg="1">
+            &ensp;
+          </MDBCol>
+          <MDBCol className={"pt-4 pb-4"} md="11" lg="11">
+            <MDBContainer className="mt-4">
               <MDBRow className="text-center">
                 <MDBCol>
-                  <div className="text-center py-3">
-                    <MDBBtn color="cyan" type="submit">
-                      Register
-                    </MDBBtn>
-                  </div>
+                  <p className={`h3 text-center py-4 ${styles.underline2}`}>
+                    Workshop Registration
+                  </p>
                 </MDBCol>
               </MDBRow>
-            </MDBCol>
-          </MDBRow>
-        </form>
-      </MDBContainer>
+
+              <form onSubmit={this.submitForm}>
+                <MDBRow className="justify-content-center">
+                  <MDBCol md="6" sm="12" className="mb-4">
+                    <MDBCard>
+                      <MDBCardBody>
+                        <p
+                          className={`h4 text-center py-4 ${styles.underline}`}
+                        >
+                          Company Details
+                        </p>
+                        <div className="grey-text">
+                          <input
+                            placeholder="Company Name"
+                            label="Company Name"
+                            icon="user"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="companyName"
+                            value={this.state.companyName}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError(["companyName"])}
+                          <input
+                            placeholder="Company Email"
+                            label="Company Email"
+                            icon="envelope"
+                            group
+                            type="email"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="companyEmail"
+                            value={this.state.companyEmail}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError(["companyEmail"])}
+                          <input
+                            placeholder="Password"
+                            label="Password"
+                            icon="lock"
+                            group
+                            type="password"
+                            validate
+                            name="companyPassword"
+                            value={this.state.companyPassword}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError(["companyPassword"])}
+                          <input
+                            placeholder="Confirm Password"
+                            label="Confirm Password"
+                            icon="lock"
+                            group
+                            type="password"
+                            validate
+                            name="companyConfirm"
+                            value={this.state.companyConfirm}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError(["companyConfirm"])}
+
+                          <input
+                            placeholder="Company Contact"
+                            label="Company Contact"
+                            icon="phone"
+                            group
+                            type="number"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="companyContact"
+                            value={this.state.companyContact}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError([
+                            "companyContact",
+                            "companyContactNegative",
+                            "companyContactLength",
+                          ])}
+                          <input
+                            placeholder="Address"
+                            label="Address"
+                            icon="map-marked-alt"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="companyAddress"
+                            value={this.state.companyAddress}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError(["companyAddress"])}
+                          <input
+                            placeholder="City"
+                            label="City"
+                            icon="city"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="companyCity"
+                            value={this.state.companyCity}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError(["companyCity"])}
+                          <input
+                            placeholder="Zip Code"
+                            label="Zip Code"
+                            icon="envelope-open-text"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="companyZip"
+                            value={this.state.companyZip}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError([
+                            "companyZip",
+                            "companyZipNegative",
+                          ])}
+                        </div>
+                      </MDBCardBody>
+                    </MDBCard>
+                  </MDBCol>
+
+                  <MDBCol md="6" sm="10" className="mb-4">
+                    <MDBCard>
+                      <MDBCardBody>
+                        <p
+                          className={`h4 text-center py-4 ${styles.underline}`}
+                        >
+                          Owner Details
+                        </p>
+                        <div className="grey-text">
+                          <input
+                            placeholder="Full Name"
+                            label="Full name"
+                            icon="user"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="ownerName"
+                            value={this.state.ownerName}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError(["ownerName"])}
+                          <input
+                            placeholder="Designation/Position"
+                            label="Designation"
+                            icon="user"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="ownerPosition"
+                            value={this.state.ownerPosition}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError(["ownerPosition"])}
+                          <input
+                            placeholder="Contact Number"
+                            label="Contact Number"
+                            icon="phone"
+                            group
+                            type="text"
+                            validate
+                            error="wrong"
+                            success="right"
+                            name="ownerContact"
+                            value={this.state.ownerContact}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError([
+                            "ownerContact",
+                            "ownerContactNegative",
+                            "ownerContactLength",
+                          ])}
+                          <input
+                            placeholder="CNIC"
+                            label="CNIC"
+                            icon="fingerprint"
+                            group
+                            type="text"
+                            name="ownerCNIC"
+                            value={this.state.ownerCNIC}
+                            onChange={this.handleChange}
+                          />
+                          {this.displayError([
+                            "ownerCNIC",
+                            "ownerCNICLength",
+                            "ownerCNICNegative",
+                          ])}
+                        </div>
+                      </MDBCardBody>
+                    </MDBCard>
+
+                    <MDBRow className="text-center">
+                      <MDBCol>
+                        <div className="text-center py-3">
+                          <MDBBtn
+                            className={`justify-content-center mt-2 ${styles.btn}`}
+                            color="elegant"
+                            type="submit"
+                          >
+                            <span className={``}>Register</span>
+                          </MDBBtn>
+                        </div>
+                      </MDBCol>
+                    </MDBRow>
+                  </MDBCol>
+                </MDBRow>
+              </form>
+            </MDBContainer>
+          </MDBCol>
+        </MDBRow>
+      </div>
     );
   }
 }

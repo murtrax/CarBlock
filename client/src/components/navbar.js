@@ -16,7 +16,9 @@ import {
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import Home from "./home"; //Home Page
+
 import About from "./about"; //About Page
+
 import SignUpUser from "./signup"; //User SignUp
 import LogInUser from "./signin"; //Sign In (Workshop)
 import Workshop from "./workshop"; //Workshop Sign Up
@@ -28,6 +30,7 @@ import log from "./../images/block.png";
 import newCar from "./addNewCar"; //add new car form (workshop)
 import carResults from "./homeComponents/carResults"; //(display car report)
 import repairWorkshop from "./repairWorkshop"; //add service and acc details
+
 import DashboardWorkshop from "./dashboard/Dashboard"; //DUMMY dashboard
 
 // Importing React Redux and Redux Store and other important imports (DANIAL)
@@ -38,6 +41,8 @@ import setAuthToken from "../utils/setAuthToken";
 import { setCurrentUser, logoutUser } from "../actions/authActions";
 import PrivateRoute from "./private-route/PrivateRoute";
 import PrivateRouteRegAuth from "./private-route/PrivateRouteRegAuth";
+
+import styles from "./styles/navbar.module.css";
 
 // (DANIAL)
 // Check for token to keep user logged in
@@ -77,7 +82,7 @@ class NavbarPage extends Component {
     return (
       <Provider store={store}>
         <Router>
-          <MDBNavbar color="elegant-color-dark" dark expand="md">
+          <MDBNavbar className={styles.bar} dark expand="md">
             <MDBNavbarBrand>
               <img
                 src={log}
@@ -89,14 +94,14 @@ class NavbarPage extends Component {
             <MDBNavbarToggler onClick={this.toggleCollapse} />
             <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
               <MDBNavbarNav right>
-                <MDBNavItem active>
+                <MDBNavItem>
                   <MDBNavLink to="/home">Home</MDBNavLink>
                 </MDBNavItem>
                 <MDBNavItem>
-                  <MDBNavLink to="/about">About</MDBNavLink>
+                  <MDBNavLink to="/login">Login</MDBNavLink>
                 </MDBNavItem>
                 <MDBNavItem>
-                  <MDBNavLink to="/login">Login</MDBNavLink>
+                  <MDBNavLink to="/searchResult">Search</MDBNavLink>
                 </MDBNavItem>
                 <MDBNavItem>
                   <MDBDropdown>
@@ -107,7 +112,7 @@ class NavbarPage extends Component {
                       <MDBNavLink to="/signup">
                         <MDBDropdownItem>User</MDBDropdownItem>
                       </MDBNavLink>
-                      <MDBNavLink to="/Workshop">
+                      <MDBNavLink to="/workshop">
                         <MDBDropdownItem>Workshop</MDBDropdownItem>
                       </MDBNavLink>
                     </MDBDropdownMenu>
@@ -130,25 +135,12 @@ class NavbarPage extends Component {
                   <MDBNavLink to="/workshopRepair">Workshop Repair</MDBNavLink>
                 </MDBNavItem>
               </MDBNavbarNav>
-              <MDBNavbarNav right>
-                <MDBNavItem>
-                  <MDBNavLink className="waves-effect waves-light" to="#!">
-                    <MDBIcon fab icon="twitter" />
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink className="waves-effect waves-light" to="#!">
-                    <MDBIcon fab icon="google-plus-g" />
-                  </MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem></MDBNavItem>
-              </MDBNavbarNav>
             </MDBCollapse>
           </MDBNavbar>
+
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/home" exact component={Home} />
-            <Route path="/about" exact component={About} />
             <Route path="/signup" exact component={SignUpUser} />
             <Route path="/login" exact component={LogInUser} />
             <Route path="/workshop" exact component={Workshop} />
