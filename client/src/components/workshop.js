@@ -134,8 +134,16 @@ class FormPage extends React.Component {
     if (this.state.errors == {}) {
       this.clearFields();
     } else {
+      let errorsTemp = this.state.errors;
+      let isValidTemp = this.state.isValid;
+      
       this.setState({
         errorBool: "true",
+        errors: {errorsTemp}, 
+      },()=>{
+        this.setState({
+          errorBool: "true"
+        })
       });
     }
 
@@ -160,7 +168,7 @@ class FormPage extends React.Component {
   };
 
   render() {
-    console.log(this.state.errors);
+    //console.log(this.state.errors)
     return (
       <div>
         <MDBRow>
@@ -203,7 +211,7 @@ class FormPage extends React.Component {
                             icon="user"
                             group
                             type="text"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="companyName"
@@ -217,7 +225,7 @@ class FormPage extends React.Component {
                             icon="envelope"
                             group
                             type="email"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="companyEmail"
@@ -231,7 +239,7 @@ class FormPage extends React.Component {
                             icon="lock"
                             group
                             type="password"
-                            validate
+                            //validate
                             name="companyPassword"
                             value={this.state.companyPassword}
                             onChange={this.handleChange}
@@ -243,7 +251,7 @@ class FormPage extends React.Component {
                             icon="lock"
                             group
                             type="password"
-                            validate
+                            //validate
                             name="companyConfirm"
                             value={this.state.companyConfirm}
                             onChange={this.handleChange}
@@ -256,7 +264,7 @@ class FormPage extends React.Component {
                             icon="phone"
                             group
                             type="number"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="companyContact"
@@ -274,7 +282,7 @@ class FormPage extends React.Component {
                             icon="map-marked-alt"
                             group
                             type="text"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="companyAddress"
@@ -288,7 +296,7 @@ class FormPage extends React.Component {
                             icon="city"
                             group
                             type="text"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="companyCity"
@@ -302,7 +310,7 @@ class FormPage extends React.Component {
                             icon="envelope-open-text"
                             group
                             type="text"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="companyZip"
@@ -333,7 +341,7 @@ class FormPage extends React.Component {
                             icon="user"
                             group
                             type="text"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="ownerName"
@@ -347,7 +355,7 @@ class FormPage extends React.Component {
                             icon="user"
                             group
                             type="text"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="ownerPosition"
@@ -361,7 +369,7 @@ class FormPage extends React.Component {
                             icon="phone"
                             group
                             type="text"
-                            validate
+                            //validate
                             error="wrong"
                             success="right"
                             name="ownerContact"
@@ -426,7 +434,8 @@ FormPage.propTypes = {
 // Getting the state from Redux and mapping it to props which we can use in components. (DANIAL)
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  errors: state.errors,
+  errors: state.errors.errors,
+  isValid: state.errors.isValid,
 });
 
 // Connecting the Register Component (signup) to the Redux Store using "connect" (DANIAL)

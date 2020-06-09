@@ -241,7 +241,10 @@ class FormPage extends React.Component {
                             className="mt-3"
                           />
                           <label style={{ color: "red" }}>
-                            {this.state.errors.email}
+                          {this.displayError("", [
+                              "emailEmpty",
+                              "emailInvalid",
+                            ])}
                           </label>
 
                           <input
@@ -260,7 +263,7 @@ class FormPage extends React.Component {
                             className="mt-5"
                           />
                           <label style={{ color: "red" }}>
-                            {this.state.errors.password}
+                          {this.displayError("", ["password", "Incorrect Password"])}
                           </label>
                         </div>
                         <div className="text-center">
