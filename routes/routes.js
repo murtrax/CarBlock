@@ -563,7 +563,7 @@ router.post("/CarEntry", (req, res) => {
   const { errors, isValid } = carAndOwnerValidate(data);
   //if data is not valid, send errors back to front end
   if (!isValid) {
-    return res.status(400).json({ errors: errors, isValid: isValid });
+    return res.status(305).json({ errors: errors, isValid: isValid });
   } else {
     //if data is in proper valid format than check if a car with this vin and reg# already exists in the db
     carDetails
@@ -571,9 +571,7 @@ router.post("/CarEntry", (req, res) => {
       .then((car) => {
         //if car exists send error message
         if (car) {
-          return res
-            .status(400)
-            .send("A vehicle with this VIN or Reg Number already exists");
+          return res.status(400).json({ error: "A vehile with this VIN or Reg Number already exists"});
         } else {
           //Object of car details
           const carData = {
@@ -797,7 +795,7 @@ router.post("/AccidentAndService", (req, res) => {
   const { errors, isValid } = AccidentAndServiceHistoryValidate(data); //Validate data
   //if data is not valid then send errors to front end
   if (!isValid) {
-    return res.status(400).json({ errors: errors, isValid: isValid }); //Send error response to client with errors object
+    return res.status(305).json({ errors: errors, isValid: isValid }); //Send error response to client with errors object
   } else {
     //todays date
     const todaysDate = Date.now().toString();

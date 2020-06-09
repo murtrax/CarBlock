@@ -25,6 +25,7 @@ class TabsDefault extends Component {
     reg: "",
     errors: [],
     errorBool: "",
+    msg: "",
   };
 
   componentDidMount() {
@@ -44,6 +45,7 @@ class TabsDefault extends Component {
       millage: "",
       comments: "",
       reg: "",
+      msg: "",
     });
   };
 
@@ -56,6 +58,8 @@ class TabsDefault extends Component {
         millage: "",
         comments: "",
         reg: "",
+        errors: [],
+        errorBool: "false"
       });
     }
   };
@@ -85,6 +89,15 @@ class TabsDefault extends Component {
         this.clearFields();
       })
       .catch((err) => {
+        if (err.response.request.status === 400){
+          console.log("error")
+          this.setState({
+            msg: err.response.data.error,
+            errorBool: "false",
+            errors: [],
+          })
+        }
+        else {
         console.log(err.response.data);
         this.setState(
           {
@@ -96,7 +109,7 @@ class TabsDefault extends Component {
             });
           }
         );
-      });
+      }});
   };
 
   displayError = (message, errorType) => {
@@ -309,6 +322,7 @@ class TabsDefault extends Component {
                               </label>
                             </div>
                           </div>
+                          <label style = {{color: "red", fontSize: "13"}}>{this.state.msg}</label>
                           <div className="text-center py-2 mt-3 justify-content-center mx-auto">
                             <div className="row text-center">
                               <button

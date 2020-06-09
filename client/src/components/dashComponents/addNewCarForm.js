@@ -22,6 +22,7 @@ class CardExample extends React.Component {
     drive: "",
     errors: [],
     errorBool: "",
+    msg: ""
   };
 
   handleChange = (e) => {
@@ -106,18 +107,38 @@ class CardExample extends React.Component {
         console.log(response.data);
         this.resetFields();
       })
-      .catch((error) => {
-        let valid = error.response.data.isValid;
-        let errors = error.response.data.errors;
-        if (!valid) {
+      .catch(error => {
+        console.log(error.response.data.error)
+        console.log(error.response.request.status)
+        if (error.response.request.status === 400){
+          console.log("error")
           this.setState({
-            errors: errors,
-          });
-          this.setState({
-            errorBool: "true",
-          });
+            msg: error.response.data.error,
+            errorBool: "false",
+            errors: [],
+          })
         }
-        console.log(this.state.errors);
+        else {
+          this.setState({
+            errors: [],
+            errorBool: "false",
+            msg: ""
+          })
+          let valid = error.response.data.isValid;
+          let errors = error.response.data.errors;
+          if (!valid)
+          {
+            this.setState({
+              errors: errors
+            },()=> {
+              this.setState({
+                errorBool: "true"
+              })
+            })
+          }
+          console.log(this.state.errors)
+        }
+        
       });
   };
 
@@ -140,11 +161,15 @@ class CardExample extends React.Component {
       drive: "",
       errors: [],
       errorBool: "",
+    },()=> {
+      this.setState({
+        msg: ""
+      })
     });
   };
 
   render() {
-    console.log(this.state);
+    //console.log(this.state);
 
     return (
       <MDBContainer>
@@ -356,6 +381,7 @@ class CardExample extends React.Component {
                         "millageNegative",
                       ])}
                       <br />
+                      <label style = {{color: "red", fontSize: "13"}}>{this.state.msg}</label>
                       <br />
                       <button
                         class="btn waves-effect waves-light"
