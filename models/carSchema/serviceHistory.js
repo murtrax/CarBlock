@@ -23,6 +23,15 @@ const serviceHistorySchema = new Schema({
     type: String,
     required: true,
   },
+  sparePart1: {
+    type: String,
+  },
+  sparePart2: {
+    type: String,
+  },
+  sparePart3: {
+    type: String,
+  },
 });
 
 const serviceHistory = mongoose.model("serviceHistory", serviceHistorySchema);

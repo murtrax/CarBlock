@@ -270,7 +270,7 @@ class TabsDefault extends Component {
                                   id="icon_prefix"
                                   type="number"
                                   name="sparePart1"
-                                  value={this.state.spareParts}
+                                  value={this.state.sparePart1}
                                   onChange={this.handleChange}
                                 />
                                 <label htmlFor="icon_prefix2">Spare Part</label>
@@ -285,7 +285,7 @@ class TabsDefault extends Component {
                                   id="icon_prefix"
                                   type="number"
                                   name="sparePart2"
-                                  value={this.state.spareParts}
+                                  value={this.state.sparePart2}
                                   onChange={this.handleChange}
                                 />
                                 <label htmlFor="icon_prefix2">Spare Part</label>
@@ -300,7 +300,7 @@ class TabsDefault extends Component {
                                   id="icon_prefix"
                                   type="number"
                                   name="sparePart3"
-                                  value={this.state.spareParts}
+                                  value={this.state.sparePart3}
                                   onChange={this.handleChange}
                                 />
                                 <label htmlFor="icon_prefix2">Spare Part</label>
