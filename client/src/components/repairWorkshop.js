@@ -23,6 +23,9 @@ class TabsDefault extends Component {
     millage: "",
     comments: "",
     reg: "",
+    sparePart1: "",
+    sparePart2: "",
+    sparePart3: "",
     errors: [],
     errorBool: "",
     msg: "",
@@ -46,6 +49,9 @@ class TabsDefault extends Component {
       comments: "",
       reg: "",
       msg: "",
+      sparePart1: "",
+      sparePart2: "",
+      sparePart3: "",
     });
   };
 
@@ -59,7 +65,7 @@ class TabsDefault extends Component {
         comments: "",
         reg: "",
         errors: [],
-        errorBool: "false"
+        errorBool: "false",
       });
     }
   };
@@ -78,6 +84,9 @@ class TabsDefault extends Component {
       comments: this.state.comments,
       reg: this.state.reg,
       activeItem: this.state.activeItem,
+      sparePart1: this.state.sparePart1,
+      sparePart2: this.state.sparePart2,
+      sparePart3: this.state.sparePart3,
     };
     axios({
       url: "/AccidentAndService",
@@ -89,27 +98,27 @@ class TabsDefault extends Component {
         this.clearFields();
       })
       .catch((err) => {
-        if (err.response.request.status === 400){
-          console.log("error")
+        if (err.response.request.status === 400) {
+          console.log("error");
           this.setState({
             msg: err.response.data.error,
             errorBool: "false",
             errors: [],
-          })
+          });
+        } else {
+          console.log(err.response.data);
+          this.setState(
+            {
+              errors: err.response.data.errors,
+            },
+            () => {
+              this.setState({
+                errorBool: "true",
+              });
+            }
+          );
         }
-        else {
-        console.log(err.response.data);
-        this.setState(
-          {
-            errors: err.response.data.errors,
-          },
-          () => {
-            this.setState({
-              errorBool: "true",
-            });
-          }
-        );
-      }});
+      });
   };
 
   displayError = (message, errorType) => {
@@ -250,6 +259,55 @@ class TabsDefault extends Component {
                               </label>
                             </div>
                           </div>
+
+                          <div className="row">
+                            <div className="col-4">
+                              <div className="input-field">
+                                <i className="material-icons prefix">
+                                  mode_edit
+                                </i>
+                                <input
+                                  id="icon_prefix"
+                                  type="number"
+                                  name="sparePart1"
+                                  value={this.state.spareParts}
+                                  onChange={this.handleChange}
+                                />
+                                <label htmlFor="icon_prefix2">Spare Part</label>
+                              </div>
+                            </div>
+                            <div className="col-4">
+                              <div className="input-field">
+                                <i className="material-icons prefix">
+                                  mode_edit
+                                </i>
+                                <input
+                                  id="icon_prefix"
+                                  type="number"
+                                  name="sparePart2"
+                                  value={this.state.spareParts}
+                                  onChange={this.handleChange}
+                                />
+                                <label htmlFor="icon_prefix2">Spare Part</label>
+                              </div>
+                            </div>
+                            <div className="col-4">
+                              <div className="input-field">
+                                <i className="material-icons prefix">
+                                  mode_edit
+                                </i>
+                                <input
+                                  id="icon_prefix"
+                                  type="number"
+                                  name="sparePart3"
+                                  value={this.state.spareParts}
+                                  onChange={this.handleChange}
+                                />
+                                <label htmlFor="icon_prefix2">Spare Part</label>
+                              </div>
+                            </div>
+                          </div>
+
                           <div className="row text-center">
                             <button
                               className="btn waves-effect waves-light"
@@ -322,7 +380,9 @@ class TabsDefault extends Component {
                               </label>
                             </div>
                           </div>
-                          <label style = {{color: "red", fontSize: "13"}}>{this.state.msg}</label>
+                          <label style={{ color: "red", fontSize: "13" }}>
+                            {this.state.msg}
+                          </label>
                           <div className="text-center py-2 mt-3 justify-content-center mx-auto">
                             <div className="row text-center">
                               <button
