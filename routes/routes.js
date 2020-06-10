@@ -13,7 +13,7 @@ const accidentHistory = require("./../models/carSchema/accidentHistory");
 const companyRegistrationTemp = require("./../models/workshopTemp/workshopRegistrationTemp");
 const companyRegistration = require("./../models/workshopRegistration");
 const informationHash = require("./../models/informationHash");
-
+const sparePart = require ("./../models/carSchema/sparePart")
 const adminLogin = require("./../models/adminLogin"); //YET TO BE CREATED
 
 //validation

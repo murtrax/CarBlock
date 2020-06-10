@@ -17,13 +17,14 @@ import classnames from "classnames";
 import styles from "./styles/form.module.css";
 
 import loginIllustration from "../images/illustrations/signin.svg";
+import isEmpty from "is-empty";
 
 class FormPage extends React.Component {
   state = {
     email: "",
     password: "",
     errors: {},
-    errorBool: "",
+    errorBool: "false",
     typeOfUser: "",
     color: "",
     submit: "false",
@@ -105,9 +106,12 @@ class FormPage extends React.Component {
           errors: nextProps.errors,
         },
         () => {
-          this.setState({
-            errorBool: "true",
-          });
+          if (!isEmpty(this.state.errors))
+          {
+            this.setState({
+              errorBool: "true",
+            });
+        }
         }
       );
     }
@@ -152,6 +156,7 @@ class FormPage extends React.Component {
   };
 
   render() {
+    console.log(this.state.errorBool);  
     const { errors } = this.state;
     if (this.state.typeOfUser == "") {
       this.state.color = "red";
