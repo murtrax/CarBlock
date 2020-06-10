@@ -37,83 +37,83 @@ const accidentDataHashing = require("./../hashingAndConversion/accidentDataHashi
  */
 const contractAbi = [
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: false,
-        internalType: "address",
-        name: "from",
-        type: "address",
+        "indexed": false,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "carDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "carDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "ownerDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "ownerDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "serviceDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "serviceDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "accidentDetailsHash",
-        type: "string",
-      },
+        "indexed": false,
+        "internalType": "string",
+        "name": "accidentDetailsHash",
+        "type": "string"
+      }
     ],
-    name: "Transferred",
-    type: "event",
+    "name": "Transferred",
+    "type": "event"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        internalType: "string",
-        name: "_carDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_carDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_ownerDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_ownerDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_serviceDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_serviceDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_accidentDetailsHash",
-        type: "string",
-      },
+        "internalType": "string",
+        "name": "_accidentDetailsHash",
+        "type": "string"
+      }
     ],
-    name: "eventGenerator",
-    outputs: [
+    "name": "eventGenerator",
+    "outputs": [
       {
-        internalType: "bool",
-        name: "success",
-        type: "bool",
-      },
+        "internalType": "bool",
+        "name": "success",
+        "type": "bool"
+      }
     ],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ];
 
-const contractAddress = "0xC845e757c1b7e226EE85130bfCC178d13d4228F2";
+const contractAddress = "0x6209b9628a24e53266C83c052fD1A1c71f3Ca169";
 const web3js = new web3();
-web3js.setProvider(new web3.providers.HttpProvider("http://localhost:9545"));
+web3js.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
 const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
 
 let accounts = [];

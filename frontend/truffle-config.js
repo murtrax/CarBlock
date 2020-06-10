@@ -36,6 +36,15 @@ module.exports = {
    */
 
   networks: {
+
+  	 development1: {
+    host: "localhost", //our network is running on localhost
+    port: 8545, // port where your blockchain is running
+    network_id: "900",
+    from: "0xB9816baA7834B83244628265cbc756E166a83Cd9", // use the account-id generated during the setup process
+    gas: 8000000
+  },
+
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
