@@ -17,6 +17,7 @@ function addToOwnerHistory(data, obj) {
       };
     });
     newData.push(obj);
+
     return hash(newData);
   } else {
     let newData = [];
@@ -32,8 +33,10 @@ function addToOwnerHistory(data, obj) {
       ownerContact: data.ownerContact,
       date: data.date,
     };
+
     newData.push(validData);
     newData.push(obj);
+
     return hash(newData);
   }
 }

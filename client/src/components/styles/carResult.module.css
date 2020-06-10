@@ -1,0 +1,70 @@
+.listHeading{
+background-color: #437AD7;
+color: white;
+}
+
+.listFeature{
+    background-color: #437AD7;
+    color: white;
+    margin-bottom: 0.2rem;
+    vertical-align: middle;
+}
+.listItem{
+    border-radius: 0.2rem;
+    padding-left: 0.5rem;
+    margin-bottom: 0.2rem;
+    background-color: #4d4d4d;
+    color: white;
+}
+
+.listElement{
+    border-radius: 0.2rem;
+    padding-left: 0.5rem;
+    background-color: #437AD7;
+    margin-bottom: 0.2rem;
+    color: white;
+    font-size: large;
+}
+
+.elWidth{
+    width: 5rem;
+    float: left;
+}
+
+.body{
+background-color: #e5e2e2;
+margin-bottom: -1.4rem;
+padding-bottom: 2rem;
+}
+
+.snapshot{
+    height: 93%;
+    background-color: rgb(107, 107, 107);
+    margin-top: 0.5rem;
+    vertical-align: middle;
+}
+
+.feat{
+    font-size: 1.6rem;
+    padding-top: -1rem;
+}
+
+.scrollable{
+    height: 20rem;
+    overflow-y: scroll;
+}
+
+@media only screen and (max-width: 600px) {
+    .feat{
+        font-size: 1.4rem;
+        padding-top: -1rem;
+    }
+    .snapshot{
+        height: 93%;
+        background-color: rgb(107, 107, 107);
+        margin-top: 0.5rem;
+        margin-bottom: -1rem;
+        vertical-align: middle;
+    }
+
+}

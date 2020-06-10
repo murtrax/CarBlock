@@ -226,7 +226,7 @@ class CardExample extends React.Component {
                       <input
                         placeholder="Year of Manufacture"
                         name="year"
-                        type="text"
+                        type="number"
                         className="validate"
                         value={this.state.year}
                         onChange={this.handleChange}

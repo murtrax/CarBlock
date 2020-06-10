@@ -293,31 +293,6 @@ router.post("/signUp", (req, res) => {
   }
 });
 
-router.get("/getWorkshopsTemp", (req, res) => {
-  const data = req.body;
-  console.log(data);
-
-  companyRegistrationTemp
-    .find({ approved: false }, { companyPassword: 0 })
-    .then((workshops) => {
-      res.json({ workshops });
-    });
-});
-
-router.post("/deleteWorkshop", (req, res) => {
-  const data = req.body;
-  companyRegistrationTemp
-    .deleteOne({ companyEmail: data.companyEmail })
-    .then(() => {
-      res.json({ success: "Workshop deleted from database" });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "A database with this Email doesn't exist within the database",
-      });
-    });
-});
-
 //save workshop into permanent table
 router.post("/saveWorkshop", (req, res) => {
   const data = req.body;
@@ -373,7 +348,11 @@ router.post("/saveWorkshop", (req, res) => {
     });
 });
 
-//Workshop Registration into temporary table
+/**
+ * This route takes input from the workshop registration form,
+ * validates the data for proper format, and saves the record in a
+ * temporary table for workshops for reg auth approval
+ */
 router.post("/workshopSignUp", (req, res) => {
   const data = req.body;
   const { errors, isValid } = workshopTempValidation(data);
@@ -419,15 +398,57 @@ router.post("/workshopSignUp", (req, res) => {
   }
 });
 
-router.post("/searchCar", (req, res) => {
+/**
+ * This route retrieves a list of all un-approved workshops in the table
+ * and sends that data to the front-end (registration auth dashboard)
+ */
+router.get("/getWorkshopsTemp", (req, res) => {
   const data = req.body;
-  console.log(data);
-  let returnedCar = null;
+
+  companyRegistrationTemp
+    .find({ approved: false }, { companyPassword: 0 })
+    .then((workshops) => {
+      res.json({ workshops });
+    });
+});
+
+/**
+ * This route takes an email as an input in the request
+ * and deletes any workshops with the corresponding email
+ * in the temporary workshop holder table.
+ * If workshop doesn't exist, appropriate msg is sent back
+ */
+router.post("/deleteWorkshop", (req, res) => {
+  const data = req.body;
+  companyRegistrationTemp
+    .deleteOne({ companyEmail: data.companyEmail })
+    .then(() => {
+      res.json({ success: "Workshop deleted from database" });
+    })
+    .catch(() => {
+      res.status(400).json({
+        error: "A workshop with this Email doesn't exist within the database",
+      });
+    });
+});
+
+/**
+ * This route takes input as a number from the search bar (landing page) and checks if it is vin or reg num
+ * according to the selection, appropriate car is retrieved and hash of all 4 types of data is calculated
+ * 4 hashes are matched with the hashes stored in the BC and if matched then data is sent to the front end
+ * else it is not and error is logged saying that data mismatch
+ */
+router.post("/searchCar", (req, res) => {
+  //Extract form data from request
+  const data = req.body;
+
+  //Initialize null variables
   let vin = null;
   let reg = null;
-  let serviceDetails = null;
-  let ownershipDetails = null;
-  let accidentDetails = null;
+  let serviceDetails = [];
+  let accidentDetails = [];
+
+  //Initialize empty payload
   let payload = [];
 
   if (data.selectedOpt === "vin") {
@@ -435,57 +456,124 @@ router.post("/searchCar", (req, res) => {
     carDetails.findOne({ vin: data.number }).then((car) => {
       //If car does not exist then
       if (!car) {
-        return res.status(400).send("Car does not exist");
+        return res
+          .status(400)
+          .send("There is nor registered vehicle across this Vin number!");
       } else {
-        returnedCar = car;
+        //Get Hash of car data after converting into valid object
+        const cHash = carDataHashing(car);
+        const returnedCar = car;
+        //Get registration number of car (for handling queries)
         reg = returnedCar.reg;
-      }
 
-      ownershipHistory
-        .findOne(
-          { vin: vin, reg: reg },
-          { yearPurchased: 1, millage: 1, city: 1, state: 1 }
-        )
-        .then((owner) => {
-          if (!owner) {
-            //return res.status(400).send("Ownership history does not exist");
-          } else {
-            ownershipDetails = owner;
-            //res.json({ owner: ownership, car: returnedCar });
-            serviceHistory.find({ vin: vin, reg: reg }).then((car) => {
-              if (car) {
-                serviceDetails = car;
-              } else {
-                console.log("Service History does not exist");
-              }
-
-              accidentHistory.find({ vin: vin, reg: reg }).then((car) => {
-                if (car) {
-                  accidentDetails = car;
-                  payload = [
-                    returnedCar,
-                    serviceDetails,
-                    ownershipDetails,
-                    accidentDetails,
-                  ];
-                  console.log(payload);
-                  return res.json({ car: payload });
+        //Get ownership details about said car
+        ownershipHistory
+          .find(
+            { vin: vin, reg: reg }
+            /*{ yearPurchased: 1, millage: 1, city: 1, state: 1 }*/
+          )
+          .then((owner) => {
+            if (!owner) {
+              return res
+                .status(400)
+                .send("Ownership history does not exist! Data corrupt!");
+            } else {
+              //Get hashed data of owner details across said car
+              //console.log("owner retreived from db: " + owner);
+              const oHash = ownerDataHashing(owner);
+              console.log("oHash aftre db retrieval: " + oHash);
+              //owner object returned from DB
+              const ownershipDetails = owner;
+              //Find service history across said car
+              serviceHistory.find({ vin: vin, reg: reg }).then((sHistory) => {
+                let sHash = null;
+                if (sHistory) {
+                  //Get hash of service details of said car
+                  sHash = serviceDataHashing(sHistory);
+                  //service details of car
+                  serviceDetails = sHistory;
                 } else {
-                  console.log("Accident History does not exist");
-                  payload = [
-                    returnedCar,
-                    serviceDetails,
-                    ownershipDetails,
-                    accidentDetails,
-                  ];
-                  console.log(payload);
-                  res.json({ car: payload });
+                  console.log(
+                    "No records against service history for this vehicle exist!"
+                  );
+                  sHash = hash([]);
                 }
-              });
-            });
-          }
-          //retrieve data and send back to the client
-        });
+
+                //Find accident history for said vehicle
+                accidentHistory
+                  .find({ vin: vin, reg: reg })
+                  .then((aHistory) => {
+                    let aHash = null;
+                    if (aHistory) {
+                      //Get hash of accident data
+                      aHash = accidentDataHashing(aHistory);
+                      //accident records of car
+                      accidentDetails = aHistory;
+                    } else {
+                      console.log(
+                        "No records against accident history for this vehicle exist!"
+                      );
+                      aHash = hash([]);
+                    }
+                    //find block number for this vehicle
+                    informationHash
+                      .findOne({ vin: vin, reg: reg })
+                      .then((record) => {
+                        hashingTestSC.getPastEvents(
+                          "AllEvents",
+                          {
+                            fromBlock: record.block,
+                            toBlock: record.block,
+                          },
+                          (err, events) => {
+                            //Compare all 4 hashes
+                            //If any hash does not match then send appropriate response
+                            //If all hashes match then send data back to front end
+                            if (
+                              cHash == events[0].returnValues.carDetailsHash
+                            ) {
+                              console.log("Car Data Matched!");
+                              if (
+                                oHash == events[0].returnValues.ownerDetailsHash
+                              ) {
+                                console.log("owner data Matched!");
+                                if (
+                                  sHash ==
+                                  events[0].returnValues.serviceDetailsHash
+                                ) {
+                                  console.log("Service data Matched!");
+                                  if (
+                                    aHash ==
+                                    events[0].returnValues.accidentDetailsHash
+                                  ) {
+                                    console.log("Accident data Matched!");
+                                    //If hashes match and data is ok then make payload
+                                    payload = [
+                                      returnedCar,
+                                      serviceDetails,
+                                      ownershipDetails,
+                                      accidentDetails,
+                                    ];
+                                    //send the payload to the frontend
+                                    return res.json({ car: payload });
+                                  }
+                                } else {
+                                  console.log("Service Data Mismatch!");
+                                }
+                              } else {
+                                console.log("Owner Data Mismatch!");
+                              }
+                            } else {
+                              console.log("Car Data Mismatch!");
+                            }
+                          }
+                        ); //end then block for get events method
+                      }); //end then block for info hashes table
+                  }); //end then block for accident history
+              }); //end then block for service history
+            }
+          }); //end then block for owner history
+      }
     });
   }
 
@@ -494,59 +582,125 @@ router.post("/searchCar", (req, res) => {
     carDetails.findOne({ reg: data.number }).then((car) => {
       //If car does not exist then
       if (!car) {
-        return res.status(400).send("Car does not exist");
+        return res
+          .status(400)
+          .send(
+            "There is no registered vehicle across this Registration number!"
+          );
       } else {
-        returnedCar = car;
+        //Get Hash of car data after converting into valid object
+        const cHash = carDataHashing(car);
+        const returnedCar = car;
+        //Get registration number of car (for handling queries)
         vin = returnedCar.vin;
-      }
 
-      ownershipHistory
-        .findOne(
-          { reg: data.number, vin: vin },
-          { yearPurchased: 1, millage: 1, city: 1, state: 1 }
-        )
-        .then((owner) => {
-          if (!owner) {
-            return res.status(400).send("Ownership history does not exist");
-          } else {
-            ownershipDetails = owner;
-            //res.json({ owner: ownership, car: returnedCar });
-            serviceHistory.find({ vin: vin, reg: reg }).then((car) => {
-              if (car) {
-                serviceDetails = car;
-                console.log(serviceDetails);
-              } else {
-                console.log("Service History does not exist");
-              }
+        //Get ownership details about said car
+        ownershipHistory
+          .find(
+            { vin: vin, reg: reg }
+            /*{ yearPurchased: 1, millage: 1, city: 1, state: 1 }*/
+          )
+          .then((owner) => {
+            if (!owner) {
+              return res
+                .status(400)
+                .send("Ownership history does not exist! Data corrupt!");
+            } else {
+              //Get hashed data of owner details across said car
+              const oHash = ownerDataHashing(owner);
 
-              accidentHistory.find({ vin: vin, reg: reg }).then((car) => {
-                if (car) {
-                  accidentDetails = car;
-                  payload = [
-                    returnedCar,
-                    serviceDetails,
-                    ownershipDetails,
-                    accidentDetails,
-                  ];
-                  console.log(payload);
-                  return res.json({ car: payload });
+              //owner object returned from DB
+              const ownershipDetails = owner;
+              //Find service history across said car
+              serviceHistory.find({ vin: vin, reg: reg }).then((sHistory) => {
+                let sHash = null;
+                if (sHistory) {
+                  //Get hash of service details of said car
+                  sHash = serviceDataHashing(sHistory);
+                  //service details of car
+                  serviceDetails = sHistory;
                 } else {
-                  console.log("Accident History does not exist");
-                  payload = [
-                    returnedCar,
-                    serviceDetails,
-                    ownershipDetails,
-                    accidentDetails,
-                  ];
-                  console.log(payload);
-                  return res.json({ car: payload });
+                  console.log(
+                    "No records against service history for this vehicle exist!"
+                  );
+                  sHash = hash([]);
                 }
-              });
-            });
-          }
-          //retrieve data and send back to the client
-          //res.json({ owner: ownership, car: returnedCar });
-        });
+
+                //Find accident history for said vehicle
+                accidentHistory
+                  .find({ vin: vin, reg: reg })
+                  .then((aHistory) => {
+                    let aHash = null;
+                    if (aHistory) {
+                      //Get hash of accident data
+                      aHash = accidentDataHashing(aHistory);
+                      //accident records of car
+                      accidentDetails = aHistory;
+                    } else {
+                      console.log(
+                        "No records against accident history for this vehicle exist!"
+                      );
+                      aHash = hash([]);
+                    }
+                    //find block number for this vehicle
+                    informationHash
+                      .findOne({ vin: vin, reg: reg })
+                      .then((record) => {
+                        hashingTestSC.getPastEvents(
+                          "AllEvents",
+                          {
+                            fromBlock: record.block,
+                            toBlock: record.block,
+                          },
+                          (err, events) => {
+                            //Compare all 4 hashes
+                            //If any hash does not match then send appropriate response
+                            //If all hashes match then send data back to front end
+                            if (
+                              cHash == events[0].returnValues.carDetailsHash
+                            ) {
+                              console.log("Car Data Matched!");
+                              if (
+                                oHash == events[0].returnValues.ownerDetailsHash
+                              ) {
+                                console.log("owner data Matched!");
+                                if (
+                                  sHash ==
+                                  events[0].returnValues.serviceDetailsHash
+                                ) {
+                                  console.log("Service data Matched!");
+                                  if (
+                                    aHash ==
+                                    events[0].returnValues.accidentDetailsHash
+                                  ) {
+                                    console.log("Accident data Matched!");
+                                    //If hashes match and data is ok then make payload
+                                    payload = [
+                                      returnedCar,
+                                      serviceDetails,
+                                      ownershipDetails,
+                                      accidentDetails,
+                                    ];
+                                    //send the payload to the frontend
+                                    return res.json({ car: payload });
+                                  }
+                                } else {
+                                  console.log("Service Data Mismatch!");
+                                }
+                              } else {
+                                console.log("Owner Data Mismatch!");
+                              }
+                            } else {
+                              console.log("Car Data Mismatch!");
+                            }
+                          }
+                        ); //end then block for get events method
+                      }); //end then block for info hashes table
+                  }); //end then block for accident history
+              }); //end then block for service history
+            }
+          }); //end then block for owner history
+      }
     });
   }
 });
@@ -579,12 +733,13 @@ router.post("/CarEntry", (req, res) => {
             reg: data.regNumber,
             make: data.make,
             model: data.model,
-            year: data.year,
+            year: data.year.toString(),
             varaint: data.variant,
             type: data.type,
             fuel: data.fuel,
             drive: data.drive,
           };
+
           //Object of owner details
           const ownerData = {
             vin: data.vinNumber,
@@ -600,8 +755,8 @@ router.post("/CarEntry", (req, res) => {
           };
 
           //Hash of all 4 types of car data ready to be passed into SC
-          const carDataHashed = hash(carData);
-          const ownerDataHashed = hash(ownerData);
+          const carDataHashed = carDataHashing(carData);
+          const ownerDataHashed = ownerDataHashing(ownerData);
           const serviceDataHashed = hash([]);
           const accidentDataHashed = hash([]);
 
@@ -653,6 +808,7 @@ router.post("/CarEntry", (req, res) => {
                   });
                 }
               });
+
               res.send("The new car entry was sucessfully saved");
             }) //end then block of SC
             .catch((err) => console.log(err));
@@ -698,14 +854,13 @@ router.post("/OwnerTransfer", (req, res) => {
                   ownerContact: data.contact,
                   date: Date.now().toString(),
                 };
+                response.push(newOwnerData);
 
                 //Hashed car object
                 const carDataHashed = carDataHashing(car);
                 //Hash updated owner data
-                const ownerDataHashed = addToOwnerHistory(
-                  response,
-                  newOwnerData
-                );
+                const ownerDataHashed = ownerDataHashing(response);
+
                 //search service history for car
                 serviceHistory
                   .find({ vin: data.vinNumber, reg: data.regNumber })
@@ -808,7 +963,7 @@ router.post("/AccidentAndService", (req, res) => {
         const carDataHashed = carDataHashing(car);
         //search owner details of the car
         ownershipHistory
-          .findOne({ vin: car.vin, reg: car.reg })
+          .find({ vin: car.vin, reg: car.reg })
           .then((owner) => {
             //create hash of owner data
             const ownerDataHashed = ownerDataHashing(owner);

@@ -6,7 +6,7 @@ function hashOwnerData(data) {
       return {
         vin: item.vin,
         reg: item.reg,
-        yearPurchased: item.yearPurchased,
+        yearPurchased: item.yearPurchased.toString(),
         millage: item.millage,
         city: item.city,
         state: item.state,
@@ -16,12 +16,15 @@ function hashOwnerData(data) {
         date: item.date,
       };
     });
+    /*console.log("owner hashing file if array:");
+    console.log(newData);
+    console.log("\n " + hash(newData));*/
     return hash(newData);
   } else {
     const newObj = {
       vin: data.vin,
       reg: data.reg,
-      yearPurchased: data.yearPurchased,
+      yearPurchased: data.yearPurchased.toString(),
       millage: data.millage,
       city: data.city,
       state: data.state,
@@ -30,7 +33,12 @@ function hashOwnerData(data) {
       ownerContact: data.ownerContact,
       date: data.date,
     };
-    return hash(newObj);
+    const newObjArray = [];
+    newObjArray.push(newObj);
+    /*console.log("owner hashing file if object:");
+    console.log(newObjArray);
+    console.log("\n " + hash(newObjArray));*/
+    return hash(newObjArray);
   }
 }
 
