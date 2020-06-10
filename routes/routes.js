@@ -725,7 +725,9 @@ router.post("/CarEntry", (req, res) => {
       .then((car) => {
         //if car exists send error message
         if (car) {
-          return res.status(400).json({ error: "A vehile with this VIN or Reg Number already exists"});
+          return res.status(400).json({
+            error: "A vehile with this VIN or Reg Number already exists",
+          });
         } else {
           //Object of car details
           const carData = {
@@ -947,6 +949,7 @@ router.post("/OwnerTransfer", (req, res) => {
  */
 router.post("/AccidentAndService", (req, res) => {
   const data = req.body; //Extract data from body
+  console.log(data);
   const { errors, isValid } = AccidentAndServiceHistoryValidate(data); //Validate data
   //if data is not valid then send errors to front end
   if (!isValid) {
