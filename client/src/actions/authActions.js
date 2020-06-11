@@ -12,7 +12,11 @@ export const registerWorkshop = (userData, history) => (dispatch) => {
     .post("/workshopSignUp", userData)
     .then((res) => {
       console.log(res.data);
-      history.push("/login");
+
+      history.push({
+        pathname: "/success",
+        state: { message: res.data.success },
+      });
     })
     .catch((err) => {
       dispatch({

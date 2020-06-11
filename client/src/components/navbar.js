@@ -43,6 +43,8 @@ import PrivateRoute from "./private-route/PrivateRoute";
 import PrivateRouteRegAuth from "./private-route/PrivateRouteRegAuth";
 
 import styles from "./styles/navbar.module.css";
+import errorMessage from "./errorMessage";
+import Success from "./success";
 
 // (DANIAL)
 // Check for token to keep user logged in
@@ -158,6 +160,8 @@ class NavbarPage extends Component {
             <Route path="/alert" exact component={Alert} />
             <Route path="/transfer" exact component={Transfer} />
             <Route path="/newCar" exact component={newCar} />
+            <Route path="/error" exact component={errorMessage} />
+            <Route path="/success" exact component={Success} />
             <Route
               path="/searchResults/:opt&:id"
               exact

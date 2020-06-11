@@ -85,6 +85,11 @@ class CarResults extends Component {
         console.log(this.state);
       })
       .catch((err) => {
+        //redirect user to error page with appropriate message
+        this.props.history.push({
+          pathname: "/error",
+          state: { message: err.response.data.msg },
+        });
         console.log(err.response.data);
         this.setState({
           error: err.response.data,
@@ -201,9 +206,3 @@ class CarResults extends Component {
 }
 
 export default CarResults;
-
-/*
-<h1>{this.state.owner.state}</h1>
-<h1>{this.state.car.make}</h1>
-<h1>{this.state.car.model}</h1>
-*/

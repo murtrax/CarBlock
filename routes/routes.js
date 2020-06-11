@@ -13,7 +13,7 @@ const accidentHistory = require("./../models/carSchema/accidentHistory");
 const companyRegistrationTemp = require("./../models/workshopTemp/workshopRegistrationTemp");
 const companyRegistration = require("./../models/workshopRegistration");
 const informationHash = require("./../models/informationHash");
-const sparePart = require ("./../models/carSchema/sparePart")
+const sparePart = require("./../models/carSchema/sparePart");
 const adminLogin = require("./../models/adminLogin"); //YET TO BE CREATED
 
 //validation
@@ -37,83 +37,83 @@ const accidentDataHashing = require("./../hashingAndConversion/accidentDataHashi
  */
 const contractAbi = [
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
+        indexed: false,
+        internalType: "address",
+        name: "from",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "carDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "carDetailsHash",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "ownerDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "ownerDetailsHash",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "serviceDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "serviceDetailsHash",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "accidentDetailsHash",
-        "type": "string"
-      }
+        indexed: false,
+        internalType: "string",
+        name: "accidentDetailsHash",
+        type: "string",
+      },
     ],
-    "name": "Transferred",
-    "type": "event"
+    name: "Transferred",
+    type: "event",
   },
   {
-    "constant": false,
-    "inputs": [
+    constant: false,
+    inputs: [
       {
-        "internalType": "string",
-        "name": "_carDetailsHash",
-        "type": "string"
+        internalType: "string",
+        name: "_carDetailsHash",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "_ownerDetailsHash",
-        "type": "string"
+        internalType: "string",
+        name: "_ownerDetailsHash",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "_serviceDetailsHash",
-        "type": "string"
+        internalType: "string",
+        name: "_serviceDetailsHash",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "_accidentDetailsHash",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "_accidentDetailsHash",
+        type: "string",
+      },
     ],
-    "name": "eventGenerator",
-    "outputs": [
+    name: "eventGenerator",
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "success",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
     ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
-const contractAddress = "0x402aBFa55c923a647FAfAe7b37676dF44734742c";
+const contractAddress = "0xC845e757c1b7e226EE85130bfCC178d13d4228F2";
 const web3js = new web3();
-web3js.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+web3js.setProvider(new web3.providers.HttpProvider("http://localhost:9545"));
 const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
 
 let accounts = [];
@@ -386,7 +386,7 @@ router.post("/workshopSignUp", (req, res) => {
                     .json({ error: "Error saving data to database" });
                 } else {
                   return res.json({
-                    sucess:
+                    success:
                       "We have recived your application, We will contact you soon",
                   });
                 }
@@ -502,7 +502,7 @@ router.post("/searchCar", (req, res) => {
                 //Find accident history for said vehicle
                 accidentHistory
                   .find({ vin: vin, reg: reg })
-                  .then((aHistory) => {
+                  .then(async (aHistory) => {
                     let aHash = null;
                     if (aHistory) {
                       //Get hash of accident data
@@ -515,60 +515,36 @@ router.post("/searchCar", (req, res) => {
                       );
                       aHash = hash([]);
                     }
-                    //find block number for this vehicle
-                    informationHash
-                      .findOne({ vin: vin, reg: reg })
-                      .then((record) => {
-                        hashingTestSC.getPastEvents(
-                          "AllEvents",
-                          {
-                            fromBlock: record.block,
-                            toBlock: record.block,
-                          },
-                          (err, events) => {
-                            //Compare all 4 hashes
-                            //If any hash does not match then send appropriate response
-                            //If all hashes match then send data back to front end
-                            if (
-                              cHash == events[0].returnValues.carDetailsHash
-                            ) {
-                              console.log("Car Data Matched!");
-                              if (
-                                oHash == events[0].returnValues.ownerDetailsHash
-                              ) {
-                                console.log("owner data Matched!");
-                                if (
-                                  sHash ==
-                                  events[0].returnValues.serviceDetailsHash
-                                ) {
-                                  console.log("Service data Matched!");
-                                  if (
-                                    aHash ==
-                                    events[0].returnValues.accidentDetailsHash
-                                  ) {
-                                    console.log("Accident data Matched!");
-                                    //If hashes match and data is ok then make payload
-                                    payload = [
-                                      returnedCar,
-                                      serviceDetails,
-                                      ownershipDetails,
-                                      accidentDetails,
-                                    ];
-                                    //send the payload to the frontend
-                                    return res.json({ car: payload });
-                                  }
-                                } else {
-                                  console.log("Service Data Mismatch!");
-                                }
-                              } else {
-                                console.log("Owner Data Mismatch!");
-                              }
-                            } else {
-                              console.log("Car Data Mismatch!");
-                            }
-                          }
-                        ); //end then block for get events method
-                      }); //end then block for info hashes table
+
+                    //Check if existing data is correct with the blockchain hashes
+                    await compareExistingRecords(
+                      vin,
+                      reg,
+                      cHash,
+                      oHash,
+                      sHash,
+                      aHash
+                    )
+                      .then((bool) => {
+                        if (bool) {
+                          //If hashes match and data is ok then make payload
+                          payload = [
+                            returnedCar,
+                            serviceDetails,
+                            ownershipDetails,
+                            accidentDetails,
+                          ];
+                          //send the payload to the frontend
+                          return res.json({ car: payload });
+                        }
+                      })
+                      .catch((err) => {
+                        res.status(400).json({
+                          msg:
+                            "The existing records in the database are not valid! We apologise for the inconvenience! ",
+                          typeMismatch: err.message,
+                        });
+                      });
                   }); //end then block for accident history
               }); //end then block for service history
             }
@@ -629,7 +605,7 @@ router.post("/searchCar", (req, res) => {
                 //Find accident history for said vehicle
                 accidentHistory
                   .find({ vin: vin, reg: reg })
-                  .then((aHistory) => {
+                  .then(async (aHistory) => {
                     let aHash = null;
                     if (aHistory) {
                       //Get hash of accident data
@@ -642,60 +618,36 @@ router.post("/searchCar", (req, res) => {
                       );
                       aHash = hash([]);
                     }
-                    //find block number for this vehicle
-                    informationHash
-                      .findOne({ vin: vin, reg: reg })
-                      .then((record) => {
-                        hashingTestSC.getPastEvents(
-                          "AllEvents",
-                          {
-                            fromBlock: record.block,
-                            toBlock: record.block,
-                          },
-                          (err, events) => {
-                            //Compare all 4 hashes
-                            //If any hash does not match then send appropriate response
-                            //If all hashes match then send data back to front end
-                            if (
-                              cHash == events[0].returnValues.carDetailsHash
-                            ) {
-                              console.log("Car Data Matched!");
-                              if (
-                                oHash == events[0].returnValues.ownerDetailsHash
-                              ) {
-                                console.log("owner data Matched!");
-                                if (
-                                  sHash ==
-                                  events[0].returnValues.serviceDetailsHash
-                                ) {
-                                  console.log("Service data Matched!");
-                                  if (
-                                    aHash ==
-                                    events[0].returnValues.accidentDetailsHash
-                                  ) {
-                                    console.log("Accident data Matched!");
-                                    //If hashes match and data is ok then make payload
-                                    payload = [
-                                      returnedCar,
-                                      serviceDetails,
-                                      ownershipDetails,
-                                      accidentDetails,
-                                    ];
-                                    //send the payload to the frontend
-                                    return res.json({ car: payload });
-                                  }
-                                } else {
-                                  console.log("Service Data Mismatch!");
-                                }
-                              } else {
-                                console.log("Owner Data Mismatch!");
-                              }
-                            } else {
-                              console.log("Car Data Mismatch!");
-                            }
-                          }
-                        ); //end then block for get events method
-                      }); //end then block for info hashes table
+
+                    //Check if existing data is correct with the blockchain hashes
+                    await compareExistingRecords(
+                      vin,
+                      reg,
+                      cHash,
+                      oHash,
+                      sHash,
+                      aHash
+                    )
+                      .then((bool) => {
+                        if (bool) {
+                          //If hashes match and data is ok then make payload
+                          payload = [
+                            returnedCar,
+                            serviceDetails,
+                            ownershipDetails,
+                            accidentDetails,
+                          ];
+                          //send the payload to the frontend
+                          return res.json({ car: payload });
+                        }
+                      })
+                      .catch((err) => {
+                        res.status(400).json({
+                          msg:
+                            "The existing records in the database are not valid! We apologise for the inconvenience! --- " +
+                            err.message,
+                        });
+                      });
                   }); //end then block for accident history
               }); //end then block for service history
             }
@@ -830,7 +782,7 @@ router.post("/OwnerTransfer", (req, res) => {
   const { errors, isValid } = ownerTransferValidate(data);
   //if data is not valid, send error message to front end
   if (!isValid) {
-    return res.status(400).json({ errors: errors, isValid: isValid });
+    return res.status(305).json({ errors: errors, isValid: isValid });
   } else {
     //find if this car exists in the database
     carDetails
@@ -856,6 +808,10 @@ router.post("/OwnerTransfer", (req, res) => {
                   ownerContact: data.contact,
                   date: Date.now().toString(),
                 };
+                //Use this value to compare values in the BC before updating
+                const ownerHashToCompare = ownerDataHashing(newOwnerData);
+
+                //add new record to the object
                 response.push(newOwnerData);
 
                 //Hashed car object
@@ -877,7 +833,7 @@ router.post("/OwnerTransfer", (req, res) => {
                     //search accident history for car
                     accidentHistory
                       .find({ vin: data.vinNumber, reg: data.regNumber })
-                      .then((accident) => {
+                      .then(async (accident) => {
                         let accidentDataHashed = null;
                         //if accident records exist then calculate their hash else find hash of empty array
                         if (accident) {
@@ -886,39 +842,61 @@ router.post("/OwnerTransfer", (req, res) => {
                           accidentDataHashed = hash([]);
                         }
 
-                        //Call smart contract with hashed data to store in event
-                        hashingTestSC.methods
-                          .eventGenerator(
-                            carDataHashed,
-                            ownerDataHashed,
-                            serviceDataHashed,
-                            accidentDataHashed
-                          )
-                          .send({ from: accounts[0], gas: 3000000 })
-                          .then((response) => {
-                            //Check if a record across this car already exists
-                            informationHash
-                              .findOne({
-                                vin: data.vinNumber,
-                                reg: data.regNumber,
-                              })
-                              .then((record) => {
-                                //if record exists update it else create new record
-                                updateOrCreateEntryInHashTable(
-                                  record,
-                                  response,
-                                  data.vinNumber,
-                                  data.regNumber
-                                );
-                                console.log("Transaction Completed!");
+                        //Compare hashes of existing records before starting  a new transaction and updating values
+                        await compareExistingRecords(
+                          data.vinNumber,
+                          data.regNumber,
+                          carDataHashed,
+                          ownerHashToCompare,
+                          serviceDataHashed,
+                          accidentDataHashed
+                        )
+                          .then((bool) => {
+                            if (bool) {
+                              //Call smart contract with hashed data to store in event
+                              hashingTestSC.methods
+                                .eventGenerator(
+                                  carDataHashed,
+                                  ownerDataHashed,
+                                  serviceDataHashed,
+                                  accidentDataHashed
+                                )
+                                .send({ from: accounts[0], gas: 3000000 })
+                                .then((response) => {
+                                  //Check if a record across this car already exists
+                                  informationHash
+                                    .findOne({
+                                      vin: data.vinNumber,
+                                      reg: data.regNumber,
+                                    })
+                                    .then((record) => {
+                                      //if record exists update it else create new record
+                                      updateOrCreateEntryInHashTable(
+                                        record,
+                                        response,
+                                        data.vinNumber,
+                                        data.regNumber
+                                      );
+                                      console.log("Transaction Completed!");
 
-                                //save new owner into db
-                                const OwnerTransfer = new ownershipHistory(
-                                  newOwnerData
-                                );
-                                OwnerTransfer.save();
-                                res.send("Owner Transferred Successfully!");
-                              });
+                                      //save new owner into db
+                                      const OwnerTransfer = new ownershipHistory(
+                                        newOwnerData
+                                      );
+                                      OwnerTransfer.save();
+                                      res.send(
+                                        "Owner Transferred Successfully!"
+                                      );
+                                    });
+                                });
+                            }
+                          })
+                          .catch((err) => {
+                            res.status(400).json({
+                              msg:
+                                "The existing records in the database are not valid! We apologise for the inconvenience! --- " +
+                                err.message,
+                            });
                           });
                       });
                   });
@@ -1011,36 +989,39 @@ router.post("/AccidentAndService", (req, res) => {
                     //the payload object accordingly
                     if (data.sparePart1 != "") {
                       payload.sparePart1 = data.sparePart1;
-                        await verify(data.sparePart1).then((T)=> {
+                      await verify(data.sparePart1)
+                        .then((T) => {
                           console.log(T);
                           payload.isValid1 = T;
                         })
-                        .catch((err)=> {
+                        .catch((err) => {
                           console.log(err);
-                          payload.isValid1 = "N/A"
-                        })                 
+                          payload.isValid1 = "N/A";
+                        });
                     }
-                    if (data.sparePart2 != "")  {
+                    if (data.sparePart2 != "") {
                       payload.sparePart2 = data.sparePart2;
-                        await verify(data.sparePart2).then((T)=> {
+                      await verify(data.sparePart2)
+                        .then((T) => {
                           console.log(T);
                           payload.isValid2 = T;
                         })
-                        .catch((err)=> {
+                        .catch((err) => {
                           console.log(err);
-                          payload.isValid2 = "N/A"
-                        })                 
+                          payload.isValid2 = "N/A";
+                        });
                     }
                     if (data.sparePart3 != "") {
                       payload.sparePart3 = data.sparePart3;
-                        await verify(data.sparePart3).then((T)=> {
+                      await verify(data.sparePart3)
+                        .then((T) => {
                           console.log(T);
                           payload.isValid3 = T;
                         })
-                        .catch((err)=> {
+                        .catch((err) => {
                           console.log(err);
-                          payload.isValid3 = "N/A"
-                        })                 
+                          payload.isValid3 = "N/A";
+                        });
                     }
                     console.log(payload);
                     //if the user selected to enter service history then
@@ -1206,25 +1187,82 @@ function updateOrCreateEntryInHashTable(record, response, vinNum, regNum) {
     newInformationHash.save();
   }
 }
-  async function verify (sp1)  { 
-    return new Promise ( (resolve, reject)=> {
-      sparePart.find({id : sp1})
-    .then((sparePart)=>{
-      if (sparePart.length > 0) {
-        console.log(sparePart);
-        let T = true;
-        resolve(T);
-      }
-      else {
-        let F = false
-        resolve(F);
-      }
-    })
-    .catch((error)=> {
-      reject(error);
-    })
-  }
-  )
-  
-};
+
+//This function checks if existing data hashes in the database corresspond to
+//the ones in the blockchain before initiating a new transaction
+async function compareExistingRecords(
+  vin,
+  reg,
+  carData,
+  ownerData,
+  serviceData,
+  accidentData
+) {
+  return new Promise((resolve, reject) => {
+    informationHash.findOne({ vin: vin, reg: reg }).then((record) => {
+      hashingTestSC.getPastEvents(
+        "AllEvents",
+        {
+          fromBlock: record.block,
+          toBlock: record.block,
+        },
+        (err, events) => {
+          //Compare all 4 hashes
+          //If any hash does not match then send appropriate response
+          //If all hashes match then send data back to front end
+          if (carData == events[0].returnValues.carDetailsHash) {
+            console.log("Car Data Matched!");
+            if (ownerData == events[0].returnValues.ownerDetailsHash) {
+              console.log("owner data Matched!");
+              if (serviceData == events[0].returnValues.serviceDetailsHash) {
+                console.log("Service data Matched!");
+                if (
+                  accidentData == events[0].returnValues.accidentDetailsHash
+                ) {
+                  console.log("Accident data Matched!");
+                  //If hashes match and data is ok then make payload
+                  resolve(true);
+                }
+              } else {
+                reject({
+                  message: "Service Data Mismatch!",
+                });
+              }
+            } else {
+              reject({
+                message: "Owner Data Mismatch!",
+              });
+            }
+          } else {
+            reject({
+              message: "Car Data Mismatch!",
+            });
+          }
+        }
+      ); //end then block for get events method
+    }); //end then block for info hashes table
+  });
+}
+
+//Verify Spareparts
+async function verify(sp1) {
+  return new Promise((resolve, reject) => {
+    sparePart
+      .find({ id: sp1 })
+      .then((sparePart) => {
+        if (sparePart.length > 0) {
+          console.log(sparePart);
+          let T = true;
+          resolve(T);
+        } else {
+          let F = false;
+          resolve(F);
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
 module.exports = router;

@@ -67,13 +67,20 @@ class FormPage extends React.Component {
         this.resetFields();
       })
       .catch((err) => {
-        console.log(err.response.data.errors);
-        this.setState({
-          errors: err.response.data.errors,
-        });
-        this.setState({
-          errorBool: "true",
-        });
+        if (err.response.status == 400) {
+          this.setState({
+            errorBool: "false",
+          });
+          console.log(err.response.data);
+        } else {
+          console.log(err.response.data.errors);
+          this.setState({
+            errors: err.response.data.errors,
+          });
+          this.setState({
+            errorBool: "true",
+          });
+        }
       });
   };
 
