@@ -32,6 +32,15 @@ const serviceHistorySchema = new Schema({
   sparePart3: {
     type: String,
   },
+  isValid1: {
+    type: String,
+  },
+  isValid2: {
+    type: String,
+  },
+  isValid3: {
+    type: String,
+  },
 });
 
 const serviceHistory = mongoose.model("serviceHistory", serviceHistorySchema);

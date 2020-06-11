@@ -37,83 +37,83 @@ const accidentDataHashing = require("./../hashingAndConversion/accidentDataHashi
  */
 const contractAbi = [
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: false,
-        internalType: "address",
-        name: "from",
-        type: "address",
+        "indexed": false,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "carDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "carDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "ownerDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "ownerDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "serviceDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "serviceDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "accidentDetailsHash",
-        type: "string",
-      },
+        "indexed": false,
+        "internalType": "string",
+        "name": "accidentDetailsHash",
+        "type": "string"
+      }
     ],
-    name: "Transferred",
-    type: "event",
+    "name": "Transferred",
+    "type": "event"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        internalType: "string",
-        name: "_carDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_carDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_ownerDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_ownerDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_serviceDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_serviceDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_accidentDetailsHash",
-        type: "string",
-      },
+        "internalType": "string",
+        "name": "_accidentDetailsHash",
+        "type": "string"
+      }
     ],
-    name: "eventGenerator",
-    outputs: [
+    "name": "eventGenerator",
+    "outputs": [
       {
-        internalType: "bool",
-        name: "success",
-        type: "bool",
-      },
+        "internalType": "bool",
+        "name": "success",
+        "type": "bool"
+      }
     ],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ];
 
-const contractAddress = "0x1f3e6fFf32C89EB366831f16638c995BF2C1bCFB";
+const contractAddress = "0x402aBFa55c923a647FAfAe7b37676dF44734742c";
 const web3js = new web3();
-web3js.setProvider(new web3.providers.HttpProvider("http://localhost:9545"));
+web3js.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
 const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
 
 let accounts = [];
@@ -986,7 +986,7 @@ router.post("/AccidentAndService", (req, res) => {
                 }
                 accidentHistory
                   .find({ vin: car.vin, reg: car.reg })
-                  .then((aHistory) => {
+                  .then(async (aHistory) => {
                     let accidentData = [];
                     if (aHistory) {
                       //add old accident history records to data to be hashed
@@ -1011,14 +1011,38 @@ router.post("/AccidentAndService", (req, res) => {
                     //the payload object accordingly
                     if (data.sparePart1 != "") {
                       payload.sparePart1 = data.sparePart1;
+                        await verify(data.sparePart1).then((T)=> {
+                          console.log(T);
+                          payload.isValid1 = T;
+                        })
+                        .catch((err)=> {
+                          console.log(err);
+                          payload.isValid1 = "N/A"
+                        })                 
                     }
-                    if (data.sparePart2 != "") {
+                    if (data.sparePart2 != "")  {
                       payload.sparePart2 = data.sparePart2;
+                        await verify(data.sparePart2).then((T)=> {
+                          console.log(T);
+                          payload.isValid2 = T;
+                        })
+                        .catch((err)=> {
+                          console.log(err);
+                          payload.isValid2 = "N/A"
+                        })                 
                     }
                     if (data.sparePart3 != "") {
                       payload.sparePart3 = data.sparePart3;
+                        await verify(data.sparePart3).then((T)=> {
+                          console.log(T);
+                          payload.isValid3 = T;
+                        })
+                        .catch((err)=> {
+                          console.log(err);
+                          payload.isValid3 = "N/A"
+                        })                 
                     }
-
+                    console.log(payload);
                     //if the user selected to enter service history then
                     if (data.activeItem == "1") {
                       //add latest record to service history object
@@ -1182,5 +1206,25 @@ function updateOrCreateEntryInHashTable(record, response, vinNum, regNum) {
     newInformationHash.save();
   }
 }
-
+  async function verify (sp1)  { 
+    return new Promise ( (resolve, reject)=> {
+      sparePart.find({id : sp1})
+    .then((sparePart)=>{
+      if (sparePart.length > 0) {
+        console.log(sparePart);
+        let T = true;
+        resolve(T);
+      }
+      else {
+        let F = false
+        resolve(F);
+      }
+    })
+    .catch((error)=> {
+      reject(error);
+    })
+  }
+  )
+  
+};
 module.exports = router;

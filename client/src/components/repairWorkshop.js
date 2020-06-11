@@ -100,6 +100,7 @@ class TabsDefault extends Component {
       .catch((err) => {
         if (err.response.request.status === 400) {
           console.log("error");
+          console.log(err.response)
           this.setState({
             msg: err.response.data.error,
             errorBool: "false",
@@ -268,7 +269,7 @@ class TabsDefault extends Component {
                                 </i>
                                 <input
                                   id="icon_prefix"
-                                  type="number"
+                                  type="text"
                                   name="sparePart1"
                                   value={this.state.sparePart1}
                                   onChange={this.handleChange}
@@ -283,7 +284,7 @@ class TabsDefault extends Component {
                                 </i>
                                 <input
                                   id="icon_prefix"
-                                  type="number"
+                                  type="text"
                                   name="sparePart2"
                                   value={this.state.sparePart2}
                                   onChange={this.handleChange}
@@ -298,7 +299,7 @@ class TabsDefault extends Component {
                                 </i>
                                 <input
                                   id="icon_prefix"
-                                  type="number"
+                                  type="text"
                                   name="sparePart3"
                                   value={this.state.sparePart3}
                                   onChange={this.handleChange}
