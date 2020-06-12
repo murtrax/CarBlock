@@ -2,20 +2,19 @@ const mongoose = require ("mongoose");
 
 const Schema = mongoose.Schema;
 
-const accidentHistorySchema = new Schema({
+const alertSchema = new Schema({
     reg: String, 
     date: String,
     //millage at the time of service
     millage: String,
     garage: String,
     //the details of what type of accident was it, front end collision
-    comments: String,
-    //were any airbags deployed, yes or no
-    airBagsDeployed: Boolean,
-    sturturalDamage: Boolean, 
-    ownerCNIC: String, 
+    comments: String, 
+    sparePart1: String,
+    sparePart2: String,
+    sparePart3: String,
 })
 
-const  accidentHistory = mongoose.model("accidentHistorySchema",  accidentHistorySchema);
+const  alert = mongoose.model("alert",  alertSchema);
 
-module.exports =  accidentHistory;
+module.exports =  alert;

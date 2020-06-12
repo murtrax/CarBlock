@@ -87,6 +87,7 @@ class TabsDefault extends Component {
       sparePart1: this.state.sparePart1,
       sparePart2: this.state.sparePart2,
       sparePart3: this.state.sparePart3,
+      garage: this.props.auth.user.name,
     };
     axios({
       url: "/AccidentAndService",
@@ -100,7 +101,7 @@ class TabsDefault extends Component {
       .catch((err) => {
         if (err.response.request.status === 400) {
           console.log("error");
-          console.log(err.response)
+          console.log(err.response.data.error)
           this.setState({
             msg: err.response.data.error,
             errorBool: "false",
@@ -150,6 +151,7 @@ class TabsDefault extends Component {
   };
 
   render() {
+    console.log(this.props.auth.user.name);
     return (
       <div>
         <MDBRow>
@@ -308,7 +310,9 @@ class TabsDefault extends Component {
                               </div>
                             </div>
                           </div>
-
+                          <label style={{ color: "red", fontSize: "13" }}>
+                            {this.state.msg}
+                          </label>
                           <div className="row text-center">
                             <button
                               className="btn waves-effect waves-light"
