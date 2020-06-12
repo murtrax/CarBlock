@@ -13,7 +13,7 @@ const accidentHistory = require("./../models/carSchema/accidentHistory");
 const companyRegistrationTemp = require("./../models/workshopTemp/workshopRegistrationTemp");
 const companyRegistration = require("./../models/workshopRegistration");
 const informationHash = require("./../models/informationHash");
-const sparePart = require ("./../models/carSchema/sparePart")
+const sparePart = require("./../models/carSchema/sparePart");
 const alert = require("./../models/alertSchema/alert");
 const adminLogin = require("./../models/adminLogin"); //YET TO BE CREATED
 
@@ -457,9 +457,9 @@ router.post("/searchCar", (req, res) => {
     carDetails.findOne({ vin: data.number }).then((car) => {
       //If car does not exist then
       if (!car) {
-        return res
-          .status(400)
-          .send("There is nor registered vehicle across this Vin number!");
+        return res.status(400).json({
+          msg: "There is no registered vehicle across this vin number!",
+        });
       } else {
         //Get Hash of car data after converting into valid object
         const cHash = carDataHashing(car);
@@ -475,14 +475,14 @@ router.post("/searchCar", (req, res) => {
           )
           .then((owner) => {
             if (!owner) {
-              return res
-                .status(400)
-                .send("Ownership history does not exist! Data corrupt!");
+              return res.status(400).json({
+                msg: "Ownership history does not exist! Data corrupt!",
+              });
             } else {
               //Get hashed data of owner details across said car
               //console.log("owner retreived from db: " + owner);
               const oHash = ownerDataHashing(owner);
-              console.log("oHash aftre db retrieval: " + oHash);
+
               //owner object returned from DB
               const ownershipDetails = owner;
               //Find service history across said car
@@ -516,60 +516,39 @@ router.post("/searchCar", (req, res) => {
                       );
                       aHash = hash([]);
                     }
-                    //find block number for this vehicle
-                    informationHash
-                      .findOne({ vin: vin, reg: reg })
-                      .then((record) => {
-                        hashingTestSC.getPastEvents(
-                          "AllEvents",
-                          {
-                            fromBlock: record.block,
-                            toBlock: record.block,
-                          },
-                          (err, events) => {
-                            //Compare all 4 hashes
-                            //If any hash does not match then send appropriate response
-                            //If all hashes match then send data back to front end
-                            if (
-                              cHash == events[0].returnValues.carDetailsHash
-                            ) {
-                              console.log("Car Data Matched!");
-                              if (
-                                oHash == events[0].returnValues.ownerDetailsHash
-                              ) {
-                                console.log("owner data Matched!");
-                                if (
-                                  sHash ==
-                                  events[0].returnValues.serviceDetailsHash
-                                ) {
-                                  console.log("Service data Matched!");
-                                  if (
-                                    aHash ==
-                                    events[0].returnValues.accidentDetailsHash
-                                  ) {
-                                    console.log("Accident data Matched!");
-                                    //If hashes match and data is ok then make payload
-                                    payload = [
-                                      returnedCar,
-                                      serviceDetails,
-                                      ownershipDetails,
-                                      accidentDetails,
-                                    ];
-                                    //send the payload to the frontend
-                                    return res.json({ car: payload });
-                                  }
-                                } else {
-                                  console.log("Service Data Mismatch!");
-                                }
-                              } else {
-                                console.log("Owner Data Mismatch!");
-                              }
-                            } else {
-                              console.log("Car Data Mismatch!");
-                            }
-                          }
-                        ); //end then block for get events method
-                      }); //end then block for info hashes table
+                    //Check hashes and if data is not corrupt then initiate a new transaction
+                    await compareExistingRecords(
+                      vin,
+                      reg,
+                      cHash,
+                      oHash,
+                      sHash,
+                      aHash
+                    )
+                      .then((bool) => {
+                        payload = [
+                          returnedCar,
+                          serviceDetails,
+                          ownershipDetails,
+                          accidentDetails,
+                        ];
+                        //send the payload to the frontend
+                        return res.json({ car: payload });
+                      })
+                      .catch((err) => {
+                        if (err.BCerror) {
+                          res.status(305).json({
+                            msg: err.BCerror,
+                          });
+                        } else {
+                          res.status(305).json({
+                            msg:
+                              "Unfortunately the " +
+                              err.message +
+                              " in our records has been corrupted! We apologise for the inconvenience!",
+                          });
+                        }
+                      });
                   }); //end then block for accident history
               }); //end then block for service history
             }
@@ -583,11 +562,10 @@ router.post("/searchCar", (req, res) => {
     carDetails.findOne({ reg: data.number }).then((car) => {
       //If car does not exist then
       if (!car) {
-        return res
-          .status(400)
-          .send(
-            "There is no registered vehicle across this Registration number!"
-          );
+        return res.status(400).json({
+          msg:
+            "There is no registered vehicle across this registration number!",
+        });
       } else {
         //Get Hash of car data after converting into valid object
         const cHash = carDataHashing(car);
@@ -603,9 +581,9 @@ router.post("/searchCar", (req, res) => {
           )
           .then((owner) => {
             if (!owner) {
-              return res
-                .status(400)
-                .send("Ownership history does not exist! Data corrupt!");
+              return res.status(400).json({
+                msg: "Ownership history does not exist! Data corrupt!",
+              });
             } else {
               //Get hashed data of owner details across said car
               const oHash = ownerDataHashing(owner);
@@ -643,60 +621,42 @@ router.post("/searchCar", (req, res) => {
                       );
                       aHash = hash([]);
                     }
-                    //find block number for this vehicle
-                    informationHash
-                      .findOne({ vin: vin, reg: reg })
-                      .then((record) => {
-                        hashingTestSC.getPastEvents(
-                          "AllEvents",
-                          {
-                            fromBlock: record.block,
-                            toBlock: record.block,
-                          },
-                          (err, events) => {
-                            //Compare all 4 hashes
-                            //If any hash does not match then send appropriate response
-                            //If all hashes match then send data back to front end
-                            if (
-                              cHash == events[0].returnValues.carDetailsHash
-                            ) {
-                              console.log("Car Data Matched!");
-                              if (
-                                oHash == events[0].returnValues.ownerDetailsHash
-                              ) {
-                                console.log("owner data Matched!");
-                                if (
-                                  sHash ==
-                                  events[0].returnValues.serviceDetailsHash
-                                ) {
-                                  console.log("Service data Matched!");
-                                  if (
-                                    aHash ==
-                                    events[0].returnValues.accidentDetailsHash
-                                  ) {
-                                    console.log("Accident data Matched!");
-                                    //If hashes match and data is ok then make payload
-                                    payload = [
-                                      returnedCar,
-                                      serviceDetails,
-                                      ownershipDetails,
-                                      accidentDetails,
-                                    ];
-                                    //send the payload to the frontend
-                                    return res.json({ car: payload });
-                                  }
-                                } else {
-                                  console.log("Service Data Mismatch!");
-                                }
-                              } else {
-                                console.log("Owner Data Mismatch!");
-                              }
-                            } else {
-                              console.log("Car Data Mismatch!");
-                            }
-                          }
-                        ); //end then block for get events method
-                      }); //end then block for info hashes table
+
+                    //Check hashes and if data is not corrupt then initiate a new transaction
+                    await compareExistingRecords(
+                      vin,
+                      reg,
+                      cHash,
+                      oHash,
+                      sHash,
+                      aHash
+                    )
+                      .then((bool) => {
+                        if (bool) {
+                          payload = [
+                            returnedCar,
+                            serviceDetails,
+                            ownershipDetails,
+                            accidentDetails,
+                          ];
+                          //send the payload to the frontend
+                          return res.json({ car: payload });
+                        }
+                      })
+                      .catch((err) => {
+                        if (err.BCerror) {
+                          res.status(305).json({
+                            msg: err.BCerror,
+                          });
+                        } else {
+                          res.status(305).json({
+                            msg:
+                              "Unfortunately the " +
+                              err.message +
+                              " in our records has been corrupted! We apologise for the inconvenience!",
+                          });
+                        }
+                      });
                   }); //end then block for accident history
               }); //end then block for service history
             }
@@ -851,6 +811,14 @@ router.post("/OwnerTransfer", (req, res) => {
               carDetailsMillage = response[0].millage;
               //if owner data exists in the db
               if (response) {
+                if (response.length > 1) {
+                  carDetailsMillage = response[response.length - 1].millage;
+                } else if (response.length === 1) {
+                  console.log(response[0]);
+                  carDetailsMillage = response[0].millage;
+                } else {
+                  carDetailsMillage = 0;
+                }
                 //make data object for new owner
                 const newOwnerData = {
                   vin: data.vinNumber,
@@ -864,6 +832,7 @@ router.post("/OwnerTransfer", (req, res) => {
                   ownerContact: data.contact,
                   date: Date.now().toString(),
                 };
+                const ownerHashToBeCompared = ownerDataHashing(response);
                 response.push(newOwnerData);
 
                 //Hashed car object
@@ -878,7 +847,16 @@ router.post("/OwnerTransfer", (req, res) => {
                     let serviceDataHashed = null;
                     //if service records exist then calculate their hash else find hash of empty array
                     if (service) {
-                      serviceMillage = service[service.length - 1].millage;
+                      if (service.length > 1) {
+                        console.log("Printing Service History");
+                        serviceMillage = service[service.length - 1].millage;
+                        console.log(serviceMillage);
+                        console.log("End Service History");
+                      }
+                      if (service.length === 1) {
+                        serviceMillage = service[0].millage;
+                      }
+
                       serviceDataHashed = serviceDataHashing(service);
                     } else {
                       serviceDataHashed = hash([]);
@@ -890,82 +868,129 @@ router.post("/OwnerTransfer", (req, res) => {
                         let accidentDataHashed = null;
                         //if accident records exist then calculate their hash else find hash of empty array
                         if (accident) {
-                          accidentMillage = accident[accident.length - 1].millage;
+                          if (accident.length > 1) {
+                            accidentMillage =
+                              accident[accident.length - 1].millage;
+                          }
+                          if (accident.length == 1) {
+                            accidentMillage = accident[0].millage;
+                          }
+
                           accidentDataHashed = accidentDataHashing(accident);
                         } else {
                           accidentDataHashed = hash([]);
                         }
 
-                        const millageData =[
-                          {name :"accident", millage: accidentMillage },
-                          {name: "service", millage: serviceMillage},
-                          {name: "carDetails", millage: carDetailsMillage},
-                          {name: "millageCurrent", millage: millageCurrent}
-                        ]
+                        await compareExistingRecords(
+                          data.vinNumber,
+                          data.regNumber,
+                          carDataHashed,
+                          ownerHashToBeCompared,
+                          serviceDataHashed,
+                          accidentDataHashed
+                        )
+                          .then(async (bool) => {
+                            if (bool) {
+                              const millageData = [
+                                { name: "accident", millage: accidentMillage },
+                                { name: "service", millage: serviceMillage },
+                                {
+                                  name: "carDetails",
+                                  millage: carDetailsMillage,
+                                },
+                                {
+                                  name: "millageCurrent",
+                                  millage: millageCurrent,
+                                },
+                              ];
 
-                      await highestMillage(millageData)
-                      .then(async (res1)=> {
-                        console.log(res1);
-                        if(res1.name != "millageCurrent") {
-                          const alertPayload = {
-                            reg: data.reg,
-                            date: todaysDate,
-                            millage: res1.millage,
-                            comments: "Milage entered was less than a previously recorded value",
-                            //garage: data.garage
-                          }
-                          console.log(alertPayload)
-                          const newAlert = new alert(
-                            alertPayload
-                          );
-                            await newAlert.save((error) => {
-                            if (error) {
-                              console.log(error)
-                             return res.status(400).json({error: "There was an error in recording an alert"})
-                            }
-                            else {
-                              console.log("New alert saved");
-                              return res.status(400).json({error: "The milage you are trying to enter is less than a previously recorded value"})
-                            }
-                        })
-                      }
-                    else {
-                       //Call smart contract with hashed data to store in event
-                       hashingTestSC.methods
-                       .eventGenerator(
-                         carDataHashed,
-                         ownerDataHashed,
-                         serviceDataHashed,
-                         accidentDataHashed
-                       )
-                       .send({ from: accounts[0], gas: 3000000 })
-                       .then((response) => {
-                         //Check if a record across this car already exists
-                         informationHash
-                           .findOne({
-                             vin: data.vinNumber,
-                             reg: data.regNumber,
-                           })
-                           .then((record) => {
-                             //if record exists update it else create new record
-                             updateOrCreateEntryInHashTable(
-                               record,
-                               response,
-                               data.vinNumber,
-                               data.regNumber
-                             );
-                             console.log("Transaction Completed!");
+                              await highestMillage(millageData).then(
+                                async (res1) => {
+                                  console.log(res1);
+                                  if (res1.name != "millageCurrent") {
+                                    const alertPayload = {
+                                      reg: data.reg,
+                                      date: todaysDate,
+                                      millage: res1.millage,
+                                      comments:
+                                        "Milage entered was less than a previously recorded value in owner transfer section!",
+                                      //garage: data.garage
+                                    };
+                                    console.log(alertPayload);
+                                    const newAlert = new alert(alertPayload);
+                                    await newAlert.save((error) => {
+                                      if (error) {
+                                        console.log(error);
+                                        return res.status(400).json({
+                                          error:
+                                            "There was an error in recording an alert",
+                                        });
+                                      } else {
+                                        console.log("New alert saved");
+                                        return res.status(400).json({
+                                          error:
+                                            "The milage you are trying to enter is less than a previously recorded value",
+                                        });
+                                      }
+                                    });
+                                  } else {
+                                    //Call smart contract with hashed data to store in event
+                                    hashingTestSC.methods
+                                      .eventGenerator(
+                                        carDataHashed,
+                                        ownerDataHashed,
+                                        serviceDataHashed,
+                                        accidentDataHashed
+                                      )
+                                      .send({ from: accounts[0], gas: 3000000 })
+                                      .then((response) => {
+                                        //Check if a record across this car already exists
+                                        informationHash
+                                          .findOne({
+                                            vin: data.vinNumber,
+                                            reg: data.regNumber,
+                                          })
+                                          .then((record) => {
+                                            //if record exists update it else create new record
+                                            updateOrCreateEntryInHashTable(
+                                              record,
+                                              response,
+                                              data.vinNumber,
+                                              data.regNumber
+                                            );
+                                            console.log(
+                                              "Transaction Completed!"
+                                            );
 
-                             //save new owner into db
-                             const OwnerTransfer = new ownershipHistory(
-                               newOwnerData
-                             );
-                             OwnerTransfer.save();
-                             res.send("Owner Transferred Successfully!");
-                           });
-                       });
-                    }
-                    })
+                                            //save new owner into db
+                                            const OwnerTransfer = new ownershipHistory(
+                                              newOwnerData
+                                            );
+                                            OwnerTransfer.save();
+                                            res.send(
+                                              "Owner Transferred Successfully!"
+                                            );
+                                          });
+                                      });
+                                  }
+                                }
+                              );
+                            }
+                          })
+                          .catch((err) => {
+                            if (err.BCerror) {
+                              res.status(400).json({
+                                msg: err.BCerror,
+                              });
+                            } else {
+                              res.status(400).json({
+                                msg:
+                                  "Unfortunately the " +
+                                  err.message +
+                                  " in our records has been corrupted! We apologise for the inconvenience!",
+                              });
+                            }
+                          });
                       });
                   });
               } else {
@@ -998,10 +1023,9 @@ router.post("/AccidentAndService", (req, res) => {
   let serviceMillage = 0;
   let carDetailsMillage = 0;
   let errorCondition = 0;
-  
-  
+
   const data = req.body; //Extract data from body
-  console.log(data);
+
   let millageCurrent = data.millage;
   const { errors, isValid } = AccidentAndServiceHistoryValidate(data); //Validate data
   //if data is not valid then send errors to front end
@@ -1021,9 +1045,17 @@ router.post("/AccidentAndService", (req, res) => {
         ownershipHistory
           .find({ vin: car.vin, reg: car.reg })
           .then((owner) => {
-            console.log("Printing car details millage")
-           carDetailsMillage = owner[0].millage;
+            if (owner.length > 1) {
+              carDetailsMillage = owner[owner.length - 1].millage;
+            } else if (owner.length === 1) {
+              carDetailsMillage = owner[0].millage;
+            } else {
+              carDetailsMillage = 0;
+            }
+
+            console.log("Printing car details millage");
             console.log(carDetailsMillage);
+
             //create hash of owner data
             const ownerDataHashed = ownerDataHashing(owner);
             serviceHistory
@@ -1038,262 +1070,290 @@ router.post("/AccidentAndService", (req, res) => {
                   //add old service history records to data to be hashed
                   if (sHistory.length > 1) {
                     serviceData = sHistory;
-                  } else if (sHistory.length === 1) {
-                    serviceData.push(sHistory[0]);
-                  } else {
-                    serviceData = [];
+                    console.log("Printing Service History");
+                    serviceMillage = sHistory[sHistory.length - 1].millage;
+                    console.log(serviceMillage);
+                    console.log("End Service History");
                   }
+                  if (sHistory.length === 1) {
+                    serviceData.push(sHistory[0]);
+                    serviceMillage = sHistory[0].millage;
+                  }
+                } else {
+                  serviceData = [];
                 }
+
                 accidentHistory
                   .find({ vin: car.vin, reg: car.reg })
                   .then(async (aHistory) => {
                     let accidentData = [];
                     if (aHistory) {
-                      console.log("Printing Accident History")
-                      accidentMillage = aHistory[aHistory.length - 1].millage;
-                      console.log(accidentMillage)
-                      console.log("End Service History")
-                      //add old accident history records to data to be hashed
-                      //if ()
-                      const millageData =[
-                        {name :"accident", millage: accidentMillage },
-                        {name: "service", millage: serviceMillage},
-                        {name: "carDetails", millage: carDetailsMillage},
-                        {name: "millageCurrent", millage: millageCurrent}
-                      ]
-
-                    await highestMillage(millageData)
-                      .then(async (res1)=> {
-                        console.log(res1);
-                        if(res1.name != "millageCurrent") {
-                          const alertPayload = {
-                            reg: data.reg,
-                            date: todaysDate,
-                            millage: res1.millage,
-                            comments: "Milage entered was less than a previously recorded value",
-                            garage: data.garage
-                          }
-                          console.log(alertPayload)
-                          const newAlert = new alert(
-                            alertPayload
-                          );
-                            await newAlert.save((error) => {
-                            if (error) {
-                              errorCondition = 1;
-                              console.log(error)
-                             return res.status(400).json({error: "There was an error in recording an alert"})
-                             //return 1;
-
-                            }
-                            else {
-                              console.log("New alert saved");
-                              errorCondition = 2;
-                             return res.status(400).json({error: "The milage you are trying to enter is less than a previously recorded value"})
-                             //return 2;
-                            }
-                          }) 
-                        }
-                        else {
-
-                          //let por1 = await por;
-
                       if (aHistory.length > 1) {
+                        //add old accident history records to data to be hashed
                         accidentData = aHistory;
-                      } else if (aHistory.length === 1) {
+                        console.log("Printing Accident History");
+                        accidentMillage = aHistory[aHistory.length - 1].millage;
+                        console.log(accidentMillage);
+                        console.log("End Service History");
+                      }
+                      if (aHistory.length === 1) {
                         accidentData.push(aHistory[0]);
-                      } else {
-                        accidentData = [];
+                        accidentMillage = aHistory[0].millage;
                       }
-                    
-                    //make payload
-                    const payload = {
-                      vin: car.vin,
-                      reg: data.reg,
-                      millage: data.millage,
-                      date: todaysDate,
-                      comments: data.comments,
-                    };
-
-                    //Check that out of all 3 spare parts which of them exist and update
-                    //the payload object accordingly
-                    if (data.sparePart1 != "") {
-                      payload.sparePart1 = data.sparePart1;
-                        await verify(data.sparePart1).then((T)=> {
-                          //console.log(T);
-                          payload.isValid1 = T;
-                        })
-                        .catch((err)=> {
-                          console.log(err);
-                          payload.isValid1 = "N/A"
-                        })                 
+                    } else {
+                      accidentData = [];
                     }
-                    if (data.sparePart2 != "")  {
-                      payload.sparePart2 = data.sparePart2;
-                        await verify(data.sparePart2).then((T)=> {
-                          //console.log(T);
-                          payload.isValid2 = T;
-                        })
-                        .catch((err)=> {
-                          console.log(err);
-                          payload.isValid2 = "N/A"
-                        })                 
-                    }
-                    if (data.sparePart3 != "") {
-                      payload.sparePart3 = data.sparePart3;
-                        await verify(data.sparePart3).then((T)=> {
-                         // console.log(T);
-                          payload.isValid3 = T;
-                        })
-                        .catch((err)=> {
-                          console.log(err);
-                          payload.isValid3 = "N/A"
-                        })                 
-                    }
-                    //console.log(payload);
-                    //if the user selected to enter service history then
-                    if (data.activeItem == "1") {
-                      //add latest record to service history object
-                      serviceData.push(payload);
-                      const serviceDataHashed = serviceDataHashing(serviceData);
-                      const accidentDataHashed = accidentDataHashing(
-                        accidentData
-                      );
 
-                      //This code prints out all 4 hashes. This is for debugging purposes to see updates in block chain with multiple updates
-                      /*console.log(
-                        "C: " +
-                          carDataHashed +
-                          " O: " +
-                          ownerDataHashed +
-                          " S: " +
-                          serviceDataHashed +
-                          " A: " +
-                          accidentDataHashed
-                      );*/
+                    //Compare current values with previous records in the BC
+                    await compareExistingRecords(
+                      car.vin,
+                      car.reg,
+                      carDataHashed,
+                      ownerDataHashed,
+                      serviceDataHashing(serviceData),
+                      accidentDataHashing(accidentData)
+                    )
+                      .then(async (bool) => {
+                        if (bool) {
+                          const millageData = [
+                            { name: "accident", millage: accidentMillage },
+                            { name: "service", millage: serviceMillage },
+                            { name: "carDetails", millage: carDetailsMillage },
+                            { name: "millageCurrent", millage: millageCurrent },
+                          ];
+                          console.log(millageData);
 
-                      //call smart contract
-                      hashingTestSC.methods
-                        .eventGenerator(
-                          carDataHashed,
-                          ownerDataHashed,
-                          serviceDataHashed,
-                          accidentDataHashed
-                        )
-                        .send({ from: accounts[0], gas: 3000000 })
-                        .then((response) => {
-                          // check if entry across this car exists in info hash table
-                          informationHash
-                            .findOne({ vin: car.vin, reg: car.reg })
-                            .then((record) => {
-                              //if record doesnt exist then add new record. If it exists then update
-                              updateOrCreateEntryInHashTable(
-                                record,
-                                response,
-                                car.vin,
-                                data.reg
-                              );
+                          await highestMillage(millageData)
+                            .then(async (res1) => {
+                              console.log(res1);
+                              if (res1.name != "millageCurrent") {
+                                const alertPayload = {
+                                  reg: data.reg,
+                                  date: todaysDate,
+                                  millage: res1.millage,
+                                  comments:
+                                    "Milage entered was less than a previously recorded value in Service/Accident Section",
+                                  garage: data.garage,
+                                };
+                                console.log(alertPayload);
+                                const newAlert = new alert(alertPayload);
+                                await newAlert.save((error) => {
+                                  if (error) {
+                                    errorCondition = 1;
+                                    console.log(error);
+                                    return res.status(400).json({
+                                      error:
+                                        "There was an error in recording an alert",
+                                    });
+                                  } else {
+                                    console.log("New alert saved");
+                                    errorCondition = 2;
+                                    return res.status(400).json({
+                                      error:
+                                        "The milage you are trying to enter is less than a previously recorded value",
+                                    });
+                                    //return 2;
+                                  }
+                                });
+                              } else {
+                                //let por1 = await por;
 
-                              //Save Service data into table
-                              const serviceDetails = new serviceHistory(
-                                payload
-                              );
-                              serviceDetails.save((error) => {
-                                if (error) {
-                                  res
-                                    .status(400)
-                                    .json({ error: "error in saving!" });
-                                } else {
-                                  res.send(
-                                    "Saved in service history successfully!"
-                                  );
+                                //make payload
+                                const payload = {
+                                  vin: car.vin,
+                                  reg: data.reg,
+                                  millage: data.millage,
+                                  date: todaysDate,
+                                  comments: data.comments,
+                                };
+
+                                //Check that out of all 3 spare parts which of them exist and update
+                                //the payload object accordingly
+                                if (data.sparePart1 != "") {
+                                  payload.sparePart1 = data.sparePart1;
+                                  await verify(data.sparePart1)
+                                    .then((T) => {
+                                      //console.log(T);
+                                      payload.isValid1 = T;
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                      payload.isValid1 = "N/A";
+                                    });
                                 }
-                              });
-                            });
-                        })
-                        .catch((err) => console.log(err));
-                    }
-                    //if the user selected to enter accident history then
-                    else {
-                      //add latest record to accident history object
-                      accidentData.push(payload);
-                      const serviceDataHashed = serviceDataHashing(serviceData);
-                      const accidentDataHashed = accidentDataHashing(
-                        accidentData
-                      );
-                      //This code prints out all 4 hashes. This is for debugging purposes to see updates in block chain with multiple updates
-                      /*console.log(
-                        "C: " +
-                          carDataHashed +
-                          " O: " +
-                          ownerDataHashed +
-                          " S: " +
-                          serviceDataHashed +
-                          " A: " +
-                          accidentDataHashed
-                      );*/
-                      hashingTestSC.methods
-                        .eventGenerator(
-                          carDataHashed,
-                          ownerDataHashed,
-                          serviceDataHashed,
-                          accidentDataHashed
-                        )
-                        .send({ from: accounts[0], gas: 3000000 })
-                        .then((response) => {
-                          // check if entry across this car exists in info hash table
-                          informationHash
-                            .findOne({ vin: car.vin, reg: car.reg })
-                            .then((record) => {
-                              updateOrCreateEntryInHashTable(
-                                record,
-                                response,
-                                car.vin,
-                                car.reg
-                              );
-
-                              //save accident data into table
-                              const accidentDetails = new accidentHistory(
-                                payload
-                              );
-                              accidentDetails.save((error) => {
-                                if (error) {
-                                  res
-                                    .status(400)
-                                    .json({ error: "error in saving!" });
-                                } else {
-                                  res.send(
-                                    "Saved in accident history successfully!"
-                                  );
+                                if (data.sparePart2 != "") {
+                                  payload.sparePart2 = data.sparePart2;
+                                  await verify(data.sparePart2)
+                                    .then((T) => {
+                                      //console.log(T);
+                                      payload.isValid2 = T;
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                      payload.isValid2 = "N/A";
+                                    });
                                 }
-                              });
-                            });
-                        })
-                        .catch((err) =>
-                          console.log("Error in recieving blockNumber!\n" + err)
-                        );
+                                if (data.sparePart3 != "") {
+                                  payload.sparePart3 = data.sparePart3;
+                                  await verify(data.sparePart3)
+                                    .then((T) => {
+                                      // console.log(T);
+                                      payload.isValid3 = T;
+                                    })
+                                    .catch((err) => {
+                                      console.log(err);
+                                      payload.isValid3 = "N/A";
+                                    });
+                                }
 
+                                //console.log(payload);
+                                //if the user selected to enter service history then
+                                if (data.activeItem == "1") {
+                                  //add latest record to service history object
+                                  serviceData.push(payload);
+                                  //compute both hashes
+                                  const serviceDataHashed = serviceDataHashing(
+                                    serviceData
+                                  );
+                                  const accidentDataHashed = accidentDataHashing(
+                                    accidentData
+                                  );
+
+                                  //call smart contract
+                                  hashingTestSC.methods
+                                    .eventGenerator(
+                                      carDataHashed,
+                                      ownerDataHashed,
+                                      serviceDataHashed,
+                                      accidentDataHashed
+                                    )
+                                    .send({ from: accounts[0], gas: 3000000 })
+                                    .then((response) => {
+                                      // check if entry across this car exists in info hash table
+                                      informationHash
+                                        .findOne({ vin: car.vin, reg: car.reg })
+                                        .then((record) => {
+                                          //if record doesnt exist then add new record. If it exists then update
+                                          updateOrCreateEntryInHashTable(
+                                            record,
+                                            response,
+                                            car.vin,
+                                            data.reg
+                                          );
+
+                                          //Save Service data into table
+                                          const serviceDetails = new serviceHistory(
+                                            payload
+                                          );
+                                          serviceDetails.save((error) => {
+                                            if (error) {
+                                              res.status(400).json({
+                                                error: "error in saving!",
+                                              });
+                                            } else {
+                                              res.send(
+                                                "Saved in service history successfully!"
+                                              );
+                                            }
+                                          });
+                                        });
+                                    }) //end then of smart contract
+                                    .catch((err) => console.log(err));
+                                }
+                                //if the user selected to enter accident history then
+                                else {
+                                  //add latest record to accident history object
+                                  accidentData.push(payload);
+                                  //compute both hashes
+                                  const serviceDataHashed = serviceDataHashing(
+                                    serviceData
+                                  );
+                                  const accidentDataHashed = accidentDataHashing(
+                                    accidentData
+                                  );
+
+                                  hashingTestSC.methods
+                                    .eventGenerator(
+                                      carDataHashed,
+                                      ownerDataHashed,
+                                      serviceDataHashed,
+                                      accidentDataHashed
+                                    )
+                                    .send({ from: accounts[0], gas: 3000000 })
+                                    .then((response) => {
+                                      // check if entry across this car exists in info hash table
+                                      informationHash
+                                        .findOne({ vin: car.vin, reg: car.reg })
+                                        .then((record) => {
+                                          updateOrCreateEntryInHashTable(
+                                            record,
+                                            response,
+                                            car.vin,
+                                            car.reg
+                                          );
+
+                                          //save accident data into table
+                                          const accidentDetails = new accidentHistory(
+                                            payload
+                                          );
+                                          accidentDetails.save((error) => {
+                                            if (error) {
+                                              res.status(400).json({
+                                                error: "error in saving!",
+                                              });
+                                            } else {
+                                              res.send(
+                                                "Saved in accident history successfully!"
+                                              );
+                                            }
+                                          });
+                                        }); //end then of info hash
+                                    }) //end then of smart contract call
+                                    .catch((err) => {
+                                      res.status(400).json({
+                                        error:
+                                          "error in recieving block number!",
+                                      });
+                                    }); //end catch
+                                }
+                              }
+                            }) //end then of highest millage
+                            .catch((err) => {
+                              console.log(err);
+                              res
+                                .status(400)
+                                .json({ error: "Unknown error occured" });
+                              return;
+                            }); //end catch
                         }
-                      }
-                      })
-                      .catch((err)=> {
-                        console.log(err);
-                        res.status(400).json({error: "Unknown error occured"});
-                        return;
-                      })
-                    }
+                      }) //end then block for comparing previous values
+                      .catch((err) => {
+                        if (err.BCerror) {
+                          res.status(400).json({
+                            msg: err.BCerror,
+                          });
+                        } else {
+                          res.status(400).json({
+                            error:
+                              "Unfortunately the " +
+                              err.message +
+                              " in our records has been corrupted! We apologise for the inconvenience!",
+                          });
+                        }
+                      }); //end catch
                   });
-              });
-          })
+              }); //end then block for recieving service records
+          }) //end then block for recieving owner data
           .catch((error) => {
             res.status(400).json({ error: "No Owner Found across this Car!" });
           });
-      })
+      }) //end then block for recieving car data
       .catch((error) =>
         res
           .status(400)
           .json({ error: "No Car Found across this Registration Number!" })
       );
-  }
+  } //end else block for validation of data
 });
 
 //This function checks if a record against a car exists in the info hashes table
@@ -1322,39 +1382,113 @@ function updateOrCreateEntryInHashTable(record, response, vinNum, regNum) {
     newInformationHash.save();
   }
 }
-async function highestMillage (array)
-{
-  return new Promise ((resolve, reject)=> {
+
+async function highestMillage(array) {
+  return new Promise((resolve, reject) => {
     var max = 0;
     var result;
     for (var i = 0; i < array.length; i++) {
-        if (array[i].millage > max) {
-            result = array[i];
-            max = array[i].millage;
-        }
+      if (parseInt(array[i].millage, 10) > max) {
+        result = array[i];
+        max = parseInt(array[i].millage, 10);
+      }
     }
-    resolve (result);
-  })
+    if (result.name == "millageCurrent") {
+      resolve(result);
+    } else {
+      if (parseInt(result.millage, 10) == parseInt(array[3].millage, 10)) {
+        resolve(array[3]);
+      } else {
+        resolve(result);
+      }
+    }
+  });
 }
-async function verify (sp1)  { 
-    return new Promise ( (resolve, reject)=> {
-      sparePart.find({id : sp1})
-    .then((sparePart)=>{
-      if (sparePart.length > 0) {
-        //console.log(sparePart);
-        let T = true;
-        resolve(T);
+
+async function verify(sp1) {
+  return new Promise((resolve, reject) => {
+    sparePart
+      .find({ id: sp1 })
+      .then((sparePart) => {
+        if (sparePart.length > 0) {
+          //console.log(sparePart);
+          let T = true;
+          resolve(T);
+        } else {
+          let F = false;
+          resolve(F);
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+//This function checks if existing data hashes in the database corresspond to
+//the ones in the blockchain before initiating a new transaction
+async function compareExistingRecords(
+  vin,
+  reg,
+  carData,
+  ownerData,
+  serviceData,
+  accidentData
+) {
+  return new Promise((resolve, reject) => {
+    informationHash.findOne({ vin: vin, reg: reg }).then((record) => {
+      if (record) {
+        hashingTestSC.getPastEvents(
+          "AllEvents",
+          {
+            fromBlock: record.block,
+            toBlock: record.block,
+          },
+          (err, events) => {
+            //Compare all 4 hashes
+            //If any hash does not match then send appropriate response
+            //If all hashes match then send data back to front end
+            if (carData == events[0].returnValues.carDetailsHash) {
+              console.log("Car Data Matched!");
+              if (ownerData == events[0].returnValues.ownerDetailsHash) {
+                console.log("owner data Matched!");
+                if (serviceData == events[0].returnValues.serviceDetailsHash) {
+                  console.log("Service data Matched!");
+                  if (
+                    accidentData == events[0].returnValues.accidentDetailsHash
+                  ) {
+                    console.log("Accident data Matched!");
+                    //If hashes match and data is ok then make payload
+                    resolve(true);
+                  } else {
+                    reject({
+                      message: "Accident Data",
+                    });
+                  }
+                } else {
+                  reject({
+                    message: "Service Data",
+                  });
+                }
+              } else {
+                reject({
+                  message: "Owner Data",
+                });
+              }
+            } else {
+              reject({
+                message: "Car Data",
+              });
+            }
+          }
+        ); //end then block for get events method
+      } else {
+        reject({
+          BCerror: "Data Corrupt!",
+        });
       }
-      else {
-        let F = false
-        resolve(F);
-      }
-    })
-    .catch((error)=> {
-      reject(error);
-    })
-  }
-  )
-  
-};
+    }); //end then block for info hashes table
+  });
+}
+
 module.exports = router;

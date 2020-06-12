@@ -101,7 +101,7 @@ class TabsDefault extends Component {
       .catch((err) => {
         if (err.response.request.status === 400) {
           console.log("error");
-          console.log(err.response.data.error)
+          console.log(err.response.data.error);
           this.setState({
             msg: err.response.data.error,
             errorBool: "false",

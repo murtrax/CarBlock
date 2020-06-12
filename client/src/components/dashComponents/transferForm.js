@@ -16,7 +16,7 @@ class FormPage extends React.Component {
     year: "",
     errors: [],
     errorBool: "",
-    msg: ""
+    msg: "",
   };
 
   handleChange = (e) => {
@@ -40,7 +40,7 @@ class FormPage extends React.Component {
       year: "",
       errors: [],
       errorBool: "",
-      msg: ""
+      msg: "",
     });
   };
 
@@ -72,7 +72,7 @@ class FormPage extends React.Component {
         if (err.response.status == 400) {
           this.setState({
             errorBool: "false",
-            msg: err.response.data.error
+            msg: err.response.data.error,
           });
           console.log(err.response.data);
         } else {
@@ -225,8 +225,7 @@ class FormPage extends React.Component {
                     Transfer
                     <i class="material-icons right">send</i>
                   </button>
-                  <br>
-                  </br>
+                  <br></br>
                   <label style={{ color: "red", fontSize: "13" }}>
                     {this.state.msg}
                   </label>
