@@ -1,5 +1,3 @@
-//Random Comment
-
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -15,7 +13,8 @@ const accidentHistory = require("./../models/carSchema/accidentHistory");
 const companyRegistrationTemp = require("./../models/workshopTemp/workshopRegistrationTemp");
 const companyRegistration = require("./../models/workshopRegistration");
 const informationHash = require("./../models/informationHash");
-const sparePart = require("./../models/carSchema/sparePart");
+const sparePart = require ("./../models/carSchema/sparePart")
+const alert = require("./../models/alertSchema/alert");
 const adminLogin = require("./../models/adminLogin"); //YET TO BE CREATED
 
 //validation
@@ -39,83 +38,83 @@ const accidentDataHashing = require("./../hashingAndConversion/accidentDataHashi
  */
 const contractAbi = [
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: false,
-        internalType: "address",
-        name: "from",
-        type: "address",
+        "indexed": false,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "carDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "carDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "ownerDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "ownerDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "serviceDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "serviceDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "accidentDetailsHash",
-        type: "string",
-      },
+        "indexed": false,
+        "internalType": "string",
+        "name": "accidentDetailsHash",
+        "type": "string"
+      }
     ],
-    name: "Transferred",
-    type: "event",
+    "name": "Transferred",
+    "type": "event"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        internalType: "string",
-        name: "_carDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_carDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_ownerDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_ownerDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_serviceDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_serviceDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_accidentDetailsHash",
-        type: "string",
-      },
+        "internalType": "string",
+        "name": "_accidentDetailsHash",
+        "type": "string"
+      }
     ],
-    name: "eventGenerator",
-    outputs: [
+    "name": "eventGenerator",
+    "outputs": [
       {
-        internalType: "bool",
-        name: "success",
-        type: "bool",
-      },
+        "internalType": "bool",
+        "name": "success",
+        "type": "bool"
+      }
     ],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ];
 
-const contractAddress = "0xC845e757c1b7e226EE85130bfCC178d13d4228F2";
+const contractAddress = "0x402aBFa55c923a647FAfAe7b37676dF44734742c";
 const web3js = new web3();
-web3js.setProvider(new web3.providers.HttpProvider("http://localhost:9545"));
+web3js.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
 const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
 
 let accounts = [];
@@ -388,7 +387,7 @@ router.post("/workshopSignUp", (req, res) => {
                     .json({ error: "Error saving data to database" });
                 } else {
                   return res.json({
-                    success:
+                    sucess:
                       "We have recived your application, We will contact you soon",
                   });
                 }
@@ -438,7 +437,7 @@ router.post("/deleteWorkshop", (req, res) => {
  * This route takes input as a number from the search bar (landing page) and checks if it is vin or reg num
  * according to the selection, appropriate car is retrieved and hash of all 4 types of data is calculated
  * 4 hashes are matched with the hashes stored in the BC and if matched then data is sent to the front end
- * else it is not and error is logged saying that data mismatched S
+ * else it is not and error is logged saying that data mismatch
  */
 router.post("/searchCar", (req, res) => {
   //Extract form data from request
@@ -504,7 +503,7 @@ router.post("/searchCar", (req, res) => {
                 //Find accident history for said vehicle
                 accidentHistory
                   .find({ vin: vin, reg: reg })
-                  .then(async (aHistory) => {
+                  .then((aHistory) => {
                     let aHash = null;
                     if (aHistory) {
                       //Get hash of accident data
@@ -517,36 +516,60 @@ router.post("/searchCar", (req, res) => {
                       );
                       aHash = hash([]);
                     }
-
-                    //Check if existing data is correct with the blockchain hashes
-                    await compareExistingRecords(
-                      vin,
-                      reg,
-                      cHash,
-                      oHash,
-                      sHash,
-                      aHash
-                    )
-                      .then((bool) => {
-                        if (bool) {
-                          //If hashes match and data is ok then make payload
-                          payload = [
-                            returnedCar,
-                            serviceDetails,
-                            ownershipDetails,
-                            accidentDetails,
-                          ];
-                          //send the payload to the frontend
-                          return res.json({ car: payload });
-                        }
-                      })
-                      .catch((err) => {
-                        res.status(400).json({
-                          msg:
-                            "The existing records in the database are not valid! We apologise for the inconvenience! ",
-                          typeMismatch: err.message,
-                        });
-                      });
+                    //find block number for this vehicle
+                    informationHash
+                      .findOne({ vin: vin, reg: reg })
+                      .then((record) => {
+                        hashingTestSC.getPastEvents(
+                          "AllEvents",
+                          {
+                            fromBlock: record.block,
+                            toBlock: record.block,
+                          },
+                          (err, events) => {
+                            //Compare all 4 hashes
+                            //If any hash does not match then send appropriate response
+                            //If all hashes match then send data back to front end
+                            if (
+                              cHash == events[0].returnValues.carDetailsHash
+                            ) {
+                              console.log("Car Data Matched!");
+                              if (
+                                oHash == events[0].returnValues.ownerDetailsHash
+                              ) {
+                                console.log("owner data Matched!");
+                                if (
+                                  sHash ==
+                                  events[0].returnValues.serviceDetailsHash
+                                ) {
+                                  console.log("Service data Matched!");
+                                  if (
+                                    aHash ==
+                                    events[0].returnValues.accidentDetailsHash
+                                  ) {
+                                    console.log("Accident data Matched!");
+                                    //If hashes match and data is ok then make payload
+                                    payload = [
+                                      returnedCar,
+                                      serviceDetails,
+                                      ownershipDetails,
+                                      accidentDetails,
+                                    ];
+                                    //send the payload to the frontend
+                                    return res.json({ car: payload });
+                                  }
+                                } else {
+                                  console.log("Service Data Mismatch!");
+                                }
+                              } else {
+                                console.log("Owner Data Mismatch!");
+                              }
+                            } else {
+                              console.log("Car Data Mismatch!");
+                            }
+                          }
+                        ); //end then block for get events method
+                      }); //end then block for info hashes table
                   }); //end then block for accident history
               }); //end then block for service history
             }
@@ -607,7 +630,7 @@ router.post("/searchCar", (req, res) => {
                 //Find accident history for said vehicle
                 accidentHistory
                   .find({ vin: vin, reg: reg })
-                  .then(async (aHistory) => {
+                  .then((aHistory) => {
                     let aHash = null;
                     if (aHistory) {
                       //Get hash of accident data
@@ -810,10 +833,6 @@ router.post("/OwnerTransfer", (req, res) => {
                   ownerContact: data.contact,
                   date: Date.now().toString(),
                 };
-                //Use this value to compare values in the BC before updating
-                const ownerHashToCompare = ownerDataHashing(newOwnerData);
-
-                //add new record to the object
                 response.push(newOwnerData);
 
                 //Hashed car object
@@ -835,7 +854,7 @@ router.post("/OwnerTransfer", (req, res) => {
                     //search accident history for car
                     accidentHistory
                       .find({ vin: data.vinNumber, reg: data.regNumber })
-                      .then(async (accident) => {
+                      .then((accident) => {
                         let accidentDataHashed = null;
                         //if accident records exist then calculate their hash else find hash of empty array
                         if (accident) {
@@ -928,8 +947,15 @@ router.post("/OwnerTransfer", (req, res) => {
  * BlockNumber updated in info hashes table
  */
 router.post("/AccidentAndService", (req, res) => {
+  let accidentMillage = 0;
+  let serviceMillage = 0;
+  let carDetailsMillage = 0;
+  let errorCondition = 0;
+  
+  
   const data = req.body; //Extract data from body
   console.log(data);
+  let millageCurrent = data.millage;
   const { errors, isValid } = AccidentAndServiceHistoryValidate(data); //Validate data
   //if data is not valid then send errors to front end
   if (!isValid) {
@@ -948,6 +974,9 @@ router.post("/AccidentAndService", (req, res) => {
         ownershipHistory
           .find({ vin: car.vin, reg: car.reg })
           .then((owner) => {
+            console.log("Printing car details millage")
+           carDetailsMillage = owner[0].millage;
+            console.log(carDetailsMillage);
             //create hash of owner data
             const ownerDataHashed = ownerDataHashing(owner);
             serviceHistory
@@ -955,6 +984,10 @@ router.post("/AccidentAndService", (req, res) => {
               .then((sHistory) => {
                 let serviceData = [];
                 if (sHistory) {
+                  console.log("Printing Service History")
+                  serviceMillage = sHistory[sHistory.length - 1].millage;
+                  console.log(serviceMillage);
+                  console.log("End Service History")
                   //add old service history records to data to be hashed
                   if (sHistory.length > 1) {
                     serviceData = sHistory;
@@ -969,7 +1002,54 @@ router.post("/AccidentAndService", (req, res) => {
                   .then(async (aHistory) => {
                     let accidentData = [];
                     if (aHistory) {
+                      console.log("Printing Accident History")
+                      accidentMillage = aHistory[aHistory.length - 1].millage;
+                      console.log(accidentMillage)
+                      console.log("End Service History")
                       //add old accident history records to data to be hashed
+                      //if ()
+                      const millageData =[
+                        {name :"accident", millage: accidentMillage },
+                        {name: "service", millage: serviceMillage},
+                        {name: "carDetails", millage: carDetailsMillage},
+                        {name: "millageCurrent", millage: millageCurrent}
+                      ]
+
+                    await highestMillage(millageData)
+                      .then(async (res1)=> {
+                        console.log(res1);
+                        if(res1.name != "millageCurrent") {
+                          const alertPayload = {
+                            reg: data.reg,
+                            date: todaysDate,
+                            millage: res1.millage,
+                            comments: "Milage entered was less than a previously recorded value",
+                            garage: data.garage
+                          }
+                          console.log(alertPayload)
+                          const newAlert = new alert(
+                            alertPayload
+                          );
+                            await newAlert.save((error) => {
+                            if (error) {
+                              errorCondition = 1;
+                              console.log(error)
+                             return res.status(400).json({error: "There was an error in recording an alert"})
+                             //return 1;
+
+                            }
+                            else {
+                              console.log("New alert saved");
+                              errorCondition = 2;
+                             return res.status(400).json({error: "The milage you are trying to enter is less than a previously recorded value"})
+                             //return 2;
+                            }
+                          }) 
+                        }
+                        else {
+
+                          //let por1 = await por;
+
                       if (aHistory.length > 1) {
                         accidentData = aHistory;
                       } else if (aHistory.length === 1) {
@@ -977,7 +1057,7 @@ router.post("/AccidentAndService", (req, res) => {
                       } else {
                         accidentData = [];
                       }
-                    }
+                    
                     //make payload
                     const payload = {
                       vin: car.vin,
@@ -991,41 +1071,40 @@ router.post("/AccidentAndService", (req, res) => {
                     //the payload object accordingly
                     if (data.sparePart1 != "") {
                       payload.sparePart1 = data.sparePart1;
-                      await verify(data.sparePart1)
-                        .then((T) => {
+                        await verify(data.sparePart1).then((T)=> {
+                          //console.log(T);
                           console.log(T);
                           payload.isValid1 = T;
                         })
-                        .catch((err) => {
+                        .catch((err)=> {
                           console.log(err);
-                          payload.isValid1 = "N/A";
-                        });
+                          payload.isValid1 = "N/A"
+                        })                 
                     }
-                    if (data.sparePart2 != "") {
+                    if (data.sparePart2 != "")  {
                       payload.sparePart2 = data.sparePart2;
-                      await verify(data.sparePart2)
-                        .then((T) => {
+                        await verify(data.sparePart2).then((T)=> {
+                          //console.log(T);
                           console.log(T);
                           payload.isValid2 = T;
                         })
-                        .catch((err) => {
+                        .catch((err)=> {
                           console.log(err);
-                          payload.isValid2 = "N/A";
-                        });
+                          payload.isValid2 = "N/A"
+                        })                 
                     }
                     if (data.sparePart3 != "") {
                       payload.sparePart3 = data.sparePart3;
-                      await verify(data.sparePart3)
-                        .then((T) => {
-                          console.log(T);
+                        await verify(data.sparePart3).then((T)=> {
+                         // console.log(T);
                           payload.isValid3 = T;
                         })
-                        .catch((err) => {
+                        .catch((err)=> {
                           console.log(err);
-                          payload.isValid3 = "N/A";
-                        });
+                          payload.isValid3 = "N/A"
+                        })                 
                     }
-                    console.log(payload);
+                    //console.log(payload);
                     //if the user selected to enter service history then
                     if (data.activeItem == "1") {
                       //add latest record to service history object
@@ -1147,6 +1226,15 @@ router.post("/AccidentAndService", (req, res) => {
                         .catch((err) =>
                           console.log("Error in recieving blockNumber!\n" + err)
                         );
+
+                        }
+                      }
+                      })
+                      .catch((err)=> {
+                        console.log(err);
+                        res.status(400).json({error: "Unknown error occured"});
+                        return;
+                      })
                     }
                   });
               });
