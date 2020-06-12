@@ -437,7 +437,7 @@ router.post("/deleteWorkshop", (req, res) => {
  * This route takes input as a number from the search bar (landing page) and checks if it is vin or reg num
  * according to the selection, appropriate car is retrieved and hash of all 4 types of data is calculated
  * 4 hashes are matched with the hashes stored in the BC and if matched then data is sent to the front end
- * else it is not and error is logged saying that data mismatch
+ * else it is not and error is logged saying that data mismatched S
  */
 router.post("/searchCar", (req, res) => {
   //Extract form data from request
