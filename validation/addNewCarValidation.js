@@ -41,6 +41,8 @@ function validateCarAndOwnerInput(data) {
     errors.make = "Make is required";
   }
 
+
+
   //Model checks
   if (Validator.isEmpty(data.model)) {
     errors.model = "Model is required";
@@ -77,16 +79,25 @@ function validateCarAndOwnerInput(data) {
     errors.FullName = "Full Name is required";
   }
 
+  else if (!Validator.isAlpha(data.FullName)) {
+    errors.FullNameAlpha = "Full name can only contain alphabets"
+  }
+
   //Owner checks
   if (Validator.isEmpty(data.ownerCNIC)) {
     errors.ownerCNICEmpty = "CNIC is required";
   }
   //Owner checks
-  if (Validator.isLength(data.ownerCNIC, { min: 12, max: 12 })) {
+  /*if (Validator.isLength(data.ownerCNIC, { min: 12, max: 12 })) {
+    
+    errors.ownerCNICLength = "CNIC should be 13 digits";
+  }*/
+
+  else if (data.ownerCNIC.length != 13 ) {
     errors.ownerCNICLength = "CNIC should be 13 digits";
   }
 
-  if (data.ownerCNIC < 0) {
+  else if (data.ownerCNIC.length < 0) {
     errors.ownerCNICNegative = "CNIC cannot be negative";
   }
 
@@ -94,8 +105,12 @@ function validateCarAndOwnerInput(data) {
   if (Validator.isEmpty(data.ownerContact)) {
     errors.ownerContactEmpty = "Contact Number is required";
   }
-  if (data.ownerContact < 0) {
+  else if (data.ownerContact < 0) {
     errors.ownerContactNegative = "Contact cannot be a negative number";
+  }
+
+ else if (data.ownerContact.length < 7) {
+    errors.ownerContactLength = "Contact needs to be seven digits or greater";
   }
 
   //City checks
@@ -103,9 +118,17 @@ function validateCarAndOwnerInput(data) {
     errors.ownerCity = "City is required";
   }
 
+  else if (!Validator.isAlpha(data.ownerCity)) {
+    errors.ownerCityAlpha = "City Name can only contain alphabets"
+  }
+
   //State checks
   if (Validator.isEmpty(data.ownerState)) {
     errors.ownerState = "State is required";
+  }
+
+  else if (!Validator.isAlpha(data.ownerState)) {
+    errors.ownerStateAlpha = "State can only contain alphabets"
   }
 
   //Millage checks

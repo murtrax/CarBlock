@@ -23,25 +23,39 @@ function ownerTransferValidate(data) {
     errors.name = "Full Name is required";
   }
 
+  else if (!Validator.isAlpha(data.name)) {
+    errors.nameAlpha = "Full Name can only contain alphabets"
+  }
+
   //CNIC checks
   if (Validator.isEmpty(data.cnic)) {
     errors.cnicEmpty = "CNIC is required";
   }
 
-  if (Validator.isLength(data.cnic, { min: 13, max: 13 })) {
+  /*if (Validator.isLength(data.cnic, { min: 13, max: 13 })) {
+    errors.cnicLength = "CNIC should be 13 digits";
+  }*/
+
+  else if (data.cnic.length != 13 ) {
     errors.cnicLength = "CNIC should be 13 digits";
   }
 
-  if (data.cnic < 0) {
+  else if (data.cnic.length < 0) {
     errors.cnicNegative = "CNIC cannot be negative";
   }
+
+
 
   //Contact checks
   if (Validator.isEmpty(data.contact)) {
     errors.contactEmpty = "Contact Number is required";
   }
-  if (data.contact < 0) {
+  else if (data.contact < 0) {
     errors.contactNegative = "Contact cannot be a negative number";
+  }
+
+  else if (data.contact.length < 7) {
+    errors.contactLength = "Contact needs to be seven digits or greater";
   }
 
   //City checks
@@ -49,9 +63,17 @@ function ownerTransferValidate(data) {
     errors.city = "City is required";
   }
 
+  else if (!Validator.isAlpha(data.city)) {
+    errors.cityAlpha = "City Name can only contain alphabets"
+  }
+
   //State checks
   if (Validator.isEmpty(data.ownerState)) {
     errors.ownerState = "State is required";
+  }
+
+  else if (!Validator.isAlpha(data.ownerState)) {
+    errors.ownerStateAlpha = "State can only contain alphabets"
   }
 
   //Millage checks

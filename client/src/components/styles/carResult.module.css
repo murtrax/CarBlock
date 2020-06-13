@@ -1,6 +1,9 @@
 .listHeading{
 background-color: #437AD7;
 color: white;
+position: sticky;
+top: 0;
+z-index: 1;
 }
 
 .listFeature{
@@ -38,20 +41,53 @@ padding-bottom: 2rem;
 }
 
 .snapshot{
-    height: 93%;
     background-color: rgb(107, 107, 107);
     margin-top: 0.5rem;
-    vertical-align: middle;
 }
 
 .feat{
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     padding-top: -1rem;
 }
 
 .scrollable{
     height: 20rem;
     overflow-y: scroll;
+}
+
+.key{
+    font-weight: bolder;
+    background-color: #4d4d4d;
+    border-radius: 0.2rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+}
+.key1{
+    background-color: #4d4d4d;
+    border-radius: 0.4rem;
+    color:white;
+    padding: 0.3rem;
+}
+
+.sparepartT{
+    background-color: #3ea35d;
+    border-radius: 0.3rem;
+    color:white;
+    padding: 0.2rem;
+    margin:0.2rem;
+}
+
+.back{
+    margin-top: 0.5rem;
+    background-color: rgb(107, 107, 107);
+    height: 98%;
+}
+.sparepartF{
+    background-color: #b63f3f;
+    border-radius: 0.3rem;
+    color:white;
+    padding: 0.2rem;
+    margin:0.2rem;
 }
 
 @media only screen and (max-width: 600px) {
@@ -66,5 +102,13 @@ padding-bottom: 2rem;
         margin-bottom: -1rem;
         vertical-align: middle;
     }
+
+    .body{
+        background-color: #e5e2e2;
+        margin-bottom: -1.4rem;
+        padding-bottom: 2rem;
+        
+        }
+        
 
 }

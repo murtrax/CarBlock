@@ -323,7 +323,7 @@ class CardExample extends React.Component {
                         value={this.state.Fullname}
                         onChange={this.handleChange}
                       />
-                      {this.displayError("Enter Owner Name", ["FullName"])}
+                      {this.displayError("Enter Owner Name", ["FullName", "FullNameAlpha"])}
                       <input
                         placeholder="Owner CNIC"
                         name="ownerCNIC"
@@ -348,6 +348,7 @@ class CardExample extends React.Component {
                       {this.displayError("Contact", [
                         "ownerContactEmpty",
                         "ownerContactNegative",
+                        "ownerContactLength",
                       ])}
                       <input
                         placeholder="City"
@@ -357,7 +358,7 @@ class CardExample extends React.Component {
                         value={this.state.ownerCity}
                         onChange={this.handleChange}
                       />
-                      {this.displayError("City", ["ownerCity"])}
+                      {this.displayError("City", ["ownerCity", "ownerCityAlpha"])}
 
                       <input
                         placeholder="State"
@@ -367,7 +368,7 @@ class CardExample extends React.Component {
                         value={this.state.ownerState}
                         onChange={this.handleChange}
                       />
-                      {this.displayError("State", ["ownerState"])}
+                      {this.displayError("State", ["ownerState", "ownerStateAlpha"])}
                       <input
                         placeholder="Millage at time of purchase"
                         name="millage"

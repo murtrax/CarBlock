@@ -156,7 +156,7 @@ class FormPage extends React.Component {
                     value={this.state.name}
                     onChange={this.handleChange}
                   />
-                  {this.displayError("Full Name", ["name"])}
+                  {this.displayError("Full Name", ["name", "nameAlpha"])}
 
                   <input
                     placeholder="CNIC"
@@ -183,6 +183,7 @@ class FormPage extends React.Component {
                   {this.displayError("Contact Number", [
                     "contactEmpty",
                     "contactNegative",
+                    "contactLength",
                   ])}
 
                   <input
@@ -193,7 +194,7 @@ class FormPage extends React.Component {
                     value={this.state.city}
                     onChange={this.handleChange}
                   />
-                  {this.displayError("City", ["city"])}
+                  {this.displayError("City", ["city", "cityAlpha"])}
 
                   <input
                     placeholder="State"
@@ -203,7 +204,7 @@ class FormPage extends React.Component {
                     value={this.state.ownerState}
                     onChange={this.handleChange}
                   />
-                  {this.displayError("State", ["ownerState"])}
+                  {this.displayError("State", ["ownerState", "ownerStateAlpha"])}
 
                   <input
                     placeholder="Millage"
