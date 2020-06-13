@@ -153,6 +153,12 @@ class CarResults extends Component {
         console.log(this.state)
       })
       .catch(err => {
+        this.props.history.push({
+          pathname: "/error",
+          state: {
+            message: err.response.data.msg
+          }
+        })
         console.log(err.response.data);
         this.setState({
           error: err.response.data
