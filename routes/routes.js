@@ -1206,6 +1206,38 @@ router.post("/AccidentAndService", (req, res) => {
                                     });
                                 }
 
+                                const alertPayload = {
+			                      reg: data.reg,
+			                      date: todaysDate,
+			                      millage: millageCurrent,
+			                      comments: "Spare Parts are not OEM",
+			                      garage: data.garage,
+			                    }
+
+			                    if (payload.isValid1 == false) {
+			                      alertPayload.sparePart1 = payload.sparePart1
+			                    }
+			                    if (payload.isValid2 == false) {
+			                      alertPayload.sparePart2 = payload.sparePart2
+			                    }
+			                    if (payload.isValid3 == false) {
+			                      alertPayload.sparePart3 = payload.sparePart3
+			                    }
+			                    console.log(alertPayload)
+			                    const newAlert = new alert(
+			                      alertPayload
+			                    );
+			                      newAlert.save((error) => {
+			                      if (error) {
+			                        console.log(error);
+			                        console.log("There was an erroring in saving invalid spare part(s) alert");
+			                       //return 1;
+			                      }
+			                      else {
+			                        console.log("New Alert for invalid spare part(s) saved")
+			                      }
+			                      })
+
                                 //console.log(payload);
                                 //if the user selected to enter service history then
                                 if (data.activeItem == "1") {
@@ -1355,6 +1387,34 @@ router.post("/AccidentAndService", (req, res) => {
       );
   } //end else block for validation of data
 });
+
+router.post("/alert", (req,res)=> {
+  const data = req.body;
+
+  alert.find({})
+  .then((alerts)=> {
+    res.send(alerts)
+  })
+  .catch((error)=> {
+    res.status(500).send("No alerts to display")
+  })
+})
+
+router.post("/dismissAlert", (req,res)=> {
+  const data = req.body;
+  console.log(data.id);
+  alert.deleteOne({ _id: data.id })
+  .then(()=>{
+    res.json({ success: "Alert Sucessfully Deleted" });
+  })
+  .catch(()=> {
+    res.status(400).json({
+      error: "An error occured when trying to delete this alert from the database",
+    });
+  })
+})
+
+
 
 //This function checks if a record against a car exists in the info hashes table
 //If it exists then updates the record else it creates a new record
