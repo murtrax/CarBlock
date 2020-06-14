@@ -1,0 +1,28 @@
+.back{
+background-color: #333;
+margin-top: -2rem;
+margin-bottom: -2rem;
+padding-top: 2rem;
+padding-bottom: 2rem;
+}
+
+.success{
+    margin-top: 2rem;
+    background-color: #baf5ab;
+    height: 75vh;
+
+}
+
+.error{
+    margin-top: 2rem;
+    background-color: #e4a09d;
+    height: 75vh;
+}
+
+.illustration{
+    padding-top: 5rem;
+}
+
+.contain{
+    border-radius: 1rem;
+}

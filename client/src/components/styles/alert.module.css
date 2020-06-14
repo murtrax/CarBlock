@@ -1,0 +1,49 @@
+.btn{
+    border-radius: 3rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    position: absolute;
+    top:0;
+    right:0;
+    background-color: rgb(63, 63, 63);
+    border: 1px solid rgb(133, 110, 110);
+    color: rgb(255, 255, 255);
+    margin-top: 0.2rem;
+    margin-right: 0.2rem;
+
+}
+
+.pill{
+    background-color: #333;
+    color: white;
+    padding: 0.3rem;
+    border-radius: 0.2rem;
+}
+
+.pill2{
+    background-color: rgb(216, 125, 132);
+    padding: 0.3rem;
+    border-radius: 0.5rem;
+    font-weight: bolder;
+}
+
+.pill3{
+    padding: 0.3rem;
+    border-radius: 0.2rem;
+}
+
+.space{
+    margin-bottom: 0.4rem;
+    font-weight: bolder;
+}
+
+.bold{
+    font-weight: bolder;
+}
+
+.vl {
+    border-left: 2px solid #F1B0B7;
+    height: 5.3rem;
+    position: absolute;
+
+  }

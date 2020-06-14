@@ -1,8 +1,25 @@
 import React, {Component} from 'react';
-import {MDBAlert} from "mdbreact";
+import {MDBAlert, MDBIcon} from "mdbreact";
 import axios from "axios";
-//import moment from 'react-moment';
-//import 'moment-timezone';
+import styles from '../styles/alert.module.css';
+
+const err = [
+    {
+        comments: 'A millage lower than a previously recorded value was entered',
+        date: '1578567991011',
+        garage:'Hy kisi ki',
+        millage:'455',
+        reg:'343'
+    },
+    {
+        comments: 'al2 ajeeb qism ki alert hy ye zabardasti ki',
+        date: '1348567991011',
+        garage:'tha kisi ki',
+        millage:'450',
+        reg:'343'
+    }
+];
+
 
 
 export default class Alert extends Component{
@@ -43,7 +60,7 @@ export default class Alert extends Component{
         .then((res)=>{
             console.log(res);
             let array = this.state.array
-            if (index != -1){
+            if (index !== -1){
                 array.splice(index, 1);
                 this.setState({
                     array: array
@@ -61,120 +78,46 @@ export default class Alert extends Component{
         //return 1;
     }
     
+
      display = ()=> {
+         //let array = this.state.array;
          let array = this.state.array;
          let listItems = [];
          var counter = 0;
          //const renObjData
-
-       /* for (var x = 0; x< array.length; x++) {
-            //var newDate = moment(new Date(array[x].date * 1000)).format('MM/DD/YYYY hh:MM');
-            if (array[x].comments == "Spare Parts are not OEM") {
-                labels[x]= 
-                    <React.Fragment>
-                        <MDBAlert color="danger">
-                        <br></br>
-                    <label style={{ color: "Black", fontSize: "15px"}}>
-                        <text>
-                        <bold>Comments:</bold> {array[x].comments} 
-                        </text>
-                        <br></br>
-                        <text>
-                        Date: {array[x].date} 
-                        </text>
-                        <br></br>
-                        <text>
-                        Garage: {array[x].garage} 
-                        </text>
-                        <br></br>
-                        <text>
-                        Millage: {array[x].millage} 
-                        </text>
-                        <br></br>
-                        <text>
-                        Reg: {array[x].reg} 
-                        </text>
-                        <br></br>
-                    </label>
-                    <br></br>
-                    <button onClick={this.dismiss(array[x]._id, x)}>Dismiss</button>
-                    </MDBAlert>
-                    </React.Fragment>
-            }
-
-            if (array[x].comments == "Milage entered was less than a previously recorded value") {
-                labels[x]= 
-                    <React.Fragment>
-                      <MDBAlert color="danger">
-                        <br></br>
-                    <label style={{ color: "Black" , fontSize: "15px"}}>
-                        <br></br>
-                        <text>
-                        <bold>Comments:</bold> {array[x].comments} 
-                        </text>
-                        <br></br>
-                        <text>
-                        Date: {array[x].date} 
-                        </text>
-                        <br></br>
-                        <text>
-                        Garage: {array[x].garage} 
-                        </text>
-                        <br></br>
-                        <text>
-                        Millage: {array[x].millage} 
-                        </text>
-                        <br></br>
-                        <text>
-                        Reg: {array[x].reg} 
-                        </text>
-                        <br></br>
-                    </label>
-                    <br></br>
-                    <button onClick={this.dismiss(array[x]._id, x)}>Dismiss</button>
-                    </MDBAlert>
-                    </React.Fragment>
-            }
-
-            listItems = array.map((array1) =>
-            <li key={array1._id}>    
-                {array1.comment}
-            </li>
-            ); 
-        }*/
         array.map((anObjectMapped, index) => {
             listItems[counter++] =
-            <React.Fragment>
-                <MDBAlert color="danger">
-                <label key={`${anObjectMapped._id}`}>
-                    {anObjectMapped.comments} - {anObjectMapped.date}
-                </label> 
-             <button onClick={e => this.dismiss(anObjectMapped._id, index)}> Dismiss </button> 
+                <MDBAlert className = {`pb-2`} color="danger">
+                <span key={`${anObjectMapped._id}`}>
+                    <p className ={styles.pill3}><span className = {`alert-link`}>{anObjectMapped.comments}</span></p>
+                    <hr/>
+                    <p className = {`mt-1 ${styles.space}`}><span className = {`${styles.pill2}`}>Garage:&nbsp;</span> <span className = {styles.vl}/> <span className = "pl-2">{anObjectMapped.garage}</span></p>
+                    <p className = {styles.space}><span className = {styles.pill2}>Mileage:</span> <span className = "pl-2">{anObjectMapped.millage}</span></p>
+                    <p className = {styles.space}><span className = {styles.pill2}>#Reg:&emsp;&nbsp;</span> <span className = "pl-2">{anObjectMapped.reg}</span></p>
+                    <p className= {`text-right mb-2 pb-2`}><span className = {styles.pill}>{new Date(parseInt(anObjectMapped.date)).toString().substring(0, 24)}</span></p>
+                    <button className = {styles.btn} onClick={e => this.dismiss(anObjectMapped._id, index)}> <MDBIcon icon="times" /> </button> 
+
+                </span> 
              </MDBAlert>  
-            </React.Fragment>    
         })
         console.log(listItems);
         return listItems;
     }
 
     render(){
-        if (this.state.array != []) {
+        if (this.state.array !== []) {
             return (
-                <div class = "pt-2">  
+                <div class = "mt-5 pt-2">  
                 {this.display()}
-                  <MDBAlert color="danger">
-                      A simple primary alert with <a href="#!" className="alert-link">an example link</a>. Give it a click if you like. <span class = "right">24/7/2019</span>
-                  </MDBAlert>
-
                 </div>
               )
         }
         else {
             return (
-                <div class = "pt-2">  
+                <div class = "mt-5 pt-2">  
                 {this.display()}
                   <MDBAlert color="danger">
-                      Loading Content, Please Wait <span class = "right">24/7/2019</span>
+                      Loading Content, Please Wait <span class = "right"></span>
                   </MDBAlert>
                   
                 </div>
