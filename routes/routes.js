@@ -38,83 +38,83 @@ const accidentDataHashing = require("./../hashingAndConversion/accidentDataHashi
  */
 const contractAbi = [
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
+        indexed: false,
+        internalType: "address",
+        name: "from",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "carDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "carDetailsHash",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "ownerDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "ownerDetailsHash",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "serviceDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "serviceDetailsHash",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "accidentDetailsHash",
-        "type": "string"
-      }
+        indexed: false,
+        internalType: "string",
+        name: "accidentDetailsHash",
+        type: "string",
+      },
     ],
-    "name": "Transferred",
-    "type": "event"
+    name: "Transferred",
+    type: "event",
   },
   {
-    "constant": false,
-    "inputs": [
+    constant: false,
+    inputs: [
       {
-        "internalType": "string",
-        "name": "_carDetailsHash",
-        "type": "string"
+        internalType: "string",
+        name: "_carDetailsHash",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "_ownerDetailsHash",
-        "type": "string"
+        internalType: "string",
+        name: "_ownerDetailsHash",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "_serviceDetailsHash",
-        "type": "string"
+        internalType: "string",
+        name: "_serviceDetailsHash",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "_accidentDetailsHash",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "_accidentDetailsHash",
+        type: "string",
+      },
     ],
-    "name": "eventGenerator",
-    "outputs": [
+    name: "eventGenerator",
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "success",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
     ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
-const contractAddress = "0x402aBFa55c923a647FAfAe7b37676dF44734742c";
+const contractAddress = "0xC845e757c1b7e226EE85130bfCC178d13d4228F2";
 const web3js = new web3();
-web3js.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+web3js.setProvider(new web3.providers.HttpProvider("http://localhost:9545"));
 const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
 
 let accounts = [];
@@ -387,8 +387,8 @@ router.post("/workshopSignUp", (req, res) => {
                     .json({ error: "Error saving data to database" });
                 } else {
                   return res.json({
-                    sucess:
-                      "We have recived your application, We will contact you soon",
+                    success:
+                      "We have recived your application, You will contacted after approval!",
                   });
                 }
               });
@@ -461,7 +461,7 @@ router.post("/searchCar", (req, res) => {
           (bool) => {
             if (bool) {
               return res.status(400).json({
-                msg: "Data Corrupt! Transaction not allowed!",
+                msg: "Data Corrupt! Transaction not required!",
               });
             } else {
               return res.status(400).json({
@@ -576,7 +576,7 @@ router.post("/searchCar", (req, res) => {
           (bool) => {
             if (bool) {
               return res.status(400).json({
-                msg: "Data Corrupt! Transaction not allowed!",
+                msg: "Data Corrupt! Transaction not required!",
               });
             } else {
               return res.status(400).json({
@@ -1513,7 +1513,6 @@ async function compareExistingRecords(
             toBlock: record.block,
           },
           (err, events) => {
-            console.log(events);
             if (events.length >= 1) {
               //Compare all 4 hashes
               //If any hash does not match then send appropriate response
@@ -1573,22 +1572,22 @@ async function confirmDataCorruption(number, selectedOpt) {
     if (selectedOpt == "vin") {
       //Check for existing records in information hash table
       informationHash.find({ vin: number }).then((result) => {
-        if (result) {
+        if (result.length != 0) {
           resolve(true);
         } else {
           //Check for existing records in information hash table
           ownershipHistory.find({ vin: number }).then((owner) => {
-            if (owner) {
+            if (owner.length != 0) {
               resolve(true);
             } else {
               //Check for existing records in service history table
               serviceHistory.find({ vin: number }).then((service) => {
-                if (service) {
+                if (service.length != 0) {
                   resolve(true);
                 } else {
                   //Check for existing records in service history table
                   accidentHistory.find({ vin: number }).then((accident) => {
-                    if (accident) {
+                    if (accident.length != 0) {
                       resolve(true);
                     } else {
                       resolve(false);
@@ -1605,22 +1604,22 @@ async function confirmDataCorruption(number, selectedOpt) {
     if (selectedOpt == "reg") {
       //Check for existing records in information hash table
       informationHash.find({ reg: number }).then((result) => {
-        if (result) {
+        if (result.length != 0) {
           resolve(true);
         } else {
           //Check for existing records in information hash table
           ownershipHistory.find({ reg: number }).then((owner) => {
-            if (owner) {
+            if (owner.length != 0) {
               resolve(true);
             } else {
               //Check for existing records in service history table
               serviceHistory.find({ reg: number }).then((service) => {
-                if (service) {
+                if (service.length != 0) {
                   resolve(true);
                 } else {
                   //Check for existing records in service history table
                   accidentHistory.find({ reg: number }).then((accident) => {
-                    if (accident) {
+                    if (accident.length != 0) {
                       resolve(true);
                     } else {
                       resolve(false);

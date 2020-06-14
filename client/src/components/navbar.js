@@ -103,9 +103,6 @@ class NavbarPage extends Component {
                   <MDBNavLink to="/login">Login</MDBNavLink>
                 </MDBNavItem>
                 <MDBNavItem>
-                  <MDBNavLink to="/searchResult">Search</MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
                   <MDBDropdown>
                     <MDBDropdownToggle nav caret>
                       Register
@@ -121,9 +118,6 @@ class NavbarPage extends Component {
                   </MDBDropdown>
                 </MDBNavItem>
 
-                <MDBNavItem>
-                  <MDBNavLink to="/report">Report</MDBNavLink>
-                </MDBNavItem>
                 <MDBNavItem>
                   <MDBNavLink to="/alert">Alerts</MDBNavLink>
                 </MDBNavItem>
@@ -146,7 +140,6 @@ class NavbarPage extends Component {
             <Route path="/signup" exact component={SignUpUser} />
             <Route path="/login" exact component={LogInUser} />
             <Route path="/workshop" exact component={Workshop} />
-            <Route path="/report" exact component={Report} />
             <PrivateRouteRegAuth
               exact
               path="/dashboardWorkshop"
