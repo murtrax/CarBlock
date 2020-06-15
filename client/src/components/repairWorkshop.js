@@ -290,7 +290,6 @@ class TabsDefault extends Component {
                                   name="sparePart2"
                                   value={this.state.sparePart2}
                                   onChange={this.handleChange}
-                                  disabled = {(this.state.sparePart1 == "") ? true: false}
                                 />
                                 <label htmlFor="icon_prefix2">Spare Part</label>
                               </div>
@@ -306,7 +305,6 @@ class TabsDefault extends Component {
                                   name="sparePart3"
                                   value={this.state.sparePart3}
                                   onChange={this.handleChange}
-                                  disabled = {(this.state.sparePart2 == "") ? true: false}
                                 />
                                 <label htmlFor="icon_prefix2">Spare Part</label>
                               </div>
@@ -323,13 +321,6 @@ class TabsDefault extends Component {
                             >
                               Submit
                               <i className="material-icons right">send</i>
-                            </button>
-                            <button
-                              class="btn waves-effect waves-light"
-                              type="button"
-                              onClick={this.logout}
-                            >
-                              Logout
                             </button>
                           </div>
                         </form>
@@ -399,13 +390,6 @@ class TabsDefault extends Component {
                               >
                                 Submit
                                 <i className="material-icons right">send</i>
-                              </button>
-                              <button
-                                class="btn waves-effect waves-light"
-                                type="button"
-                                onClick={this.logout}
-                              >
-                                Logout
                               </button>
                             </div>
                           </div>

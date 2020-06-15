@@ -142,6 +142,8 @@ class JumbotronPage extends React.Component {
   };
 
   updateData = (select) => {
+    console.log("in update data method printing select")
+    console.log(select);
     if (this.state.workshops.length == 0) {
       this.setState({
         ownerName: "",
@@ -161,6 +163,7 @@ class JumbotronPage extends React.Component {
         workshops: [],
       });
     } else {
+      console.log(this.state.workshops)
       this.setState(
         {
           ownerName: this.state.workshops[select].ownerName,
@@ -248,6 +251,7 @@ class JumbotronPage extends React.Component {
             statusColor: "green",
             workshops: workshopsTemp,
             numberOfRecords: workshopsTemp.length,
+            selection: select - 1
           },
           () => {
             this.updateData(this.state.selection);
@@ -295,6 +299,8 @@ class JumbotronPage extends React.Component {
             approved: "Not Approved",
             statusColor: "red",
             workshops: workshopsTemp,
+            numberOfRecords: workshopsTemp.length,
+            selection: select - 1
           },
           () => {
             this.updateData(this.state.selection);

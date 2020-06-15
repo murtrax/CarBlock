@@ -38,84 +38,85 @@ const accidentDataHashing = require("./../hashingAndConversion/accidentDataHashi
  */
 const contractAbi = [
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: false,
-        internalType: "address",
-        name: "from",
-        type: "address",
+        "indexed": false,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "carDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "carDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "ownerDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "ownerDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "serviceDetailsHash",
-        type: "string",
+        "indexed": false,
+        "internalType": "string",
+        "name": "serviceDetailsHash",
+        "type": "string"
       },
       {
-        indexed: false,
-        internalType: "string",
-        name: "accidentDetailsHash",
-        type: "string",
-      },
+        "indexed": false,
+        "internalType": "string",
+        "name": "accidentDetailsHash",
+        "type": "string"
+      }
     ],
-    name: "Transferred",
-    type: "event",
+    "name": "Transferred",
+    "type": "event"
   },
   {
-    constant: false,
-    inputs: [
+    "constant": false,
+    "inputs": [
       {
-        internalType: "string",
-        name: "_carDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_carDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_ownerDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_ownerDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_serviceDetailsHash",
-        type: "string",
+        "internalType": "string",
+        "name": "_serviceDetailsHash",
+        "type": "string"
       },
       {
-        internalType: "string",
-        name: "_accidentDetailsHash",
-        type: "string",
-      },
+        "internalType": "string",
+        "name": "_accidentDetailsHash",
+        "type": "string"
+      }
     ],
-    name: "eventGenerator",
-    outputs: [
+    "name": "eventGenerator",
+    "outputs": [
       {
-        internalType: "bool",
-        name: "success",
-        type: "bool",
-      },
+        "internalType": "bool",
+        "name": "success",
+        "type": "bool"
+      }
     ],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ];
 
-const contractAddress = "0xC845e757c1b7e226EE85130bfCC178d13d4228F2";
+const contractAddress = "0x402aBFa55c923a647FAfAe7b37676dF44734742c";
 const web3js = new web3();
-web3js.setProvider(new web3.providers.HttpProvider("http://localhost:9545"));
+web3js.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
 const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
+
 
 let accounts = [];
 
@@ -388,7 +389,7 @@ router.post("/workshopSignUp", (req, res) => {
                 } else {
                   return res.json({
                     success:
-                      "We have recived your application, You will contacted after approval!",
+                      "We have recived your application, You will be contacted after approval!",
                   });
                 }
               });
@@ -1138,7 +1139,7 @@ router.post("/AccidentAndService", (req, res) => {
                                 const alertPayload = {
                                   reg: data.reg,
                                   date: todaysDate,
-                                  millage: res1.millage,
+                                  millage: millageCurrent,
                                   comments:
                                     "Milage entered was less than a previously recorded value in Service/Accident Section",
                                   garage: data.garage,
@@ -1173,6 +1174,8 @@ router.post("/AccidentAndService", (req, res) => {
                                   comments: data.comments,
                                 };
 
+                                let cmd = 0; 
+
                                 //Check that out of all 3 spare parts which of them exist and update
                                 //the payload object accordingly
                                 if (data.sparePart1 != "") {
@@ -1181,6 +1184,7 @@ router.post("/AccidentAndService", (req, res) => {
                                     .then((T) => {
                                       //console.log(T);
                                       payload.isValid1 = T;
+                                      cmd = 1
                                     })
                                     .catch((err) => {
                                       console.log(err);
@@ -1193,6 +1197,7 @@ router.post("/AccidentAndService", (req, res) => {
                                     .then((T) => {
                                       //console.log(T);
                                       payload.isValid2 = T;
+                                      cmd = 1
                                     })
                                     .catch((err) => {
                                       console.log(err);
@@ -1205,12 +1210,16 @@ router.post("/AccidentAndService", (req, res) => {
                                     .then((T) => {
                                       // console.log(T);
                                       payload.isValid3 = T;
+                                      cmd = 1 
                                     })
                                     .catch((err) => {
                                       console.log(err);
                                       payload.isValid3 = "N/A";
                                     });
                                 }
+                                console.log(payload.isValid1);
+                                console.log(payload.isValid2);
+                                console.log(payload.isValid3);
 
                                 const alertPayload = {
                                   reg: data.reg,
@@ -1220,30 +1229,33 @@ router.post("/AccidentAndService", (req, res) => {
                                   garage: data.garage,
                                 };
 
-                                if (payload.isValid1 == false) {
-                                  alertPayload.sparePart1 = payload.sparePart1;
-                                }
-                                if (payload.isValid2 == false) {
-                                  alertPayload.sparePart2 = payload.sparePart2;
-                                }
-                                if (payload.isValid3 == false) {
-                                  alertPayload.sparePart3 = payload.sparePart3;
-                                }
-                                console.log(alertPayload);
-                                const newAlert = new alert(alertPayload);
-                                newAlert.save((error) => {
-                                  if (error) {
-                                    console.log(error);
-                                    console.log(
-                                      "There was an erroring in saving invalid spare part(s) alert"
-                                    );
-                                    //return 1;
-                                  } else {
-                                    console.log(
-                                      "New Alert for invalid spare part(s) saved"
-                                    );
+                                if (payload.isValid1 == false || payload.isValid2 == false || payload.isValid3 == false){
+                                  if (payload.isValid1 == false) {
+                                    alertPayload.sparePart1 = payload.sparePart1;
                                   }
-                                });
+                                  if (payload.isValid2 == false) {
+                                    alertPayload.sparePart2 = payload.sparePart2;
+                                  }
+                                  if (payload.isValid3 == false) {
+                                    alertPayload.sparePart3 = payload.sparePart3;
+                                  }
+                                  console.log(alertPayload);
+                                  const newAlert = new alert(alertPayload);
+                                  newAlert.save((error) => {
+                                    if (error) {
+                                      console.log(error);
+                                      console.log(
+                                        "There was an erroring in saving invalid spare part(s) alert"
+                                      );
+                                      //return 1;
+                                    } else {
+                                      console.log(
+                                        "New Alert for invalid spare part(s) saved"
+                                      );
+                                    }
+                                  });
+                                }
+                                
 
                                 //console.log(payload);
                                 //if the user selected to enter service history then

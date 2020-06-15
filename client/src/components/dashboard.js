@@ -20,7 +20,7 @@ class Dashboard extends React.Component {
       <div className={styles.formback}>
         <MDBRow className="pt-5">
           <MDBCol sm="3">
-            <SideNav logout={this.onLogoutClick} />
+            <SideNav />
           </MDBCol>
           <MDBCol sm="9">
             <Workshop />

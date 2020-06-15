@@ -61,14 +61,6 @@ class sideNav extends React.Component {
                 </div>
               </a>
             </div>
-            <div className={styles.navlink}>
-              <div onClick={this.props.logout}>
-                <div>
-                  <MDBIcon className={styles.icon} size="2x" icon="power-off" />
-                  <span className={`ml-3 ${styles.iconText}`}>Logout</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

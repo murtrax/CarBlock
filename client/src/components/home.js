@@ -81,12 +81,10 @@ class JumbotronPage extends React.Component {
               >
                 <MDBCol className="py-5 text-center">
                   <MDBCardTitle className="h1-responsive pt-3 m-5 font-bold">
-                    Search Vehicle to see their Vehicle History Report
+                    Car History Reports, Just One Search Away
                   </MDBCardTitle>
                   <p className="mx-5 mb-5">
-                    Search vehicle by its Registration Number or Vin Number, if
-                    it is on the system you will b able to see its vehicle
-                    history report quickly.
+                    Verified by CarBlocks Secure BlockChain Network
                   </p>
                   <form onSubmit={this.submitForm}>
                     <MDBInput

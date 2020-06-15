@@ -290,10 +290,10 @@ if (this.state.condition == 1)
             <MDBRow>
               <MDBCol className="text-left card pt-2 pb-2 align-content-left">
                 <div className={styles.listItem}><h5>Owner Information</h5></div>
-                <div className={styles.listElement}><span className={styles.key}>City</span> {owners[owners.length-1].city}</div>
+                <div className={styles.listElement}><span className={styles.key}>City</span> {owners[0].city}</div>
                 <div className={styles.listElement}><span className={styles.key}>Milage:</span> {this.highestMillage()}</div>
-                <div className={styles.listElement}><span className={styles.key}>State:</span> {owners[owners.length-1].state}</div>
-                <div className={styles.listElement}><span className={styles.key}>Year of Purchase:</span> {owners[owners.length-1].yearPurchased}</div>
+                <div className={styles.listElement}><span className={styles.key}>State:</span> {owners[0].state}</div>
+                <div className={styles.listElement}><span className={styles.key}>Year of Purchase:</span> {owners[0].yearPurchased}</div>
               </MDBCol>
             </MDBRow>
             <MDBRow>
@@ -314,22 +314,22 @@ if (this.state.condition == 1)
           <MDBCol className={`card ${styles.back}`} md="6">
             <div className={`card ${styles.snapshot} text-left`}>
               <li className={`list-group-item ${styles.listFeature}`}>
-                <div className="md-v-line"></div><MDBIcon className="mr-4 pt-3 pr-2" size='2x' icon="users" /><span className={styles.feat}>Recent Owners: {owners.length}</span>
+                <div className="md-v-line"></div><MDBIcon className="mr-4 pt-3 pr-2" size='2x' icon="users" /><span className={styles.feat}>Total Number of Owners: {this.state.owner.length}</span>
               </li>
               <li className={`list-group-item ${styles.listFeature}`}>
-                <div className="md-v-line"></div><MDBIcon className="mr-4 pt-3 pr-3" size='2x' icon="tools" /><span className={styles.feat}>Service Records: {this.state.service.length}</span>
+                <div className="md-v-line"></div><MDBIcon className="mr-4 pt-3 pr-3" size='2x' icon="tools" /><span className={styles.feat}>Total Number of Service Records: {this.state.service.length}</span>
               </li>
               <li className={`list-group-item ${styles.listFeature}`}>
                 <div className="md-v-line"></div><MDBIcon className="mr-4 pt-3 pr-3" size='2x' icon="compass" /><span className={styles.feat}>Last Owned In:  {owners[owners.length-1].city}</span>
               </li>
               <li className={`list-group-item`}>
-                <MDBTable bordered hover>
+                <MDBTable  bordered hover>
                   <MDBTableHead color="primary-color" textWhite>
                     <tr>
-                      <th>#</th>
-                      <th>Owner 3</th>
-                      <th>Owner 2</th>
-                      <th>Owner 1</th>
+                      <th className = {styles.text}>Ownership History</th>
+                      <th className = {styles.text}>Owner 3</th>
+                      <th className = {styles.text}>Owner 2</th>
+                      <th className = {styles.text}>Owner 1</th>
                     </tr>
                   </MDBTableHead>
                   <MDBTableBody>
@@ -366,7 +366,7 @@ if (this.state.condition == 1)
         <MDBRow >
           <MDBCol md='5' className="offset-md-1 text-left">
             <ul className={`list-group card ${styles.scrollable}`}>
-              <li className={`list-group-item ${styles.listHeading}`}>
+              <li style = {{fontWeight: "bold"}} className={`list-group-item ${styles.listHeading}`}>
                 <div className="md-v-line"></div><i className="fas fa-laptop mr-4 pr-3"></i>Service History
               </li>
              <SList list={this.state.service} />
@@ -374,7 +374,7 @@ if (this.state.condition == 1)
           </MDBCol>
           <MDBCol md='5' className="text-left">
             <ul className={`list-group card ${styles.scrollable}`}>
-              <li className={`list-group-item ${styles.listHeading}`}>
+              <li style = {{fontWeight: "bold"}} className={`list-group-item ${styles.listHeading}`}>
                 <div className="md-v-line"></div><i className="fas fa-laptop mr-4 pr-3"></i>Accident Report
               </li>
               <AList list={this.state.accident} />

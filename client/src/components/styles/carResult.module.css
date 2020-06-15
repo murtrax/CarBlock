@@ -4,6 +4,7 @@ color: white;
 position: sticky;
 top: 0;
 z-index: 1;
+font-size: 1.5rem;
 }
 
 .listFeature{
@@ -51,7 +52,7 @@ padding-bottom: 2rem;
 }
 
 .scrollable{
-    height: 20rem;
+    height: 25rem;
     overflow-y: scroll;
 }
 
@@ -88,6 +89,10 @@ padding-bottom: 2rem;
     color:white;
     padding: 0.2rem;
     margin:0.2rem;
+}
+.text {
+    font-size: 1.2rem;
+    font-weight: bolder;
 }
 
 @media only screen and (max-width: 600px) {

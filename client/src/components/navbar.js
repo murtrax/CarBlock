@@ -7,18 +7,15 @@ import {
   MDBNavLink,
   MDBNavbarToggler,
   MDBCollapse,
-  MDBIcon,
   MDBDropdown,
   MDBDropdownItem,
   MDBDropdownToggle,
   MDBDropdownMenu,
 } from "mdbreact";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { logoutUser } from "./../actions/authActions";
 
 import Home from "./home"; //Home Page
-
-import About from "./about"; //About Page
-
 import SignUpUser from "./signup"; //User SignUp
 import LogInUser from "./signin"; //Sign In (Workshop)
 import Workshop from "./workshop"; //Workshop Sign Up
@@ -31,20 +28,19 @@ import newCar from "./addNewCar"; //add new car form (workshop)
 import carResults from "./homeComponents/carResults"; //(display car report)
 import repairWorkshop from "./repairWorkshop"; //add service and acc details
 
-import DashboardWorkshop from "./dashboard/Dashboard"; //DUMMY dashboard
-
 // Importing React Redux and Redux Store and other important imports (DANIAL)
-import { Provider } from "react-redux";
 import store from "../store";
 import jwt_decode from "jwt-decode";
 import setAuthToken from "../utils/setAuthToken";
-import { setCurrentUser, logoutUser } from "../actions/authActions";
+import { setCurrentUser } from "../actions/authActions";
 import PrivateRoute from "./private-route/PrivateRoute";
 import PrivateRouteRegAuth from "./private-route/PrivateRouteRegAuth";
 
 import styles from "./styles/navbar.module.css";
 import errorMessage from "./errorMessage";
 import Success from "./success";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
 // (DANIAL)
 // Check for token to keep user logged in
@@ -73,7 +69,6 @@ if (localStorage.jwtToken) {
 class NavbarPage extends Component {
   state = {
     isOpen: false,
-    isLoggedIn: false,
   };
 
   toggleCollapse = () => {
@@ -81,93 +76,119 @@ class NavbarPage extends Component {
   };
 
   render() {
-    return (
-      <Provider store={store}>
-        <Router>
-          <MDBNavbar className={styles.bar} dark expand="md">
-            <MDBNavbarBrand>
+    let links;
+    if (!this.props.auth.isAuthenticated) {
+      links = (
+        <MDBNavbar className={styles.bar} dark expand="md">
+          <MDBNavbarBrand>
+            <MDBNavLink to="/home">
               <img
                 src={log}
                 style={{ width: "7rem" }}
                 className="rounded mx-auto d-block"
                 alt="aligment"
               />
-            </MDBNavbarBrand>
-            <MDBNavbarToggler onClick={this.toggleCollapse} />
-            <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
-              <MDBNavbarNav right>
-                <MDBNavItem>
-                  <MDBNavLink to="/home">Home</MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink to="/login">Login</MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBDropdown>
-                    <MDBDropdownToggle nav caret>
-                      Register
-                    </MDBDropdownToggle>
-                    <MDBDropdownMenu>
-                      <MDBNavLink to="/signup">
-                        <MDBDropdownItem>User</MDBDropdownItem>
-                      </MDBNavLink>
-                      <MDBNavLink to="/workshop">
-                        <MDBDropdownItem>Workshop</MDBDropdownItem>
-                      </MDBNavLink>
-                    </MDBDropdownMenu>
-                  </MDBDropdown>
-                </MDBNavItem>
+            </MDBNavLink>
+          </MDBNavbarBrand>
 
-                <MDBNavItem>
-                  <MDBNavLink to="/alert">Alerts</MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink to="/transfer">Transfer Owner</MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink to="/newCar">Add New Car</MDBNavLink>
-                </MDBNavItem>
-                <MDBNavItem>
-                  <MDBNavLink to="/workshopRepair">Workshop Repair</MDBNavLink>
-                </MDBNavItem>
-              </MDBNavbarNav>
-            </MDBCollapse>
-          </MDBNavbar>
+          <MDBNavbarToggler onClick={this.toggleCollapse} />
+          <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
+            <MDBNavbarNav right>
+              <MDBNavItem>
+                <MDBNavLink to="/home">Search</MDBNavLink>
+              </MDBNavItem>
+              <MDBNavItem>
+                <MDBDropdown>
+                  <MDBDropdownToggle nav caret>
+                    Register
+                  </MDBDropdownToggle>
+                  <MDBDropdownMenu>
+                    <MDBNavLink to="/signup">
+                      <MDBDropdownItem>User</MDBDropdownItem>
+                    </MDBNavLink>
+                    <MDBNavLink to="/workshop">
+                      <MDBDropdownItem>Workshop</MDBDropdownItem>
+                    </MDBNavLink>
+                  </MDBDropdownMenu>
+                </MDBDropdown>
+              </MDBNavItem>
+              <MDBNavItem>
+                <MDBNavLink to="/login">Login</MDBNavLink>
+              </MDBNavItem>
+            </MDBNavbarNav>
+          </MDBCollapse>
+        </MDBNavbar>
+      );
+    } else {
+      links = (
+        <MDBNavbar className={styles.bar} dark expand="md">
+          <MDBNavbarBrand>
+            <MDBNavLink to="/home">
+              <img
+                src={log}
+                style={{ width: "7rem" }}
+                className="rounded mx-auto d-block"
+                alt="aligment"
+              />
+            </MDBNavLink>
+          </MDBNavbarBrand>
+          <MDBNavbarToggler onClick={this.toggleCollapse} />
+          <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
+            <MDBNavbarNav right>
+              <MDBNavItem>
+                <MDBNavLink to="/home">Search</MDBNavLink>
+              </MDBNavItem>
+              <MDBNavItem>
+                <MDBNavLink to="#" onClick={() => this.props.logoutUser(false)}>
+                  Logout
+                </MDBNavLink>
+              </MDBNavItem>
+            </MDBNavbarNav>
+          </MDBCollapse>
+        </MDBNavbar>
+      );
+    }
 
-          <Switch>
-            <Route path="/" exact component={Home} />
-            <Route path="/home" exact component={Home} />
-            <Route path="/signup" exact component={SignUpUser} />
-            <Route path="/login" exact component={LogInUser} />
-            <Route path="/workshop" exact component={Workshop} />
-            <PrivateRouteRegAuth
-              exact
-              path="/dashboardWorkshop"
-              component={DashBoard}
-            />
-            <PrivateRoute
-              exact
-              path="/workshopRepair"
-              component={repairWorkshop}
-            />
-            <Route path="/alert" exact component={Alert} />
-            <Route path="/transfer" exact component={Transfer} />
-            <Route path="/newCar" exact component={newCar} />
-            <Route path="/error" exact component={errorMessage} />
-            <Route path="/success" exact component={Success} />
-            <Route
-              path="/searchResults/:opt&:id"
-              exact
-              component={carResults}
-            />
-            {
-              //}<Route path="/workshopRepair" exact component={repairWorkshop} />
-            }{" "}
-          </Switch>
-        </Router>
-      </Provider>
+    return (
+      <Router>
+        {links}
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/home" exact component={Home} />
+          <Route path="/signup" exact component={SignUpUser} />
+          <Route path="/login" exact component={LogInUser} />
+          <Route path="/workshop" exact component={Workshop} />
+          <Route path="/report" exact component={Report} />
+          <PrivateRouteRegAuth
+            exact
+            path="/dashboardWorkshop"
+            component={DashBoard}
+          />
+          <PrivateRouteRegAuth exact path="/alert" component={Alert} />
+          <PrivateRouteRegAuth exact path="/transfer" component={Transfer} />
+          <PrivateRouteRegAuth exact path="/newCar" component={newCar} />
+          <PrivateRoute
+            exact
+            path="/workshopRepair"
+            component={repairWorkshop}
+          />
+
+          <Route path="/error" exact component={errorMessage} />
+          <Route path="/success" exact component={Success} />
+          <Route path="/searchResults/:opt&:id" exact component={carResults} />
+        </Switch>
+      </Router>
     );
   }
 }
 
-export default NavbarPage;
+NavbarPage.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { logoutUser })(NavbarPage);
