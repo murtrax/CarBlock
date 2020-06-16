@@ -19,7 +19,7 @@ function workshopTempValidation(data) {
     errors.ownerContact = "Owner Position is required";
   }
   
-    else if (data.ownerContact.length > 11)
+    else if (data.ownerContact.length > 11 || data.ownerContact.length < 11)
     {
       errors.ownerContactLength = "Owner Contact should be 11 digits";
     }
@@ -55,17 +55,25 @@ function workshopTempValidation(data) {
    if (Validator.isEmpty(data.companyPassword)) {
     errors.companyPassword = "Company Password is required";
     }
+
+    else if (data.companyPassowrd.length < 6){
+      errors.companyPassword = "Company Password must be greater than 6 digits";
+    } 
      //companyConfirm checks
   if (Validator.isEmpty(data.companyConfirm)) {
     errors.companyConfirm = "Company Password Confirmed is required";
     }
+
+    else if (data.companyConfirm.length < 6){
+      errors.companyConfirm = "Company Password must be greater than 6 digits";
+    } 
      //companyEmail checks
   if (Validator.isEmpty(data.companyContact)) {
     errors.companyContact = "Company Contact is required";
     }
 
 
-      if (data.companyContact.length <7 || data.companyContact.length <13){
+     else if (data.companyContact.length <7 || data.companyContact.length <13){
         errors.companyContactLength = "Company Contact Invalid Length";
       }
 
