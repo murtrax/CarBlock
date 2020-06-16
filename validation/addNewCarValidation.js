@@ -80,7 +80,11 @@ function validateCarAndOwnerInput(data) {
   }
 
   else if (!Validator.isAlpha(data.FullName)) {
+    if(isNaN(data.FullName))
+    {}
+    else {
     errors.FullNameAlpha = "Full name can only contain alphabets"
+    }
   }
 
   //Owner checks
@@ -118,8 +122,12 @@ function validateCarAndOwnerInput(data) {
     errors.ownerCity = "City is required";
   }
 
-  else if (!Validator.isAlpha(data.ownerCity)) {
+  else if (!Validator.isAlpha(Validator.blacklist(data.ownerCity, " "))) {
+    if(isNaN(data.ownerCity))
+    {}
+    else {
     errors.ownerCityAlpha = "City Name can only contain alphabets"
+    }
   }
 
   //State checks
@@ -128,7 +136,10 @@ function validateCarAndOwnerInput(data) {
   }
 
   else if (!Validator.isAlpha(data.ownerState)) {
+    if(isNaN(data.ownerState)){}
+    else {
     errors.ownerStateAlpha = "State can only contain alphabets"
+    }
   }
 
   //Millage checks

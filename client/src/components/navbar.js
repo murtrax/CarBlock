@@ -77,6 +77,23 @@ class NavbarPage extends Component {
 
   render() {
     let links;
+    let dashboardLink;
+
+    if (this.props.auth.user.type == "Workshop") {
+      dashboardLink = (
+        <MDBNavItem>
+          <MDBNavLink to="/workshopRepair">Repair</MDBNavLink>
+        </MDBNavItem>
+      );
+    }
+    if (this.props.auth.user.type == "Registration Auth") {
+      dashboardLink = (
+        <MDBNavItem>
+          <MDBNavLink to="/dashboardWorkshop">Dashboard</MDBNavLink>
+        </MDBNavItem>
+      );
+    }
+
     if (!this.props.auth.isAuthenticated) {
       links = (
         <MDBNavbar className={styles.bar} dark expand="md">
@@ -138,6 +155,7 @@ class NavbarPage extends Component {
               <MDBNavItem>
                 <MDBNavLink to="/home">Search</MDBNavLink>
               </MDBNavItem>
+              {dashboardLink}
               <MDBNavItem>
                 <MDBNavLink to="#" onClick={() => this.props.logoutUser(false)}>
                   Logout

@@ -84,7 +84,7 @@ class JumbotronPage extends React.Component {
                 statusColor: "red",
               },
               () => {
-                this.updateData(this.state.selection);
+                this.updateData(select);
               }
             );
           } else {
@@ -94,7 +94,7 @@ class JumbotronPage extends React.Component {
                 statusColor: "green",
               },
               () => {
-                this.updateData(this.state.selection);
+                this.updateData(select);
               }
             );
           }
@@ -122,7 +122,7 @@ class JumbotronPage extends React.Component {
                 statusColor: "Red",
               },
               () => {
-                this.updateData(this.state.selection);
+                this.updateData(select);
               }
             );
           } else {
@@ -132,7 +132,7 @@ class JumbotronPage extends React.Component {
                 statusColor: "Green",
               },
               () => {
-                this.updateData(this.state.selection);
+                this.updateData(select);
               }
             );
           }
@@ -245,6 +245,22 @@ class JumbotronPage extends React.Component {
           disabled: "disabled",
         });
       } else {
+        if (select == 0){
+          this.setState(
+            {
+              approved: "Approved",
+              statusColor: "green",
+              workshops: workshopsTemp,
+              numberOfRecords: workshopsTemp.length,
+            },
+            () => {
+              console.log("In axios")
+              console.log(this.state.selection)
+              this.updateData(this.state.selection);
+            }
+          );
+        }
+        else {
         this.setState(
           {
             approved: "Approved",
@@ -254,9 +270,12 @@ class JumbotronPage extends React.Component {
             selection: select - 1
           },
           () => {
+            console.log("In axios")
+            console.log(this.state.selection)
             this.updateData(this.state.selection);
           }
         );
+        }
       }
 
       axios({
@@ -294,6 +313,22 @@ class JumbotronPage extends React.Component {
           disabled: "disabled",
         });
       } else {
+        if (select == 0){
+          this.setState(
+            {
+              approved: "Not Approved",
+              statusColor: "red",
+              workshops: workshopsTemp,
+              numberOfRecords: workshopsTemp.length,
+            },
+            () => {
+              console.log("In axios")
+              console.log(this.state.selection)
+              this.updateData(this.state.selection);
+            }
+          );
+        }
+        else {
         this.setState(
           {
             approved: "Not Approved",
@@ -303,9 +338,12 @@ class JumbotronPage extends React.Component {
             selection: select - 1
           },
           () => {
+            console.log("In axios")
+            console.log(this.state.selection)
             this.updateData(this.state.selection);
           }
         );
+        }
       }
       axios({
         url: "/deleteWorkshop",

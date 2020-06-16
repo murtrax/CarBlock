@@ -717,7 +717,7 @@ router.post("/CarEntry", (req, res) => {
             make: data.make,
             model: data.model,
             year: data.year.toString(),
-            varaint: data.variant,
+            variant: data.variant,
             type: data.type,
             fuel: data.fuel,
             drive: data.drive,

@@ -24,7 +24,10 @@ function ownerTransferValidate(data) {
   }
 
   else if (!Validator.isAlpha(data.name)) {
+    if(isNaN(data.name)){}
+    else {
     errors.nameAlpha = "Full Name can only contain alphabets"
+    }
   }
 
   //CNIC checks
@@ -64,7 +67,10 @@ function ownerTransferValidate(data) {
   }
 
   else if (!Validator.isAlpha(data.city)) {
+    if(isNaN(data.city)){}
+    else {
     errors.cityAlpha = "City Name can only contain alphabets"
+    }
   }
 
   //State checks
@@ -73,7 +79,10 @@ function ownerTransferValidate(data) {
   }
 
   else if (!Validator.isAlpha(data.ownerState)) {
+    if(isNaN(data.ownerState)){}
+    else {
     errors.ownerStateAlpha = "State can only contain alphabets"
+    }
   }
 
   //Millage checks

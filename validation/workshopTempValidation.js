@@ -18,14 +18,14 @@ function workshopTempValidation(data) {
   if (Validator.isEmpty(data.ownerContact)) {
     errors.ownerContact = "Owner Position is required";
   }
-  if (Validator.isLength(data.ownerContact, { min: 10, max: 10 })) {
-    if (data.ownerContact.length > 11)
+  
+    else if (data.ownerContact.length > 11)
     {
       errors.ownerContactLength = "Owner Contact should be 11 digits";
     }
-    }
+  
     
-   if (data.ownerContact < 0) {
+   else if (data.ownerContact < 0) {
     errors.ownerContactNegative = "Owner Contact cannot be negative";
     }  
   //ownerCNIC checks
@@ -33,14 +33,13 @@ function workshopTempValidation(data) {
     errors.ownerCNIC = "Owner CNIC is required";
     }
 
-  if (Validator.isLength(data.ownerCNIC, { min: 12, max: 12 })) {
-    if (data.ownerCNIC.length > 13)
-    {
+ 
+    if (data.ownerCNIC.length > 13 || data.ownerCNIC.length < 13) {
       errors.ownerCNICLength = "Owner CNIC should be 13 digits";
     }
-    }
+  
     
-   if (data.ownerCNIC < 0) {
+   else if (data.ownerCNIC < 0) {
     errors.ownerCNICNegative = "Owner CNIC cannot be negative";
     }  
 
@@ -65,14 +64,12 @@ function workshopTempValidation(data) {
     errors.companyContact = "Company Contact is required";
     }
 
-    if (Validator.isLength(data.companyContact, { max: 13})) {
-      if (data.companyContact.length >13)
-      {
+
+      if (data.companyContact.length <7 || data.companyContact.length <13){
         errors.companyContactLength = "Company Contact Invalid Length";
       }
-    }
 
-    if (data.companyContact < 0) {
+   else  if (data.companyContact < 0) {
         errors.companyContactNegative = "CompanyContact cannot be a negative number";
       } 
 

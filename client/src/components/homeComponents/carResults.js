@@ -388,7 +388,7 @@ if (this.state.condition == 1)
       }
       else {
         return (
-          <div>Report Loading</div>
+          <div className = {`mx-auto text-center card mt-3 mb-3 ${styles.loading}`}>Report Loading...</div>
         )
       }
 

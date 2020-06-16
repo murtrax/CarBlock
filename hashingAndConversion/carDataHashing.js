@@ -1,7 +1,6 @@
 const hash = require("object-hash");
 
 function hashCarData(data) {
-  if (!data.variant) data.variant = "";
   const newObj = {
     vin: data.vin,
     reg: data.reg,

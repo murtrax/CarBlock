@@ -95,6 +95,14 @@ padding-bottom: 2rem;
     font-weight: bolder;
 }
 
+.loading {
+    height: 50vh;
+    font-size: 2rem;
+    padding-top: 9rem;
+    background-color: rgb(104, 104, 104);
+    color: white;
+}
+
 @media only screen and (max-width: 600px) {
     .feat{
         font-size: 1.4rem;

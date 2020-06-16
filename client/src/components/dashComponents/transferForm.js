@@ -17,6 +17,7 @@ class FormPage extends React.Component {
     errors: [],
     errorBool: "",
     msg: "",
+    success: ""
   };
 
   handleChange = (e) => {
@@ -58,7 +59,9 @@ class FormPage extends React.Component {
       millage: this.state.millage,
       year: date.getFullYear(),
     };
-
+    this.setState({
+      success: ""
+    })
     axios({
       url: "/OwnerTransfer",
       method: "post",
@@ -67,6 +70,9 @@ class FormPage extends React.Component {
       .then((response) => {
         console.log(response.data);
         this.resetFields();
+        this.setState({
+          success: response.data
+        })
       })
       .catch((err) => {
         if (err.response.status == 400) {
@@ -229,6 +235,9 @@ class FormPage extends React.Component {
                   <br></br>
                   <label style={{ color: "red", fontSize: "13" }}>
                     {this.state.msg}
+                  </label>
+                  <label style={{ color: "green", fontSize: "13" }}>
+                    {this.state.success}
                   </label>
                 </form>
               </MDBCardBody>

@@ -22,7 +22,8 @@ class CardExample extends React.Component {
     drive: "",
     errors: [],
     errorBool: "",
-    msg: ""
+    msg: "",
+    sucess: ""
   };
 
   handleChange = (e) => {
@@ -97,7 +98,9 @@ class CardExample extends React.Component {
       drive: this.state.drive,
     };
     console.log(payload);
-
+    this.setState({
+      success: ""
+    })
     axios({
       url: "/CarEntry",
       method: "POST",
@@ -106,6 +109,9 @@ class CardExample extends React.Component {
       .then((response) => {
         console.log(response.data);
         this.resetFields();
+        this.setState({
+          success: response.data
+        })
       })
       .catch(error => {
         console.log(error.response.data.error)
@@ -163,7 +169,9 @@ class CardExample extends React.Component {
       errorBool: "",
     },()=> {
       this.setState({
-        msg: ""
+        msg: "",
+        FullName: "",
+        drive: "",
       })
     });
   };
@@ -285,6 +293,7 @@ class CardExample extends React.Component {
                         <MDBCol md="6" lg="6" sm="12">
                           <select
                             className="browser-default custom-select"
+                            value={this.state.drive}
                             onChange={this.handleChange}
                             name="drive"
                           >
@@ -320,7 +329,7 @@ class CardExample extends React.Component {
                         name="FullName"
                         type="text"
                         className="validate"
-                        value={this.state.Fullname}
+                        value={this.state.FullName}
                         onChange={this.handleChange}
                       />
                       {this.displayError("Enter Owner Name", ["FullName", "FullNameAlpha"])}
@@ -383,6 +392,9 @@ class CardExample extends React.Component {
                       ])}
                       <br />
                       <label style = {{color: "red", fontSize: "13"}}>{this.state.msg}</label>
+                      <br />
+                      <br />
+                      <label style = {{color: "green", fontSize: "13"}}>{this.state.success}</label>
                       <br />
                       <button
                         class="btn waves-effect waves-light"

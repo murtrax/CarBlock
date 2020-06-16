@@ -29,6 +29,7 @@ class TabsDefault extends Component {
     errors: [],
     errorBool: "",
     msg: "",
+    success: ""
   };
 
   componentDidMount() {
@@ -89,6 +90,10 @@ class TabsDefault extends Component {
       sparePart3: this.state.sparePart3,
       garage: this.props.auth.user.name,
     };
+    this.setState({
+      success: ""
+    })
+    
     axios({
       url: "/AccidentAndService",
       method: "post",
@@ -97,6 +102,9 @@ class TabsDefault extends Component {
       .then((response) => {
         console.log(response.data);
         this.clearFields();
+        this.setState({
+          success: response.data
+        })
       })
       .catch((err) => {
         if (err.response.request.status === 400) {
@@ -313,6 +321,9 @@ class TabsDefault extends Component {
                           <label style={{ color: "red", fontSize: "13" }}>
                             {this.state.msg}
                           </label>
+                          <label style={{ color: "green", fontSize: "13" }}>
+                            {this.state.success}
+                          </label>
                           <div className="row text-center">
                             <button
                               className="btn waves-effect waves-light"
@@ -336,7 +347,7 @@ class TabsDefault extends Component {
                               </i>
                               <input
                                 id="icon_prefix"
-                                type="text"
+                                type="number"
                                 name="millage"
                                 value={this.state.millage}
                                 onChange={this.handleChange}
@@ -380,6 +391,9 @@ class TabsDefault extends Component {
                           </div>
                           <label style={{ color: "red", fontSize: "13" }}>
                             {this.state.msg}
+                          </label>
+                          <label style={{ color: "green", fontSize: "13" }}>
+                            {this.state.success}
                           </label>
                           <div className="text-center py-2 mt-3 justify-content-center mx-auto">
                             <div className="row text-center">
