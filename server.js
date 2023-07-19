@@ -1,31 +1,26 @@
-const express = require("express");
-const morgan = require("morgan");
-const mongoose = require("mongoose");
-const routes = require("./routes/routes");
-
 //Declare an express app
-const app = express();
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
 
-//declare port
-const port = 8080;
+const mongoose = require('mongoose');
+const app = require('./app');
+
+const PORT = process.env.PORT || 8080;
+
+const DB_CONNECTION = process.env.DB_CONNECTION_STRING?.replace(
+  '<password>',
+  process.env.DB_PASSWORD
+);
 
 /* Database Connection to Mongo */
-/*mongoose.connect("mongodb://localhost:27017/mernApp1", {
+mongoose.connect(DB_CONNECTION, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
-mongoose.connection.on("connected", () => {
-  console.log("Database connection established!");
-});*/
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-//log for each request on the console
-app.use(morgan("tiny"));
-
-//add a router
-app.use("/", routes);
+mongoose.connection.on('connected', () => {
+  console.log('Database connection established!');
+});
 
 //listen on pot 8080 and log out a msg on the console
-app.listen(port, console.log(`Server is running at port: ${port}`));
+app.listen(PORT, console.log(`Server started on port: ${PORT}`));
