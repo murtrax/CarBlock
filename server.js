@@ -1,40 +1,26 @@
-const express = require("express");
-const morgan = require("morgan");
-const mongoose = require("mongoose");
-const routes = require("./routes/routes");
-const passport = require("passport");
-
-// Saim is bundal.
-
 //Declare an express app
-const app = express();
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
 
-//declare port
-const port = 8080;
+const mongoose = require('mongoose');
+const app = require('./app');
+
+const PORT = process.env.PORT || 8080;
+
+const DB_CONNECTION = process.env.DB_CONNECTION_STRING?.replace(
+  '<password>',
+  process.env.DB_PASSWORD
+);
 
 /* Database Connection to Mongo */
-mongoose.connect("mongodb://localhost:27017/CarBlock", {
+mongoose.connect(DB_CONNECTION, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-mongoose.connection.on("connected", () => {
-  console.log("Database connection established!");
+
+mongoose.connection.on('connected', () => {
+  console.log('Database connection established!');
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-//log for each request on the console
-app.use(morgan("tiny"));
-
-// Passport middleware
-app.use(passport.initialize());
-
-// Passport config
-require("./config/passport")(passport);
-
-//add a router
-app.use("/", routes);
-
 //listen on pot 8080 and log out a msg on the console
-app.listen(port, console.log(`Server is running at port: ${port}`));
+app.listen(PORT, console.log(`Server started on port: ${PORT}`));

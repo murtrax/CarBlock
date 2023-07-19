@@ -1,135 +1,139 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const web3 = require("web3");
+const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 const router = express.Router();
 
 //models
-const userSignUp = require("./../models/userSignUp");
-const carDetails = require("./../models/carSchema/carDetails");
-const ownershipHistory = require("./../models/carSchema/ownershipHistory");
-const serviceHistory = require("./../models/carSchema/serviceHistory");
-const accidentHistory = require("./../models/carSchema/accidentHistory");
-const companyRegistrationTemp = require("./../models/workshopTemp/workshopRegistrationTemp");
-const companyRegistration = require("./../models/workshopRegistration");
-const informationHash = require("./../models/informationHash");
-const sparePart = require("./../models/carSchema/sparePart");
-const alert = require("./../models/alertSchema/alert");
-const adminLogin = require("./../models/adminLogin"); //YET TO BE CREATED
+const userSignUp = require('./../models/userSignUp');
+const carDetails = require('./../models/carSchema/carDetails');
+const ownershipHistory = require('./../models/carSchema/ownershipHistory');
+const serviceHistory = require('./../models/carSchema/serviceHistory');
+const accidentHistory = require('./../models/carSchema/accidentHistory');
+const companyRegistrationTemp = require('./../models/workshopTemp/workshopRegistrationTemp');
+const companyRegistration = require('./../models/workshopRegistration');
+const informationHash = require('./../models/informationHash');
+const sparePart = require('./../models/carSchema/sparePart');
+const alert = require('./../models/alertSchema/alert');
+const adminLogin = require('./../models/adminLogin'); //YET TO BE CREATED
 
 //validation
-const carAndOwnerValidate = require("./../validation/addNewCarValidation");
-const ownerTransferValidate = require("./../validation/ownerTransferValidation");
-const loginValidation = require("./../validation/loginValidation");
-const workshopTempValidation = require("./../validation/workshopTempValidation");
-const AccidentAndServiceHistoryValidate = require("./../validation/AccidentAndServiceHistoryValidate");
-const userSignUpValidate = require("./../validation/userSignUpValidation");
-const hash = require("object-hash");
+const carAndOwnerValidate = require('./../validation/addNewCarValidation');
+const ownerTransferValidate = require('./../validation/ownerTransferValidation');
+const loginValidation = require('./../validation/loginValidation');
+const workshopTempValidation = require('./../validation/workshopTempValidation');
+const AccidentAndServiceHistoryValidate = require('./../validation/AccidentAndServiceHistoryValidate');
+const userSignUpValidate = require('./../validation/userSignUpValidation');
+const hash = require('object-hash');
 
 //hashing or conversion
-const carDataHashing = require("../hashingAndConversion/carDataHashing");
-const ownerDataHashing = require("../hashingAndConversion/ownerDataHashing");
-const serviceDataHashing = require("./../hashingAndConversion/serviceDataHashing");
-const addToOwnerHistory = require("./../hashingAndConversion/addtoOwnerHistory");
-const accidentDataHashing = require("./../hashingAndConversion/accidentDataHashing");
+const carDataHashing = require('../hashingAndConversion/carDataHashing');
+const ownerDataHashing = require('../hashingAndConversion/ownerDataHashing');
+const serviceDataHashing = require('./../hashingAndConversion/serviceDataHashing');
+const addToOwnerHistory = require('./../hashingAndConversion/addtoOwnerHistory');
+const accidentDataHashing = require('./../hashingAndConversion/accidentDataHashing');
 
+const web3 = require('web3');
+
+// TODO Update web3 code with new version @Hassaan
 /******************
  * SMART CONTRACT CONFIGURATION
  */
 const contractAbi = [
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
+        indexed: false,
+        internalType: 'address',
+        name: 'from',
+        type: 'address',
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "carDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: 'string',
+        name: 'carDetailsHash',
+        type: 'string',
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "ownerDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: 'string',
+        name: 'ownerDetailsHash',
+        type: 'string',
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "serviceDetailsHash",
-        "type": "string"
+        indexed: false,
+        internalType: 'string',
+        name: 'serviceDetailsHash',
+        type: 'string',
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "accidentDetailsHash",
-        "type": "string"
-      }
+        indexed: false,
+        internalType: 'string',
+        name: 'accidentDetailsHash',
+        type: 'string',
+      },
     ],
-    "name": "Transferred",
-    "type": "event"
+    name: 'Transferred',
+    type: 'event',
   },
   {
-    "constant": false,
-    "inputs": [
+    constant: false,
+    inputs: [
       {
-        "internalType": "string",
-        "name": "_carDetailsHash",
-        "type": "string"
+        internalType: 'string',
+        name: '_carDetailsHash',
+        type: 'string',
       },
       {
-        "internalType": "string",
-        "name": "_ownerDetailsHash",
-        "type": "string"
+        internalType: 'string',
+        name: '_ownerDetailsHash',
+        type: 'string',
       },
       {
-        "internalType": "string",
-        "name": "_serviceDetailsHash",
-        "type": "string"
+        internalType: 'string',
+        name: '_serviceDetailsHash',
+        type: 'string',
       },
       {
-        "internalType": "string",
-        "name": "_accidentDetailsHash",
-        "type": "string"
-      }
+        internalType: 'string',
+        name: '_accidentDetailsHash',
+        type: 'string',
+      },
     ],
-    "name": "eventGenerator",
-    "outputs": [
+    name: 'eventGenerator',
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "success",
-        "type": "bool"
-      }
+        internalType: 'bool',
+        name: 'success',
+        type: 'bool',
+      },
     ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
 ];
 
-const contractAddress = "0x402aBFa55c923a647FAfAe7b37676dF44734742c";
-const web3js = new web3();
-web3js.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
-const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
+const contractAddress = '0x402aBFa55c923a647FAfAe7b37676dF44734742c';
 
+// const web3js = new web3();
 
-let accounts = [];
+// web3js.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+// const hashingTestSC = new web3js.eth.Contract(contractAbi, contractAddress);
 
-web3js.eth.getAccounts().then((_accounts) => {
-  accounts = _accounts;
-});
+// let accounts = [];
+
+// web3js.eth.getAccounts().then((_accounts) => {
+//   accounts = _accounts;
+// });
 
 /******************** */
 
 //Routes
 
 //Login for registration auth
-router.post("/regLogin", (req, res) => {
+router.post('/regLogin', (req, res) => {
   //console.log(req.body);
   //console.log(req.body.typeOfUser);
   const data = req.body;
@@ -142,31 +146,31 @@ router.post("/regLogin", (req, res) => {
       if (!admin) {
         return res
           .status(400)
-          .json({ error: "No User with this email exists!" });
+          .json({ error: 'No User with this email exists!' });
       } else {
         bcrypt.compare(data.password, admin.password, function (err, isMatch) {
           if (err) {
             throw err;
           } else if (!isMatch) {
-            return res.status(400).json({ error: "Incorrect Password" });
+            return res.status(400).json({ error: 'Incorrect Password' });
           } else {
             //JWT Payload
             const payload = {
               id: admin.id,
               name: admin.fullName,
-              type: "reg",
+              type: 'reg',
             };
             // Sign token
             jwt.sign(
               payload,
-              "secret",
+              'secret',
               {
                 expiresIn: 50000,
               },
               (err, token) => {
                 res.json({
                   success: true,
-                  token: "Bearer " + token,
+                  token: 'Bearer ' + token,
                 });
               }
             );
@@ -178,7 +182,7 @@ router.post("/regLogin", (req, res) => {
 });
 
 // Login route for users
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
   const data = req.body;
   const { errors, isValid } = loginValidation(data);
   if (!isValid) {
@@ -193,39 +197,40 @@ router.post("/login", (req, res) => {
         if (!workshop) {
           return res
             .status(400)
-            .json({ error: "No User with this email exists!" });
+            .json({ error: 'No User with this email exists!' });
         } else {
-          bcrypt.compare(data.password, workshop.companyPassword, function (
-            err,
-            isMatch
-          ) {
-            if (err) {
-              throw err;
-            } else if (!isMatch) {
-              return res.status(400).json({ errors: "Incorrect Password" });
-            } else {
-              //JWT Payload
-              const payload = {
-                id: workshop.id,
-                name: workshop.companyName,
-                type: data.typeOfUser,
-              };
-              // Sign token
-              jwt.sign(
-                payload,
-                "secret",
-                {
-                  expiresIn: 500000,
-                },
-                (err, token) => {
-                  res.json({
-                    success: true,
-                    token: "Bearer " + token,
-                  });
-                }
-              );
+          bcrypt.compare(
+            data.password,
+            workshop.companyPassword,
+            function (err, isMatch) {
+              if (err) {
+                throw err;
+              } else if (!isMatch) {
+                return res.status(400).json({ errors: 'Incorrect Password' });
+              } else {
+                //JWT Payload
+                const payload = {
+                  id: workshop.id,
+                  name: workshop.companyName,
+                  type: data.typeOfUser,
+                };
+                // Sign token
+                jwt.sign(
+                  payload,
+                  'secret',
+                  {
+                    expiresIn: 500000,
+                  },
+                  (err, token) => {
+                    res.json({
+                      success: true,
+                      token: 'Bearer ' + token,
+                    });
+                  }
+                );
+              }
             }
-          });
+          );
         }
       });
 
@@ -264,7 +269,7 @@ router.post("/login", (req, res) => {
 });
 
 //User sign up
-router.post("/signUp", (req, res) => {
+router.post('/signUp', (req, res) => {
   const data = req.body;
   const { errors, isValid } = userSignUpValidate(data);
   if (!isValid) {
@@ -272,7 +277,7 @@ router.post("/signUp", (req, res) => {
   } else {
     userSignUp.findOne({ email: data.email }).then((user) => {
       if (user) {
-        return res.status(400).json({ error: "This user already exists!" });
+        return res.status(400).json({ error: 'This user already exists!' });
       } else {
         //Hash the password and save new user into database
         bcrypt.genSalt(10, (err, salt) => {
@@ -289,14 +294,14 @@ router.post("/signUp", (req, res) => {
             newUser.save();
           });
         });
-        res.send("Success!");
+        res.send('Success!');
       }
     });
   }
 });
 
 //save workshop into permanent table
-router.post("/saveWorkshop", (req, res) => {
+router.post('/saveWorkshop', (req, res) => {
   const data = req.body;
   let companyInfo = null;
   companyRegistrationTemp
@@ -325,19 +330,19 @@ router.post("/saveWorkshop", (req, res) => {
         .then((company) => {
           if (company) {
             res.status(400).json({
-              error: "A database with this Email already exists in Database",
+              error: 'A database with this Email already exists in Database',
             });
           } else {
             newCompanyRegistration.save((error) => {
               if (error) {
                 console.log(error);
-                res.status(400).json({ error: "Error saving data" });
+                res.status(400).json({ error: 'Error saving data' });
               } else {
                 companyRegistrationTemp
                   .deleteOne({ companyEmail: data.companyEmail })
                   .then(() => {
                     res.json({
-                      sucess: "Company sucessfully approved and saved",
+                      sucess: 'Company sucessfully approved and saved',
                     });
                   });
               }
@@ -355,7 +360,7 @@ router.post("/saveWorkshop", (req, res) => {
  * validates the data for proper format, and saves the record in a
  * temporary table for workshops for reg auth approval
  */
-router.post("/workshopSignUp", (req, res) => {
+router.post('/workshopSignUp', (req, res) => {
   const data = req.body;
   const { errors, isValid } = workshopTempValidation(data);
   ``;
@@ -371,7 +376,7 @@ router.post("/workshopSignUp", (req, res) => {
         if (company) {
           return res
             .status(400)
-            .json({ error: "You have already sent a registration email" });
+            .json({ error: 'You have already sent a registration email' });
         } else {
           bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(data.companyPassword, 10, (err, hash) => {
@@ -385,11 +390,11 @@ router.post("/workshopSignUp", (req, res) => {
                 if (error) {
                   return res
                     .status(400)
-                    .json({ error: "Error saving data to database" });
+                    .json({ error: 'Error saving data to database' });
                 } else {
                   return res.json({
                     success:
-                      "We have recived your application, You will be contacted after approval!",
+                      'We have recived your application, You will be contacted after approval!',
                   });
                 }
               });
@@ -404,7 +409,7 @@ router.post("/workshopSignUp", (req, res) => {
  * This route retrieves a list of all un-approved workshops in the table
  * and sends that data to the front-end (registration auth dashboard)
  */
-router.get("/getWorkshopsTemp", (req, res) => {
+router.get('/getWorkshopsTemp', (req, res) => {
   const data = req.body;
 
   companyRegistrationTemp
@@ -420,12 +425,12 @@ router.get("/getWorkshopsTemp", (req, res) => {
  * in the temporary workshop holder table.
  * If workshop doesn't exist, appropriate msg is sent back
  */
-router.post("/deleteWorkshop", (req, res) => {
+router.post('/deleteWorkshop', (req, res) => {
   const data = req.body;
   companyRegistrationTemp
     .deleteOne({ companyEmail: data.companyEmail })
     .then(() => {
-      res.json({ success: "Workshop deleted from database" });
+      res.json({ success: 'Workshop deleted from database' });
     })
     .catch(() => {
       res.status(400).json({
@@ -440,7 +445,7 @@ router.post("/deleteWorkshop", (req, res) => {
  * 4 hashes are matched with the hashes stored in the BC and if matched then data is sent to the front end
  * else it is not and error is logged saying that data mismatch
  */
-router.post("/searchCar", (req, res) => {
+router.post('/searchCar', (req, res) => {
   //Extract form data from request
   const data = req.body;
 
@@ -453,7 +458,7 @@ router.post("/searchCar", (req, res) => {
   //Initialize empty payload
   let payload = [];
 
-  if (data.selectedOpt === "vin") {
+  if (data.selectedOpt === 'vin') {
     vin = data.number;
     carDetails.findOne({ vin: data.number }).then(async (car) => {
       //If car does not exist then
@@ -462,11 +467,11 @@ router.post("/searchCar", (req, res) => {
           (bool) => {
             if (bool) {
               return res.status(400).json({
-                msg: "Data Corrupt! Transaction not required!",
+                msg: 'Data Corrupt! Transaction not required!',
               });
             } else {
               return res.status(400).json({
-                msg: "There is no registered vehicle across this vin number!",
+                msg: 'There is no registered vehicle across this vin number!',
               });
             }
           }
@@ -487,7 +492,7 @@ router.post("/searchCar", (req, res) => {
           .then((owner) => {
             if (!owner) {
               return res.status(400).json({
-                msg: "Ownership history does not exist! Data corrupt!",
+                msg: 'Ownership history does not exist! Data corrupt!',
               });
             } else {
               //Get hashed data of owner details across said car
@@ -506,7 +511,7 @@ router.post("/searchCar", (req, res) => {
                   serviceDetails = sHistory;
                 } else {
                   console.log(
-                    "No records against service history for this vehicle exist!"
+                    'No records against service history for this vehicle exist!'
                   );
                   sHash = hash([]);
                 }
@@ -523,7 +528,7 @@ router.post("/searchCar", (req, res) => {
                       accidentDetails = aHistory;
                     } else {
                       console.log(
-                        "No records against accident history for this vehicle exist!"
+                        'No records against accident history for this vehicle exist!'
                       );
                       aHash = hash([]);
                     }
@@ -554,9 +559,9 @@ router.post("/searchCar", (req, res) => {
                         } else {
                           res.status(305).json({
                             msg:
-                              "Unfortunately the " +
+                              'Unfortunately the ' +
                               err.message +
-                              " in our records has been corrupted! We apologise for the inconvenience!",
+                              ' in our records has been corrupted! We apologise for the inconvenience!',
                           });
                         }
                       });
@@ -568,7 +573,7 @@ router.post("/searchCar", (req, res) => {
     });
   }
 
-  if (data.selectedOpt === "reg") {
+  if (data.selectedOpt === 'reg') {
     reg = data.number;
     carDetails.findOne({ reg: data.number }).then(async (car) => {
       //If car does not exist then
@@ -577,11 +582,11 @@ router.post("/searchCar", (req, res) => {
           (bool) => {
             if (bool) {
               return res.status(400).json({
-                msg: "Data Corrupt! Transaction not required!",
+                msg: 'Data Corrupt! Transaction not required!',
               });
             } else {
               return res.status(400).json({
-                msg: "There is no registered vehicle across this vin number!",
+                msg: 'There is no registered vehicle across this vin number!',
               });
             }
           }
@@ -602,7 +607,7 @@ router.post("/searchCar", (req, res) => {
           .then((owner) => {
             if (!owner) {
               return res.status(400).json({
-                msg: "Ownership history does not exist! Data corrupt!",
+                msg: 'Ownership history does not exist! Data corrupt!',
               });
             } else {
               //Get hashed data of owner details across said car
@@ -620,7 +625,7 @@ router.post("/searchCar", (req, res) => {
                   serviceDetails = sHistory;
                 } else {
                   console.log(
-                    "No records against service history for this vehicle exist!"
+                    'No records against service history for this vehicle exist!'
                   );
                   sHash = hash([]);
                 }
@@ -637,7 +642,7 @@ router.post("/searchCar", (req, res) => {
                       accidentDetails = aHistory;
                     } else {
                       console.log(
-                        "No records against accident history for this vehicle exist!"
+                        'No records against accident history for this vehicle exist!'
                       );
                       aHash = hash([]);
                     }
@@ -671,9 +676,9 @@ router.post("/searchCar", (req, res) => {
                         } else {
                           res.status(305).json({
                             msg:
-                              "Unfortunately the " +
+                              'Unfortunately the ' +
                               err.message +
-                              " in our records has been corrupted! We apologise for the inconvenience!",
+                              ' in our records has been corrupted! We apologise for the inconvenience!',
                           });
                         }
                       });
@@ -692,7 +697,7 @@ router.post("/searchCar", (req, res) => {
  * Smart Contract saves hashes of all 4 types of car data
  * Block Number of transaction/data is saved in information hashes table
  */
-router.post("/CarEntry", (req, res) => {
+router.post('/CarEntry', (req, res) => {
   const data = req.body;
   //Validate proper format of data
   const { errors, isValid } = carAndOwnerValidate(data);
@@ -707,7 +712,7 @@ router.post("/CarEntry", (req, res) => {
         //if car exists send error message
         if (car) {
           return res.status(400).json({
-            error: "A vehile with this VIN or Reg Number already exists",
+            error: 'A vehile with this VIN or Reg Number already exists',
           });
         } else {
           //Object of car details
@@ -765,7 +770,7 @@ router.post("/CarEntry", (req, res) => {
               newInformationHash.save((error) => {
                 if (error) {
                   return res.status(400).json({
-                    error: "There was an error saving Block Number!",
+                    error: 'There was an error saving Block Number!',
                   });
                 }
               });
@@ -779,7 +784,7 @@ router.post("/CarEntry", (req, res) => {
                 if (error) {
                   return res
                     .status(400)
-                    .json({ error: "There was an error saving Car Details" });
+                    .json({ error: 'There was an error saving Car Details' });
                 }
               });
 
@@ -787,12 +792,12 @@ router.post("/CarEntry", (req, res) => {
               newOwner.save((error) => {
                 if (error) {
                   return res.status(400).json({
-                    error: "There was an error saving new Owner details",
+                    error: 'There was an error saving new Owner details',
                   });
                 }
               });
 
-              res.send("The new car entry was sucessfully saved");
+              res.send('The new car entry was sucessfully saved');
             }) //end then block of SC
             .catch((err) => console.log(err));
         } //end else
@@ -805,7 +810,7 @@ router.post("/CarEntry", (req, res) => {
  * All 4 types of data hashes are computed and stored into a smart contract again
  * Block Number of updated transaction is stored in info hashes table as an updated record
  */
-router.post("/OwnerTransfer", (req, res) => {
+router.post('/OwnerTransfer', (req, res) => {
   let accidentMillage = 0;
   let serviceMillage = 0;
   let carDetailsMillage = 0;
@@ -863,10 +868,10 @@ router.post("/OwnerTransfer", (req, res) => {
                     //if service records exist then calculate their hash else find hash of empty array
                     if (service) {
                       if (service.length > 1) {
-                        console.log("Printing Service History");
+                        console.log('Printing Service History');
                         serviceMillage = service[service.length - 1].millage;
                         console.log(serviceMillage);
-                        console.log("End Service History");
+                        console.log('End Service History');
                       }
                       if (service.length === 1) {
                         serviceMillage = service[0].millage;
@@ -905,14 +910,14 @@ router.post("/OwnerTransfer", (req, res) => {
                           .then(async (bool) => {
                             if (bool) {
                               const millageData = [
-                                { name: "accident", millage: accidentMillage },
-                                { name: "service", millage: serviceMillage },
+                                { name: 'accident', millage: accidentMillage },
+                                { name: 'service', millage: serviceMillage },
                                 {
-                                  name: "carDetails",
+                                  name: 'carDetails',
                                   millage: carDetailsMillage,
                                 },
                                 {
-                                  name: "millageCurrent",
+                                  name: 'millageCurrent',
                                   millage: millageCurrent,
                                 },
                               ];
@@ -920,13 +925,13 @@ router.post("/OwnerTransfer", (req, res) => {
                               await highestMillage(millageData).then(
                                 async (res1) => {
                                   console.log(res1);
-                                  if (res1.name != "millageCurrent") {
+                                  if (res1.name != 'millageCurrent') {
                                     const alertPayload = {
                                       reg: data.reg,
                                       date: todaysDate,
                                       millage: res1.millage,
                                       comments:
-                                        "Milage entered was less than a previously recorded value in owner transfer section!",
+                                        'Milage entered was less than a previously recorded value in owner transfer section!',
                                       //garage: data.garage
                                     };
                                     console.log(alertPayload);
@@ -936,13 +941,13 @@ router.post("/OwnerTransfer", (req, res) => {
                                         console.log(error);
                                         return res.status(400).json({
                                           error:
-                                            "There was an error in recording an alert",
+                                            'There was an error in recording an alert',
                                         });
                                       } else {
-                                        console.log("New alert saved");
+                                        console.log('New alert saved');
                                         return res.status(400).json({
                                           error:
-                                            "The milage you are trying to enter is less than a previously recorded value",
+                                            'The milage you are trying to enter is less than a previously recorded value',
                                         });
                                       }
                                     });
@@ -972,16 +977,17 @@ router.post("/OwnerTransfer", (req, res) => {
                                               data.regNumber
                                             );
                                             console.log(
-                                              "Transaction Completed!"
+                                              'Transaction Completed!'
                                             );
 
                                             //save new owner into db
-                                            const OwnerTransfer = new ownershipHistory(
-                                              newOwnerData
-                                            );
+                                            const OwnerTransfer =
+                                              new ownershipHistory(
+                                                newOwnerData
+                                              );
                                             OwnerTransfer.save();
                                             res.send(
-                                              "Owner Transferred Successfully!"
+                                              'Owner Transferred Successfully!'
                                             );
                                           });
                                       });
@@ -998,9 +1004,9 @@ router.post("/OwnerTransfer", (req, res) => {
                             } else {
                               res.status(400).json({
                                 error:
-                                  "Unfortunately the " +
+                                  'Unfortunately the ' +
                                   err.message +
-                                  " in our records has been corrupted! We apologise for the inconvenience!",
+                                  ' in our records has been corrupted! We apologise for the inconvenience!',
                               });
                             }
                           });
@@ -1009,19 +1015,19 @@ router.post("/OwnerTransfer", (req, res) => {
               } else {
                 //if owner dasta doesnt exist in database
                 res.status(400).json({
-                  error: "Data corrupt! No owner for this car exists!",
+                  error: 'Data corrupt! No owner for this car exists!',
                 });
               }
             });
         } else {
           //if car does not exists then return error msg
           res.status(400).json({
-            error: "No such car exists in the database!",
+            error: 'No such car exists in the database!',
           });
         }
       }) // end then block of car details
       .catch((err) => {
-        console.log("Error fetching car from DB!");
+        console.log('Error fetching car from DB!');
       });
   } //end else of validity
 });
@@ -1031,7 +1037,7 @@ router.post("/OwnerTransfer", (req, res) => {
  * All 4 types of data hashes are computed again and stored into blockchain smart contract
  * BlockNumber updated in info hashes table
  */
-router.post("/AccidentAndService", (req, res) => {
+router.post('/AccidentAndService', (req, res) => {
   let accidentMillage = 0;
   let serviceMillage = 0;
   let carDetailsMillage = 0;
@@ -1066,7 +1072,7 @@ router.post("/AccidentAndService", (req, res) => {
               carDetailsMillage = 0;
             }
 
-            console.log("Printing car details millage");
+            console.log('Printing car details millage');
             console.log(carDetailsMillage);
 
             //create hash of owner data
@@ -1079,10 +1085,10 @@ router.post("/AccidentAndService", (req, res) => {
                   //add old service history records to data to be hashed
                   if (sHistory.length > 1) {
                     serviceData = sHistory;
-                    console.log("Printing Service History");
+                    console.log('Printing Service History');
                     serviceMillage = sHistory[sHistory.length - 1].millage;
                     console.log(serviceMillage);
-                    console.log("End Service History");
+                    console.log('End Service History');
                   }
                   if (sHistory.length === 1) {
                     serviceData.push(sHistory[0]);
@@ -1100,10 +1106,10 @@ router.post("/AccidentAndService", (req, res) => {
                       if (aHistory.length > 1) {
                         //add old accident history records to data to be hashed
                         accidentData = aHistory;
-                        console.log("Printing Accident History");
+                        console.log('Printing Accident History');
                         accidentMillage = aHistory[aHistory.length - 1].millage;
                         console.log(accidentMillage);
-                        console.log("End Service History");
+                        console.log('End Service History');
                       }
                       if (aHistory.length === 1) {
                         accidentData.push(aHistory[0]);
@@ -1125,23 +1131,23 @@ router.post("/AccidentAndService", (req, res) => {
                       .then(async (bool) => {
                         if (bool) {
                           const millageData = [
-                            { name: "accident", millage: accidentMillage },
-                            { name: "service", millage: serviceMillage },
-                            { name: "carDetails", millage: carDetailsMillage },
-                            { name: "millageCurrent", millage: millageCurrent },
+                            { name: 'accident', millage: accidentMillage },
+                            { name: 'service', millage: serviceMillage },
+                            { name: 'carDetails', millage: carDetailsMillage },
+                            { name: 'millageCurrent', millage: millageCurrent },
                           ];
                           console.log(millageData);
 
                           await highestMillage(millageData)
                             .then(async (res1) => {
                               console.log(res1);
-                              if (res1.name != "millageCurrent") {
+                              if (res1.name != 'millageCurrent') {
                                 const alertPayload = {
                                   reg: data.reg,
                                   date: todaysDate,
                                   millage: millageCurrent,
                                   comments:
-                                    "Milage entered was less than a previously recorded value in Service/Accident Section",
+                                    'Milage entered was less than a previously recorded value in Service/Accident Section',
                                   garage: data.garage,
                                 };
                                 console.log(alertPayload);
@@ -1152,14 +1158,14 @@ router.post("/AccidentAndService", (req, res) => {
                                     console.log(error);
                                     return res.status(400).json({
                                       error:
-                                        "There was an error in recording an alert",
+                                        'There was an error in recording an alert',
                                     });
                                   } else {
-                                    console.log("New alert saved");
+                                    console.log('New alert saved');
                                     errorCondition = 2;
                                     return res.status(400).json({
                                       error:
-                                        "The milage you are trying to enter is less than a previously recorded value",
+                                        'The milage you are trying to enter is less than a previously recorded value',
                                     });
                                     //return 2;
                                   }
@@ -1174,47 +1180,47 @@ router.post("/AccidentAndService", (req, res) => {
                                   comments: data.comments,
                                 };
 
-                                let cmd = 0; 
+                                let cmd = 0;
 
                                 //Check that out of all 3 spare parts which of them exist and update
                                 //the payload object accordingly
-                                if (data.sparePart1 != "") {
+                                if (data.sparePart1 != '') {
                                   payload.sparePart1 = data.sparePart1;
                                   await verify(data.sparePart1)
                                     .then((T) => {
                                       //console.log(T);
                                       payload.isValid1 = T;
-                                      cmd = 1
+                                      cmd = 1;
                                     })
                                     .catch((err) => {
                                       console.log(err);
-                                      payload.isValid1 = "N/A";
+                                      payload.isValid1 = 'N/A';
                                     });
                                 }
-                                if (data.sparePart2 != "") {
+                                if (data.sparePart2 != '') {
                                   payload.sparePart2 = data.sparePart2;
                                   await verify(data.sparePart2)
                                     .then((T) => {
                                       //console.log(T);
                                       payload.isValid2 = T;
-                                      cmd = 1
+                                      cmd = 1;
                                     })
                                     .catch((err) => {
                                       console.log(err);
-                                      payload.isValid2 = "N/A";
+                                      payload.isValid2 = 'N/A';
                                     });
                                 }
-                                if (data.sparePart3 != "") {
+                                if (data.sparePart3 != '') {
                                   payload.sparePart3 = data.sparePart3;
                                   await verify(data.sparePart3)
                                     .then((T) => {
                                       // console.log(T);
                                       payload.isValid3 = T;
-                                      cmd = 1 
+                                      cmd = 1;
                                     })
                                     .catch((err) => {
                                       console.log(err);
-                                      payload.isValid3 = "N/A";
+                                      payload.isValid3 = 'N/A';
                                     });
                                 }
                                 console.log(payload.isValid1);
@@ -1225,19 +1231,26 @@ router.post("/AccidentAndService", (req, res) => {
                                   reg: data.reg,
                                   date: todaysDate,
                                   millage: millageCurrent,
-                                  comments: "Spare Parts are not OEM",
+                                  comments: 'Spare Parts are not OEM',
                                   garage: data.garage,
                                 };
 
-                                if (payload.isValid1 == false || payload.isValid2 == false || payload.isValid3 == false){
+                                if (
+                                  payload.isValid1 == false ||
+                                  payload.isValid2 == false ||
+                                  payload.isValid3 == false
+                                ) {
                                   if (payload.isValid1 == false) {
-                                    alertPayload.sparePart1 = payload.sparePart1;
+                                    alertPayload.sparePart1 =
+                                      payload.sparePart1;
                                   }
                                   if (payload.isValid2 == false) {
-                                    alertPayload.sparePart2 = payload.sparePart2;
+                                    alertPayload.sparePart2 =
+                                      payload.sparePart2;
                                   }
                                   if (payload.isValid3 == false) {
-                                    alertPayload.sparePart3 = payload.sparePart3;
+                                    alertPayload.sparePart3 =
+                                      payload.sparePart3;
                                   }
                                   console.log(alertPayload);
                                   const newAlert = new alert(alertPayload);
@@ -1245,30 +1258,27 @@ router.post("/AccidentAndService", (req, res) => {
                                     if (error) {
                                       console.log(error);
                                       console.log(
-                                        "There was an erroring in saving invalid spare part(s) alert"
+                                        'There was an erroring in saving invalid spare part(s) alert'
                                       );
                                       //return 1;
                                     } else {
                                       console.log(
-                                        "New Alert for invalid spare part(s) saved"
+                                        'New Alert for invalid spare part(s) saved'
                                       );
                                     }
                                   });
                                 }
-                                
 
                                 //console.log(payload);
                                 //if the user selected to enter service history then
-                                if (data.activeItem == "1") {
+                                if (data.activeItem == '1') {
                                   //add latest record to service history object
                                   serviceData.push(payload);
                                   //compute both hashes
-                                  const serviceDataHashed = serviceDataHashing(
-                                    serviceData
-                                  );
-                                  const accidentDataHashed = accidentDataHashing(
-                                    accidentData
-                                  );
+                                  const serviceDataHashed =
+                                    serviceDataHashing(serviceData);
+                                  const accidentDataHashed =
+                                    accidentDataHashing(accidentData);
 
                                   //call smart contract
                                   hashingTestSC.methods
@@ -1293,17 +1303,16 @@ router.post("/AccidentAndService", (req, res) => {
                                           );
 
                                           //Save Service data into table
-                                          const serviceDetails = new serviceHistory(
-                                            payload
-                                          );
+                                          const serviceDetails =
+                                            new serviceHistory(payload);
                                           serviceDetails.save((error) => {
                                             if (error) {
                                               res.status(400).json({
-                                                error: "error in saving!",
+                                                error: 'error in saving!',
                                               });
                                             } else {
                                               res.send(
-                                                "Saved in service history successfully!"
+                                                'Saved in service history successfully!'
                                               );
                                             }
                                           });
@@ -1316,12 +1325,10 @@ router.post("/AccidentAndService", (req, res) => {
                                   //add latest record to accident history object
                                   accidentData.push(payload);
                                   //compute both hashes
-                                  const serviceDataHashed = serviceDataHashing(
-                                    serviceData
-                                  );
-                                  const accidentDataHashed = accidentDataHashing(
-                                    accidentData
-                                  );
+                                  const serviceDataHashed =
+                                    serviceDataHashing(serviceData);
+                                  const accidentDataHashed =
+                                    accidentDataHashing(accidentData);
 
                                   hashingTestSC.methods
                                     .eventGenerator(
@@ -1344,17 +1351,16 @@ router.post("/AccidentAndService", (req, res) => {
                                           );
 
                                           //save accident data into table
-                                          const accidentDetails = new accidentHistory(
-                                            payload
-                                          );
+                                          const accidentDetails =
+                                            new accidentHistory(payload);
                                           accidentDetails.save((error) => {
                                             if (error) {
                                               res.status(400).json({
-                                                error: "error in saving!",
+                                                error: 'error in saving!',
                                               });
                                             } else {
                                               res.send(
-                                                "Saved in accident history successfully!"
+                                                'Saved in accident history successfully!'
                                               );
                                             }
                                           });
@@ -1363,7 +1369,7 @@ router.post("/AccidentAndService", (req, res) => {
                                     .catch((err) => {
                                       res.status(400).json({
                                         error:
-                                          "error in recieving block number!",
+                                          'error in recieving block number!',
                                       });
                                     }); //end catch
                                 }
@@ -1373,7 +1379,7 @@ router.post("/AccidentAndService", (req, res) => {
                               console.log(err);
                               res
                                 .status(400)
-                                .json({ error: "Unknown error occured" });
+                                .json({ error: 'Unknown error occured' });
                               return;
                             }); //end catch
                         }
@@ -1386,9 +1392,9 @@ router.post("/AccidentAndService", (req, res) => {
                         } else {
                           res.status(400).json({
                             error:
-                              "Unfortunately the " +
+                              'Unfortunately the ' +
                               err.message +
-                              " in our records has been corrupted! We apologise for the inconvenience!",
+                              ' in our records has been corrupted! We apologise for the inconvenience!',
                           });
                         }
                       }); //end catch
@@ -1396,18 +1402,18 @@ router.post("/AccidentAndService", (req, res) => {
               }); //end then block for recieving service records
           }) //end then block for recieving owner data
           .catch((error) => {
-            res.status(400).json({ error: "No Owner Found across this Car!" });
+            res.status(400).json({ error: 'No Owner Found across this Car!' });
           });
       }) //end then block for recieving car data
       .catch((error) =>
         res
           .status(400)
-          .json({ error: "No Car Found across this Registration Number!" })
+          .json({ error: 'No Car Found across this Registration Number!' })
       );
   } //end else block for validation of data
 });
 
-router.post("/alert", (req, res) => {
+router.post('/alert', (req, res) => {
   const data = req.body;
 
   alert
@@ -1416,22 +1422,22 @@ router.post("/alert", (req, res) => {
       res.send(alerts);
     })
     .catch((error) => {
-      res.status(500).send("No alerts to display");
+      res.status(500).send('No alerts to display');
     });
 });
 
-router.post("/dismissAlert", (req, res) => {
+router.post('/dismissAlert', (req, res) => {
   const data = req.body;
   console.log(data.id);
   alert
     .deleteOne({ _id: data.id })
     .then(() => {
-      res.json({ success: "Alert Sucessfully Deleted" });
+      res.json({ success: 'Alert Sucessfully Deleted' });
     })
     .catch(() => {
       res.status(400).json({
         error:
-          "An error occured when trying to delete this alert from the database",
+          'An error occured when trying to delete this alert from the database',
       });
     });
 });
@@ -1450,7 +1456,7 @@ function updateOrCreateEntryInHashTable(record, response, vinNum, regNum) {
           },
         }
       )
-      .then((responseUpdate) => console.log("Record Updated"));
+      .then((responseUpdate) => console.log('Record Updated'));
   } else {
     //Create new record for this car
     const blockNumberInfoForDb = {
@@ -1473,7 +1479,7 @@ async function highestMillage(array) {
         max = parseInt(array[i].millage, 10);
       }
     }
-    if (result.name == "millageCurrent") {
+    if (result.name == 'millageCurrent') {
       resolve(result);
     } else {
       if (parseInt(result.millage, 10) == parseInt(array[3].millage, 10)) {
@@ -1519,7 +1525,7 @@ async function compareExistingRecords(
     informationHash.findOne({ vin: vin, reg: reg }).then((record) => {
       if (record) {
         hashingTestSC.getPastEvents(
-          "AllEvents",
+          'AllEvents',
           {
             fromBlock: record.block,
             toBlock: record.block,
@@ -1530,49 +1536,49 @@ async function compareExistingRecords(
               //If any hash does not match then send appropriate response
               //If all hashes match then send data back to front end
               if (carData == events[0].returnValues.carDetailsHash) {
-                console.log("Car Data Matched!");
+                console.log('Car Data Matched!');
                 if (ownerData == events[0].returnValues.ownerDetailsHash) {
-                  console.log("owner data Matched!");
+                  console.log('owner data Matched!');
                   if (
                     serviceData == events[0].returnValues.serviceDetailsHash
                   ) {
-                    console.log("Service data Matched!");
+                    console.log('Service data Matched!');
                     if (
                       accidentData == events[0].returnValues.accidentDetailsHash
                     ) {
-                      console.log("Accident data Matched!");
+                      console.log('Accident data Matched!');
                       //If hashes match and data is ok then make payload
                       resolve(true);
                     } else {
                       reject({
-                        message: "Accident Data",
+                        message: 'Accident Data',
                       });
                     }
                   } else {
                     reject({
-                      message: "Service Data",
+                      message: 'Service Data',
                     });
                   }
                 } else {
                   reject({
-                    message: "Owner Data",
+                    message: 'Owner Data',
                   });
                 }
               } else {
                 reject({
-                  message: "Car Data",
+                  message: 'Car Data',
                 });
               }
             } else {
               reject({
-                BCerror: "Data Corrupt! Transaction not allowed!",
+                BCerror: 'Data Corrupt! Transaction not allowed!',
               });
             }
           }
         ); //end then block for get events method
       } else {
         reject({
-          BCerror: "Data Corrupt! Transaction not allowed!",
+          BCerror: 'Data Corrupt! Transaction not allowed!',
         });
       }
     }); //end then block for info hashes table
@@ -1581,7 +1587,7 @@ async function compareExistingRecords(
 
 async function confirmDataCorruption(number, selectedOpt) {
   return new Promise((resolve, reject) => {
-    if (selectedOpt == "vin") {
+    if (selectedOpt == 'vin') {
       //Check for existing records in information hash table
       informationHash.find({ vin: number }).then((result) => {
         if (result.length != 0) {
@@ -1613,7 +1619,7 @@ async function confirmDataCorruption(number, selectedOpt) {
       }); //end then block of info hashes table
     }
 
-    if (selectedOpt == "reg") {
+    if (selectedOpt == 'reg') {
       //Check for existing records in information hash table
       informationHash.find({ reg: number }).then((result) => {
         if (result.length != 0) {

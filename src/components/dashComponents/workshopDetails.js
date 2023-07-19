@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment } from 'react';
 import {
   MDBJumbotron,
   MDBBtn,
@@ -6,38 +6,37 @@ import {
   MDBRow,
   MDBCol,
   MDBIcon,
-} from "mdbreact";
-import axios from "axios";
-import sugar from "sugar";
+} from 'mdbreact';
+import axios from 'axios';
 
 class JumbotronPage extends React.Component {
   state = {
-    ownerName: "",
-    ownerPosition: "",
-    ownerContact: "",
-    ownerCNIC: "",
-    companyName: "",
-    companyEmail: "",
-    companyContact: "",
-    companyAddress: "",
-    companyCity: "",
-    companyZip: "",
-    approved: "",
-    selection: "",
-    statusColor: "",
-    numberOfRecords: "",
+    ownerName: '',
+    ownerPosition: '',
+    ownerContact: '',
+    ownerCNIC: '',
+    companyName: '',
+    companyEmail: '',
+    companyContact: '',
+    companyAddress: '',
+    companyCity: '',
+    companyZip: '',
+    approved: '',
+    selection: '',
+    statusColor: '',
+    numberOfRecords: '',
     workshops: [],
-    disabled: "",
+    disabled: '',
   };
 
   componentDidMount = () => {
     axios
-      .get("/getWorkshopsTemp")
+      .get('/getWorkshopsTemp')
       .then((response) => {
         const data = response.data.workshops;
         if (data.length == 0) {
           this.setState({
-            disabled: "disabled",
+            disabled: 'disabled',
           });
         } else {
           this.setState(
@@ -52,8 +51,8 @@ class JumbotronPage extends React.Component {
               companyAddress: data[0].companyAddress,
               companyCity: data[0].companyCity,
               companyZip: data[0].companyZip,
-              approved: "Not Approved",
-              statusColor: "red",
+              approved: 'Not Approved',
+              statusColor: 'red',
               numberOfRecords: data.length,
               workshops: data,
             },
@@ -87,8 +86,8 @@ class JumbotronPage extends React.Component {
           if (!this.state.workshops[select].approved) {
             this.setState(
               {
-                approved: "Not Approved",
-                statusColor: "red",
+                approved: 'Not Approved',
+                statusColor: 'red',
               },
               () => {
                 this.updateData(this.state.selection);
@@ -97,8 +96,8 @@ class JumbotronPage extends React.Component {
           } else {
             this.setState(
               {
-                approved: "Approved",
-                statusColor: "green",
+                approved: 'Approved',
+                statusColor: 'green',
               },
               () => {
                 this.updateData(this.state.selection);
@@ -125,8 +124,8 @@ class JumbotronPage extends React.Component {
           if (!this.state.workshops[select].approved) {
             this.setState(
               {
-                approved: "Not Approved",
-                statusColor: "Red",
+                approved: 'Not Approved',
+                statusColor: 'Red',
               },
               () => {
                 this.updateData(this.state.selection);
@@ -135,8 +134,8 @@ class JumbotronPage extends React.Component {
           } else {
             this.setState(
               {
-                approved: "Approved",
-                statusColor: "Green",
+                approved: 'Approved',
+                statusColor: 'Green',
               },
               () => {
                 this.updateData(this.state.selection);
@@ -151,20 +150,20 @@ class JumbotronPage extends React.Component {
   updateData = (select) => {
     if (this.state.workshops.length == 0) {
       this.setState({
-        ownerName: "",
-        ownerPosition: "",
-        ownerContact: "",
-        ownerCNIC: "",
-        companyName: "",
-        companyEmail: "",
-        companyContact: "",
-        companyAddress: "",
-        companyCity: "",
-        companyZip: "",
-        approved: "",
-        selection: "",
-        statusColor: "",
-        numberOfRecords: "",
+        ownerName: '',
+        ownerPosition: '',
+        ownerContact: '',
+        ownerCNIC: '',
+        companyName: '',
+        companyEmail: '',
+        companyContact: '',
+        companyAddress: '',
+        companyCity: '',
+        companyZip: '',
+        approved: '',
+        selection: '',
+        statusColor: '',
+        numberOfRecords: '',
         workshops: [],
       });
     } else {
@@ -188,11 +187,11 @@ class JumbotronPage extends React.Component {
           ) {
             this.setState(
               {
-                aprroved: "Not Approved",
-                statusColor: "red",
+                aprroved: 'Not Approved',
+                statusColor: 'red',
               },
               () => {
-                console.log("Update Date Not Approved");
+                console.log('Update Date Not Approved');
                 console.log(this.state.workshops[select].approved);
                 console.log(this.state.statusColor);
                 console.log(this.state.approved);
@@ -201,11 +200,11 @@ class JumbotronPage extends React.Component {
           } else {
             this.setState(
               {
-                aprroved: "Approved",
-                statusColor: "green",
+                aprroved: 'Approved',
+                statusColor: 'green',
               },
               () => {
-                console.log("Update Date Approved");
+                console.log('Update Date Approved');
                 console.log(this.state.workshops[select].approved);
                 console.log(this.state.statusColor);
                 console.log(this.state.approved);
@@ -225,34 +224,34 @@ class JumbotronPage extends React.Component {
     const payload = {
       companyEmail: this.state.companyEmail,
     };
-    if (status == "Approved") {
+    if (status == 'Approved') {
       workshopsTemp[select].approved = true;
       workshopsTemp.splice(select, 1);
 
       if (workshopsTemp.length == 0) {
         this.setState({
-          ownerName: "",
-          ownerPosition: "",
-          ownerContact: "",
-          ownerCNIC: "",
-          companyName: "",
-          companyEmail: "",
-          companyContact: "",
-          companyAddress: "",
-          companyCity: "",
-          companyZip: "",
-          approved: "",
-          selection: "",
-          statusColor: "",
-          numberOfRecords: "",
+          ownerName: '',
+          ownerPosition: '',
+          ownerContact: '',
+          ownerCNIC: '',
+          companyName: '',
+          companyEmail: '',
+          companyContact: '',
+          companyAddress: '',
+          companyCity: '',
+          companyZip: '',
+          approved: '',
+          selection: '',
+          statusColor: '',
+          numberOfRecords: '',
           workshops: [],
-          disabled: "disabled",
+          disabled: 'disabled',
         });
       } else {
         this.setState(
           {
-            approved: "Approved",
-            statusColor: "green",
+            approved: 'Approved',
+            statusColor: 'green',
             workshops: workshopsTemp,
             numberOfRecords: workshopsTemp.length,
           },
@@ -263,8 +262,8 @@ class JumbotronPage extends React.Component {
       }
 
       axios({
-        url: "/saveWorkshop",
-        method: "POST",
+        url: '/saveWorkshop',
+        method: 'POST',
         data: payload,
       })
         .then((response) => {
@@ -273,46 +272,44 @@ class JumbotronPage extends React.Component {
         .catch((error) => {
           console.log(error);
         });
-
-    } else if (status == "Not Approved") {
+    } else if (status == 'Not Approved') {
       workshopsTemp[select].approved = false;
       workshopsTemp.splice(select, 1);
 
       if (workshopsTemp.length == 0) {
         this.setState({
-          ownerName: "",
-          ownerPosition: "",
-          ownerContact: "",
-          ownerCNIC: "",
-          companyName: "",
-          companyEmail: "",
-          companyContact: "",
-          companyAddress: "",
-          companyCity: "",
-          companyZip: "",
-          approved: "",
-          selection: "",
-          statusColor: "",
-          numberOfRecords: "",
+          ownerName: '',
+          ownerPosition: '',
+          ownerContact: '',
+          ownerCNIC: '',
+          companyName: '',
+          companyEmail: '',
+          companyContact: '',
+          companyAddress: '',
+          companyCity: '',
+          companyZip: '',
+          approved: '',
+          selection: '',
+          statusColor: '',
+          numberOfRecords: '',
           workshops: [],
-          disabled: "disabled",
+          disabled: 'disabled',
         });
       } else {
-      
-      this.setState(
-        {
-          approved: "Not Approved",
-          statusColor: "red",
-          workshops: workshopsTemp,
-        },
-        () => {
-          this.updateData(this.state.selection);
-        }
-      );
+        this.setState(
+          {
+            approved: 'Not Approved',
+            statusColor: 'red',
+            workshops: workshopsTemp,
+          },
+          () => {
+            this.updateData(this.state.selection);
+          }
+        );
       }
       axios({
-        url: "/deleteWorkshop",
-        method: "POST",
+        url: '/deleteWorkshop',
+        method: 'POST',
         data: payload,
       })
         .then((response) => {
@@ -327,108 +324,108 @@ class JumbotronPage extends React.Component {
   render() {
     return (
       <div>
-        <MDBRow className="mt-2">
+        <MDBRow className='mt-2'>
           <MDBCol>
-            <MDBJumbotron className="pt-1">
-              <h3 className="h3 display-4">Owner Details</h3>
-              <hr className="my-2" />
-              <div className="mt-3">
-                <kbd className="h4">Name:</kbd>{" "}
-                <span className="pl-3">{this.state.ownerName}</span>
+            <MDBJumbotron className='pt-1'>
+              <h3 className='h3 display-4'>Owner Details</h3>
+              <hr className='my-2' />
+              <div className='mt-3'>
+                <kbd className='h4'>Name:</kbd>{' '}
+                <span className='pl-3'>{this.state.ownerName}</span>
               </div>
-              <div className="mt-3">
-                <kbd className="h4">Positon:</kbd>{" "}
-                <span className="pl-3">{this.state.ownerPosition}</span>
+              <div className='mt-3'>
+                <kbd className='h4'>Positon:</kbd>{' '}
+                <span className='pl-3'>{this.state.ownerPosition}</span>
               </div>
-              <div className="mt-3">
-                <kbd className="h4">Contact:</kbd>{" "}
-                <span className="pl-3">{this.state.ownerContact}</span>
+              <div className='mt-3'>
+                <kbd className='h4'>Contact:</kbd>{' '}
+                <span className='pl-3'>{this.state.ownerContact}</span>
               </div>
-              <div className="mt-3">
-                <kbd className="h4">CNIC:</kbd>{" "}
-                <span className="pl-3">{this.state.ownerCNIC}</span>
+              <div className='mt-3'>
+                <kbd className='h4'>CNIC:</kbd>{' '}
+                <span className='pl-3'>{this.state.ownerCNIC}</span>
               </div>
             </MDBJumbotron>
           </MDBCol>
         </MDBRow>
-        <MDBRow className="mt-1">
+        <MDBRow className='mt-1'>
           <MDBCol>
-            <MDBJumbotron className="pt-1">
-              <h3 className="h3 display-4">Workshop Details</h3>
-              <hr className="my-2" />
-              <div className="mt-3">
-                <kbd className="h4">Name:</kbd>{" "}
-                <span className="pl-3">{this.state.companyName}</span>
+            <MDBJumbotron className='pt-1'>
+              <h3 className='h3 display-4'>Workshop Details</h3>
+              <hr className='my-2' />
+              <div className='mt-3'>
+                <kbd className='h4'>Name:</kbd>{' '}
+                <span className='pl-3'>{this.state.companyName}</span>
               </div>
-              <div className="mt-3">
-                <kbd className="h4">Email:</kbd>{" "}
-                <span className="pl-3">{this.state.companyEmail}</span>
+              <div className='mt-3'>
+                <kbd className='h4'>Email:</kbd>{' '}
+                <span className='pl-3'>{this.state.companyEmail}</span>
               </div>
-              <div className="mt-3">
-                <kbd className="h4">Contact:</kbd>{" "}
-                <span className="pl-3">{this.state.companyContact}</span>
+              <div className='mt-3'>
+                <kbd className='h4'>Contact:</kbd>{' '}
+                <span className='pl-3'>{this.state.companyContact}</span>
               </div>
-              <div className="mt-3">
-                <kbd className="h4">Address:</kbd>{" "}
-                <span className="pl-3">{this.state.companyAddress}</span>
+              <div className='mt-3'>
+                <kbd className='h4'>Address:</kbd>{' '}
+                <span className='pl-3'>{this.state.companyAddress}</span>
               </div>
-              <div className="mt-3">
-                <kbd className="h4">City:</kbd>{" "}
-                <span className="pl-3">{this.state.companyCity}</span>
+              <div className='mt-3'>
+                <kbd className='h4'>City:</kbd>{' '}
+                <span className='pl-3'>{this.state.companyCity}</span>
               </div>
-              <div className="mt-3">
-                <kbd className="h4">Zip:</kbd>{" "}
-                <span className="pl-3">{this.state.companyZip}</span>
+              <div className='mt-3'>
+                <kbd className='h4'>Zip:</kbd>{' '}
+                <span className='pl-3'>{this.state.companyZip}</span>
               </div>
-              <div className="mt-3">
+              <div className='mt-3'>
                 <kbd
-                  className="h4"
+                  className='h4'
                   style={{ backgroundColor: this.state.statusColor }}
                 >
                   Status:
                 </kbd>
-                <span className="pl-3">{this.state.approved}</span>
+                <span className='pl-3'>{this.state.approved}</span>
               </div>
             </MDBJumbotron>
           </MDBCol>
         </MDBRow>
         <MDBRow>
-          <MDBCol md="2">
+          <MDBCol md='2'>
             <MDBBtn
-              color="elegant"
+              color='elegant'
               disabled={this.state.disabled}
               onClick={this.previousWorkshop}
             >
-              <MDBIcon icon="angle-left" className="mr-1" />
+              <MDBIcon icon='angle-left' className='mr-1' />
             </MDBBtn>
           </MDBCol>
-          <MDBCol md="8" className="text-center">
+          <MDBCol md='8' className='text-center'>
             <MDBBtn
-              color="danger"
+              color='danger'
               disabled={this.state.disabled}
               onClick={() => {
-                this.updateStatus("Not Approved");
+                this.updateStatus('Not Approved');
               }}
             >
-              <MDBIcon icon="times" className="mr-1" /> Decline
+              <MDBIcon icon='times' className='mr-1' /> Decline
             </MDBBtn>
             <MDBBtn
-              color="success"
+              color='success'
               disabled={this.state.disabled}
               onClick={() => {
-                this.updateStatus("Approved");
+                this.updateStatus('Approved');
               }}
             >
-              Approve <MDBIcon icon="check" className="ml-1" />
+              Approve <MDBIcon icon='check' className='ml-1' />
             </MDBBtn>
           </MDBCol>
-          <MDBCol md="2">
+          <MDBCol md='2'>
             <MDBBtn
-              color="elegant right"
+              color='elegant right'
               disabled={this.state.disabled}
               onClick={this.nextWorkshop}
             >
-              <MDBIcon icon="angle-right" className="mr-1" />
+              <MDBIcon icon='angle-right' className='mr-1' />
             </MDBBtn>
           </MDBCol>
         </MDBRow>
