@@ -133,226 +133,155 @@ const contractAddress = '0x402aBFa55c923a647FAfAe7b37676dF44734742c';
 //Routes
 
 //Login for registration auth
-router.post('/regLogin', (req, res) => {
-  //console.log(req.body);
-  //console.log(req.body.typeOfUser);
+router.post('/regLogin', async (req, res) => {
   const data = req.body;
   const { errors, isValid } = loginValidation(data);
+
   if (!isValid) {
     return res.status(400).json({ errors: errors, isValid: isValid });
-  } else {
-    //Log the Reg Auth In
-    adminLogin.findOne({ email: data.email }).then((admin) => {
-      if (!admin) {
-        return res
-          .status(400)
-          .json({ error: 'No User with this email exists!' });
-      } else {
-        bcrypt.compare(data.password, admin.password, function (err, isMatch) {
-          if (err) {
-            throw err;
-          } else if (!isMatch) {
-            return res.status(400).json({ error: 'Incorrect Password' });
-          } else {
-            //JWT Payload
-            const payload = {
-              id: admin.id,
-              name: admin.fullName,
-              type: 'reg',
-            };
-            // Sign token
-            jwt.sign(
-              payload,
-              'secret',
-              {
-                expiresIn: 50000,
-              },
-              (err, token) => {
-                res.json({
-                  success: true,
-                  token: 'Bearer ' + token,
-                });
-              }
-            );
-          }
-        });
-      }
-    });
   }
+
+  //Log the Reg Auth In
+  const admin = await adminLogin.findOne({ email: data.email });
+
+  if (!admin)
+    return res.status(400).json({ error: 'No User with this email exists!' });
+
+  const isMatch = await bcrypt.compare(data.password, admin.password);
+
+  if (!isMatch) {
+    return res.status(400).json({ error: 'Incorrect Password' });
+  }
+
+  // Sign token
+  const token = jwt.sign(
+    {
+      id: admin.id,
+      name: admin.fullName,
+      type: 'reg',
+    },
+    'secret',
+    { expiresIn: 50000 }
+  );
+
+  return res.json({
+    success: true,
+    token: 'Bearer ' + token,
+  });
 });
 
 // Login route for users
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const data = req.body;
   const { errors, isValid } = loginValidation(data);
-  if (!isValid) {
-    return res.status(400).json({ errors: errors, isValid: isValid });
-  } else {
-    /*userSignUp.findOne({ email: data.email }).then((user) => {
-      //if a user does not exist then
-      if (!user) {*/
-    companyRegistration
-      .findOne({ companyEmail: data.email })
-      .then((workshop) => {
-        if (!workshop) {
-          return res
-            .status(400)
-            .json({ error: 'No User with this email exists!' });
-        } else {
-          bcrypt.compare(
-            data.password,
-            workshop.companyPassword,
-            function (err, isMatch) {
-              if (err) {
-                throw err;
-              } else if (!isMatch) {
-                return res.status(400).json({ errors: 'Incorrect Password' });
-              } else {
-                //JWT Payload
-                const payload = {
-                  id: workshop.id,
-                  name: workshop.companyName,
-                  type: data.typeOfUser,
-                };
-                // Sign token
-                jwt.sign(
-                  payload,
-                  'secret',
-                  {
-                    expiresIn: 500000,
-                  },
-                  (err, token) => {
-                    res.json({
-                      success: true,
-                      token: 'Bearer ' + token,
-                    });
-                  }
-                );
-              }
-            }
-          );
-        }
-      });
 
-    //if a user exists then
-    /*} else {
-        bcrypt.compare(data.password, user.password, function (err, isMatch) {
-          if (err) {
-            throw err;
-          } else if (!isMatch) {
-            return res.status(400).json({ error: "Incorrect Password" });
-          } else {
-            //JWT Payload
-            const payload = {
-              id: user.id,
-              name: user.fullName,
-            };
-            // Sign token
-            jwt.sign(
-              payload,
-              "secret",
-              {
-                expiresIn: 500000,
-              },
-              (err, token) => {
-                res.json({
-                  success: true,
-                  token: "Bearer " + token,
-                });
-              }
-            );
-          }
-        });
-      }
-    });*/
+  if (!isValid)
+    return res.status(400).json({ errors: errors, isValid: isValid });
+
+  const workshop = await companyRegistration.findOne({
+    companyEmail: data.email,
+  });
+
+  if (!workshop)
+    return res.status(400).json({ error: 'No User with this email exists!' });
+
+  const isMatch = await bcrypt.compare(data.password, workshop.companyPassword);
+
+  if (!isMatch) {
+    return res.status(400).json({ errors: 'Incorrect Password' });
   }
+
+  const token = jwt.sign(
+    {
+      id: workshop.id,
+      name: workshop.companyName,
+      type: data.typeOfUser,
+    },
+    'secret',
+    { expiresIn: 500000 }
+  );
+
+  res.status(200).json({
+    success: true,
+    token: 'Bearer ' + token,
+  });
 });
 
 //User sign up
-router.post('/signUp', (req, res) => {
+router.post('/signUp', async (req, res) => {
   const data = req.body;
   const { errors, isValid } = userSignUpValidate(data);
+
   if (!isValid) {
     return res.status(400).json({ errors: errors, isValid: isValid });
-  } else {
-    userSignUp.findOne({ email: data.email }).then((user) => {
-      if (user) {
-        return res.status(400).json({ error: 'This user already exists!' });
-      } else {
-        //Hash the password and save new user into database
-        bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(data.password, 10, (err, hash) => {
-            if (err) throw err;
-            const payload = {
-              fullName: data.fullName,
-              email: data.email,
-              username: data.username,
-              password: hash,
-            };
-            newUser = new userSignUp(payload);
-            console.log(newUser);
-            newUser.save();
-          });
-        });
-        res.send('Success!');
-      }
-    });
   }
+
+  const user = await userSignUp.findOne({ email: data.email });
+
+  if (user) {
+    return res.status(400).json({ error: 'This user already exists!' });
+  }
+
+  //Hash the password and save new user into database
+  const hash = await bcrypt.hash(data.password, 12);
+
+  await userSignUp.create({
+    fullName: data.fullName,
+    email: data.email,
+    username: data.username,
+    password: hash,
+  });
+
+  return res.status(200).json({ message: 'Success' });
 });
 
 //save workshop into permanent table
-router.post('/saveWorkshop', (req, res) => {
+router.post('/saveWorkshop', async (req, res) => {
   const data = req.body;
-  let companyInfo = null;
-  companyRegistrationTemp
-    .findOne(
+
+  try {
+    const companyExists = await companyRegistration.findOne({
+      companyEmail: data.companyEmail,
+    });
+
+    if (companyExists)
+      return res.status(400).json({
+        error: 'A database with this Email already exists in Database',
+      });
+
+    const company = await companyRegistrationTemp.findOne(
       { companyEmail: data.companyEmail },
       { __v: 0, approved: 0, _id: 0 }
-    )
-    .then((company) => {
-      companyInfo = {
-        ownerName: company.ownerName,
-        ownerPosition: company.ownerPosition,
-        ownerContact: company.ownerContact,
-        ownerCNIC: company.ownerCNIC,
-        companyName: company.companyName,
-        companyEmail: company.companyEmail,
-        companyPassword: company.companyPassword,
-        companyContact: company.companyContact,
-        companyAddress: company.companyAddress,
-        companyCity: company.companyCity,
-        companyZip: company.companyZip,
-      };
-      const newCompanyRegistration = new companyRegistration(companyInfo);
-      console.log(newCompanyRegistration);
-      companyRegistration
-        .findOne({ companyEmail: data.companyEmail })
-        .then((company) => {
-          if (company) {
-            res.status(400).json({
-              error: 'A database with this Email already exists in Database',
-            });
-          } else {
-            newCompanyRegistration.save((error) => {
-              if (error) {
-                console.log(error);
-                res.status(400).json({ error: 'Error saving data' });
-              } else {
-                companyRegistrationTemp
-                  .deleteOne({ companyEmail: data.companyEmail })
-                  .then(() => {
-                    res.json({
-                      sucess: 'Company sucessfully approved and saved',
-                    });
-                  });
-              }
-            });
-          }
-        });
-    })
-    .catch((error) => {
-      console.log(error);
+    );
+
+    const companyInfo = {
+      ownerName: company.ownerName,
+      ownerPosition: company.ownerPosition,
+      ownerContact: company.ownerContact,
+      ownerCNIC: company.ownerCNIC,
+      companyName: company.companyName,
+      companyEmail: company.companyEmail,
+      companyPassword: company.companyPassword,
+      companyContact: company.companyContact,
+      companyAddress: company.companyAddress,
+      companyCity: company.companyCity,
+      companyZip: company.companyZip,
+    };
+
+    const newCompanyRegistration = new companyRegistration(companyInfo);
+
+    await newCompanyRegistration.save();
+
+    await companyRegistrationTemp.deleteOne({
+      companyEmail: data.companyEmail,
     });
+
+    return res.json({
+      success: 'Company successfully approved and saved',
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 /**
@@ -360,48 +289,36 @@ router.post('/saveWorkshop', (req, res) => {
  * validates the data for proper format, and saves the record in a
  * temporary table for workshops for reg auth approval
  */
-router.post('/workshopSignUp', (req, res) => {
+router.post('/workshopSignUp', async (req, res) => {
   const data = req.body;
   const { errors, isValid } = workshopTempValidation(data);
-  ``;
-  if (!isValid) {
-    console.log(errors);
-    return res.status(400).json({ errors: errors, isValid: isValid });
-  } else {
-    //console.log(data);
 
-    companyRegistrationTemp
-      .findOne({ companyEmail: data.companyEmail })
-      .then((company) => {
-        if (company) {
-          return res
-            .status(400)
-            .json({ error: 'You have already sent a registration email' });
-        } else {
-          bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(data.companyPassword, 10, (err, hash) => {
-              if (err) throw err;
-              data.companyPassword = hash;
-              delete data.companyConfirm;
-              const newCompanyRegistrationTemp = new companyRegistrationTemp(
-                data
-              );
-              newCompanyRegistrationTemp.save((error) => {
-                if (error) {
-                  return res
-                    .status(400)
-                    .json({ error: 'Error saving data to database' });
-                } else {
-                  return res.json({
-                    success:
-                      'We have recived your application, You will be contacted after approval!',
-                  });
-                }
-              });
-            });
-          });
-        }
-      });
+  if (!isValid)
+    return res.status(400).json({ errors: errors, isValid: isValid });
+
+  const company = await companyRegistrationTemp.findOne({
+    companyEmail: data.companyEmail,
+  });
+
+  if (company)
+    return res
+      .status(400)
+      .json({ error: 'You have already sent a registration email' });
+
+  const hash = await bcrypt.hash(data.companyPassword, 12);
+
+  data.companyPassword = hash;
+  delete data.companyConfirm;
+
+  try {
+    const newCompanyRegistrationTemp = new companyRegistrationTemp(data);
+    newCompanyRegistrationTemp.save();
+    return res.status(200).json({
+      success:
+        'We have received your application, You will be contacted after approval!',
+    });
+  } catch (err) {
+    return res.status(400).json({ error: 'Error saving data to database' });
   }
 });
 
@@ -409,14 +326,13 @@ router.post('/workshopSignUp', (req, res) => {
  * This route retrieves a list of all un-approved workshops in the table
  * and sends that data to the front-end (registration auth dashboard)
  */
-router.get('/getWorkshopsTemp', (req, res) => {
-  const data = req.body;
+router.get('/getWorkshopsTemp', async (req, res) => {
+  const workshops = await companyRegistrationTemp.find(
+    { approved: false },
+    { companyPassword: 0 }
+  );
 
-  companyRegistrationTemp
-    .find({ approved: false }, { companyPassword: 0 })
-    .then((workshops) => {
-      res.json({ workshops });
-    });
+  return res.status(200).json({ workshops });
 });
 
 /**
@@ -425,18 +341,18 @@ router.get('/getWorkshopsTemp', (req, res) => {
  * in the temporary workshop holder table.
  * If workshop doesn't exist, appropriate msg is sent back
  */
-router.post('/deleteWorkshop', (req, res) => {
-  const data = req.body;
-  companyRegistrationTemp
-    .deleteOne({ companyEmail: data.companyEmail })
-    .then(() => {
-      res.json({ success: 'Workshop deleted from database' });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "A workshop with this Email doesn't exist within the database",
-      });
+router.post('/deleteWorkshop', async (req, res) => {
+  const { companyEmail } = req.body.data;
+
+  try {
+    await companyRegistrationTemp.deleteOne({ companyEmail });
+
+    return res.json({ success: 'Workshop deleted from database' });
+  } catch (err) {
+    return res.status(400).json({
+      error: "A workshop with this Email doesn't exist within the database",
     });
+  }
 });
 
 /**
@@ -445,7 +361,7 @@ router.post('/deleteWorkshop', (req, res) => {
  * 4 hashes are matched with the hashes stored in the BC and if matched then data is sent to the front end
  * else it is not and error is logged saying that data mismatch
  */
-router.post('/searchCar', (req, res) => {
+router.post('/searchCar', async (req, res) => {
   //Extract form data from request
   const data = req.body;
 
@@ -460,234 +376,214 @@ router.post('/searchCar', (req, res) => {
 
   if (data.selectedOpt === 'vin') {
     vin = data.number;
-    carDetails.findOne({ vin: data.number }).then(async (car) => {
-      //If car does not exist then
-      if (!car) {
-        await confirmDataCorruption(data.number, data.selectedOpt).then(
-          (bool) => {
-            if (bool) {
-              return res.status(400).json({
-                msg: 'Data Corrupt! Transaction not required!',
-              });
-            } else {
-              return res.status(400).json({
-                msg: 'There is no registered vehicle across this vin number!',
-              });
-            }
-          }
-        ); //end then block
-      } else {
-        //Get Hash of car data after converting into valid object
-        const cHash = carDataHashing(car);
-        const returnedCar = car;
-        //Get registration number of car (for handling queries)
-        reg = returnedCar.reg;
+    const car = await carDetails.findOne({ vin: data.number });
 
-        //Get ownership details about said car
-        ownershipHistory
-          .find(
-            { vin: vin, reg: reg }
-            /*{ yearPurchased: 1, millage: 1, city: 1, state: 1 }*/
-          )
-          .then((owner) => {
-            if (!owner) {
-              return res.status(400).json({
-                msg: 'Ownership history does not exist! Data corrupt!',
-              });
-            } else {
-              //Get hashed data of owner details across said car
-              //console.log("owner retreived from db: " + owner);
-              const oHash = ownerDataHashing(owner);
+    //If car does not exist then
+    if (!car) {
+      const bool = await confirmDataCorruption(data.number, data.selectedOpt);
 
-              //owner object returned from DB
-              const ownershipDetails = owner;
-              //Find service history across said car
-              serviceHistory.find({ vin: vin, reg: reg }).then((sHistory) => {
-                let sHash = null;
-                if (sHistory) {
-                  //Get hash of service details of said car
-                  sHash = serviceDataHashing(sHistory);
-                  //service details of car
-                  serviceDetails = sHistory;
-                } else {
-                  console.log(
-                    'No records against service history for this vehicle exist!'
-                  );
-                  sHash = hash([]);
-                }
-
-                //Find accident history for said vehicle
-                accidentHistory
-                  .find({ vin: vin, reg: reg })
-                  .then(async (aHistory) => {
-                    let aHash = null;
-                    if (aHistory) {
-                      //Get hash of accident data
-                      aHash = accidentDataHashing(aHistory);
-                      //accident records of car
-                      accidentDetails = aHistory;
-                    } else {
-                      console.log(
-                        'No records against accident history for this vehicle exist!'
-                      );
-                      aHash = hash([]);
-                    }
-                    //Check hashes and if data is not corrupt then initiate a new transaction
-                    await compareExistingRecords(
-                      vin,
-                      reg,
-                      cHash,
-                      oHash,
-                      sHash,
-                      aHash
-                    )
-                      .then((bool) => {
-                        payload = [
-                          returnedCar,
-                          serviceDetails,
-                          ownershipDetails,
-                          accidentDetails,
-                        ];
-                        //send the payload to the frontend
-                        return res.json({ car: payload });
-                      })
-                      .catch((err) => {
-                        if (err.BCerror) {
-                          res.status(305).json({
-                            msg: err.BCerror,
-                          });
-                        } else {
-                          res.status(305).json({
-                            msg:
-                              'Unfortunately the ' +
-                              err.message +
-                              ' in our records has been corrupted! We apologise for the inconvenience!',
-                          });
-                        }
-                      });
-                  }); //end then block for accident history
-              }); //end then block for service history
-            }
-          }); //end then block for owner history
+      if (bool) {
+        return res.status(400).json({
+          msg: 'Data Corrupt! Transaction not required!',
+        });
       }
-    });
+
+      return res.status(400).json({
+        msg: 'There is no registered vehicle across this vin number!',
+      });
+    }
+
+    //Get Hash of car data after converting into valid object
+    const cHash = carDataHashing(car);
+    const returnedCar = car;
+    //Get registration number of car (for handling queries)
+    reg = returnedCar.reg;
+
+    //Get ownership details about said car
+    const owner = await ownershipHistory.find(
+      { vin: vin, reg: reg }
+      /*{ yearPurchased: 1, millage: 1, city: 1, state: 1 }*/
+    );
+
+    if (!owner)
+      return res.status(400).json({
+        msg: 'Ownership history does not exist! Data corrupt!',
+      });
+
+    //Get hashed data of owner details across said car
+    //console.log("owner retreived from db: " + owner);
+    const oHash = ownerDataHashing(owner);
+
+    //owner object returned from DB
+    const ownershipDetails = owner;
+
+    //Find service history across said car
+    const sHistory = await serviceHistory.find({ vin: vin, reg: reg });
+
+    let sHash = null;
+    if (sHistory) {
+      //Get hash of service details of said car
+      sHash = serviceDataHashing(sHistory);
+      //service details of car
+      serviceDetails = sHistory;
+    } else {
+      console.log('No records against service history for this vehicle exist!');
+      sHash = hash([]);
+    }
+
+    //Find accident history for said vehicle
+    const aHistory = await accidentHistory.find({ vin: vin, reg: reg });
+
+    let aHash = null;
+    if (aHistory) {
+      //Get hash of accident data
+      aHash = accidentDataHashing(aHistory);
+      //accident records of car
+      accidentDetails = aHistory;
+    } else {
+      console.log(
+        'No records against accident history for this vehicle exist!'
+      );
+      aHash = hash([]);
+    }
+
+    try {
+      //Check hashes and if data is not corrupt then initiate a new transaction
+      await compareExistingRecords(vin, reg, cHash, oHash, sHash, aHash);
+
+      payload = [
+        returnedCar,
+        serviceDetails,
+        ownershipDetails,
+        accidentDetails,
+      ];
+
+      //send the payload to the frontend
+      return res.json({ car: payload });
+    } catch (err) {
+      if (err.BCerror) {
+        res.status(305).json({
+          msg: err.BCerror,
+        });
+      } else {
+        res.status(305).json({
+          msg:
+            'Unfortunately the ' +
+            err.message +
+            ' in our records has been corrupted! We apologise for the inconvenience!',
+        });
+      }
+    }
   }
 
   if (data.selectedOpt === 'reg') {
     reg = data.number;
-    carDetails.findOne({ reg: data.number }).then(async (car) => {
-      //If car does not exist then
-      if (!car) {
-        await confirmDataCorruption(data.number, data.selectedOpt).then(
-          (bool) => {
-            if (bool) {
-              return res.status(400).json({
-                msg: 'Data Corrupt! Transaction not required!',
-              });
-            } else {
-              return res.status(400).json({
-                msg: 'There is no registered vehicle across this vin number!',
-              });
-            }
-          }
-        ); //end then block
+    const car = await carDetails.findOne({ reg: data.number });
+
+    //If car does not exist then
+    if (!car) {
+      const bool = await confirmDataCorruption(data.number, data.selectedOpt);
+
+      if (bool) {
+        return res.status(400).json({
+          msg: 'Data Corrupt! Transaction not required!',
+        });
       } else {
-        //Get Hash of car data after converting into valid object
-        const cHash = carDataHashing(car);
-        const returnedCar = car;
-        //Get registration number of car (for handling queries)
-        vin = returnedCar.vin;
-
-        //Get ownership details about said car
-        ownershipHistory
-          .find(
-            { vin: vin, reg: reg }
-            /*{ yearPurchased: 1, millage: 1, city: 1, state: 1 }*/
-          )
-          .then((owner) => {
-            if (!owner) {
-              return res.status(400).json({
-                msg: 'Ownership history does not exist! Data corrupt!',
-              });
-            } else {
-              //Get hashed data of owner details across said car
-              const oHash = ownerDataHashing(owner);
-
-              //owner object returned from DB
-              const ownershipDetails = owner;
-              //Find service history across said car
-              serviceHistory.find({ vin: vin, reg: reg }).then((sHistory) => {
-                let sHash = null;
-                if (sHistory) {
-                  //Get hash of service details of said car
-                  sHash = serviceDataHashing(sHistory);
-                  //service details of car
-                  serviceDetails = sHistory;
-                } else {
-                  console.log(
-                    'No records against service history for this vehicle exist!'
-                  );
-                  sHash = hash([]);
-                }
-
-                //Find accident history for said vehicle
-                accidentHistory
-                  .find({ vin: vin, reg: reg })
-                  .then(async (aHistory) => {
-                    let aHash = null;
-                    if (aHistory) {
-                      //Get hash of accident data
-                      aHash = accidentDataHashing(aHistory);
-                      //accident records of car
-                      accidentDetails = aHistory;
-                    } else {
-                      console.log(
-                        'No records against accident history for this vehicle exist!'
-                      );
-                      aHash = hash([]);
-                    }
-
-                    //Check hashes and if data is not corrupt then initiate a new transaction
-                    await compareExistingRecords(
-                      vin,
-                      reg,
-                      cHash,
-                      oHash,
-                      sHash,
-                      aHash
-                    )
-                      .then((bool) => {
-                        if (bool) {
-                          payload = [
-                            returnedCar,
-                            serviceDetails,
-                            ownershipDetails,
-                            accidentDetails,
-                          ];
-                          //send the payload to the frontend
-                          return res.json({ car: payload });
-                        }
-                      })
-                      .catch((err) => {
-                        if (err.BCerror) {
-                          res.status(305).json({
-                            msg: err.BCerror,
-                          });
-                        } else {
-                          res.status(305).json({
-                            msg:
-                              'Unfortunately the ' +
-                              err.message +
-                              ' in our records has been corrupted! We apologise for the inconvenience!',
-                          });
-                        }
-                      });
-                  }); //end then block for accident history
-              }); //end then block for service history
-            }
-          }); //end then block for owner history
+        return res.status(400).json({
+          msg: 'There is no registered vehicle across this vin number!',
+        });
       }
-    });
+    }
+
+    //Get Hash of car data after converting into valid object
+    const cHash = carDataHashing(car);
+    const returnedCar = car;
+    //Get registration number of car (for handling queries)
+    vin = returnedCar.vin;
+
+    //Get ownership details about said car
+    const owner = await ownershipHistory.find(
+      { vin: vin, reg: reg }
+      /*{ yearPurchased: 1, millage: 1, city: 1, state: 1 }*/
+    );
+
+    if (!owner) {
+      return res.status(400).json({
+        msg: 'Ownership history does not exist! Data corrupt!',
+      });
+    }
+
+    //Get hashed data of owner details across said car
+    const oHash = ownerDataHashing(owner);
+
+    //owner object returned from DB
+    const ownershipDetails = owner;
+
+    //Find service history across said car
+    const sHistory = await serviceHistory.find({ vin: vin, reg: reg });
+
+    let sHash = null;
+    if (sHistory) {
+      //Get hash of service details of said car
+      sHash = serviceDataHashing(sHistory);
+      //service details of car
+      serviceDetails = sHistory;
+    } else {
+      console.log('No records against service history for this vehicle exist!');
+      sHash = hash([]);
+    }
+
+    //Find accident history for said vehicle
+    const aHistory = await accidentHistory.find({ vin: vin, reg: reg });
+
+    let aHash = null;
+    if (aHistory) {
+      //Get hash of accident data
+      aHash = accidentDataHashing(aHistory);
+      //accident records of car
+      accidentDetails = aHistory;
+    } else {
+      console.log(
+        'No records against accident history for this vehicle exist!'
+      );
+      aHash = hash([]);
+    }
+
+    try {
+      //Check hashes and if data is not corrupt then initiate a new transaction
+      const bool = await compareExistingRecords(
+        vin,
+        reg,
+        cHash,
+        oHash,
+        sHash,
+        aHash
+      );
+
+      if (bool) {
+        payload = [
+          returnedCar,
+          serviceDetails,
+          ownershipDetails,
+          accidentDetails,
+        ];
+        //send the payload to the frontend
+        return res.json({ car: payload });
+      }
+    } catch (err) {
+      if (err.BCerror) {
+        res.status(305).json({
+          msg: err.BCerror,
+        });
+      } else {
+        res.status(305).json({
+          msg:
+            'Unfortunately the ' +
+            err.message +
+            ' in our records has been corrupted! We apologise for the inconvenience!',
+        });
+      }
+    }
   }
 });
 
@@ -697,113 +593,113 @@ router.post('/searchCar', (req, res) => {
  * Smart Contract saves hashes of all 4 types of car data
  * Block Number of transaction/data is saved in information hashes table
  */
-router.post('/CarEntry', (req, res) => {
+router.post('/CarEntry', async (req, res) => {
   const data = req.body;
-  //Validate proper format of data
+
   const { errors, isValid } = carAndOwnerValidate(data);
-  //if data is not valid, send errors back to front end
+
   if (!isValid) {
     return res.status(305).json({ errors: errors, isValid: isValid });
-  } else {
-    //if data is in proper valid format than check if a car with this vin and reg# already exists in the db
-    carDetails
-      .findOne({ $or: [{ reg: data.regNumber }, { vin: data.vinNumber }] })
-      .then((car) => {
-        //if car exists send error message
-        if (car) {
-          return res.status(400).json({
-            error: 'A vehile with this VIN or Reg Number already exists',
-          });
-        } else {
-          //Object of car details
-          const carData = {
-            vin: data.vinNumber,
-            reg: data.regNumber,
-            make: data.make,
-            model: data.model,
-            year: data.year.toString(),
-            variant: data.variant,
-            type: data.type,
-            fuel: data.fuel,
-            drive: data.drive,
-          };
+  }
 
-          //Object of owner details
-          const ownerData = {
-            vin: data.vinNumber,
-            reg: data.regNumber,
-            yearPurchased: data.year,
-            millage: data.millage,
-            city: data.ownerCity,
-            state: data.ownerState,
-            ownerName: data.FullName,
-            ownerCNIC: data.ownerCNIC,
-            ownerContact: data.ownerContact,
-            date: Date.now().toString(),
-          };
+  //if data is in proper valid format than check if a car with this vin and reg# already exists in the db
+  const car = await carDetails.findOne({
+    $or: [{ reg: data.regNumber }, { vin: data.vinNumber }],
+  });
 
-          //Hash of all 4 types of car data ready to be passed into SC
-          const carDataHashed = carDataHashing(carData);
-          const ownerDataHashed = ownerDataHashing(ownerData);
-          const serviceDataHashed = hash([]);
-          const accidentDataHashed = hash([]);
+  //if car exists send error message
+  if (car) {
+    return res.status(400).json({
+      error: 'A vehicle with this VIN or Reg Number already exists',
+    });
+  }
 
-          //Call SC with this data
-          hashingTestSC.methods
-            .eventGenerator(
-              carDataHashed,
-              ownerDataHashed,
-              serviceDataHashed,
-              accidentDataHashed
-            )
-            .send({ from: accounts[0], gas: 3000000 })
-            .then((response) => {
-              //After receiving transaction reciept back, save the blockNumber of transaction in info hashes table
-              const blockNumberInfoForDb = {
-                vin: data.vinNumber,
-                reg: data.regNumber,
-                block: response.events.Transferred.blockNumber,
-              };
-              const newInformationHash = new informationHash(
-                blockNumberInfoForDb
-              );
-              newInformationHash.save((error) => {
-                if (error) {
-                  return res.status(400).json({
-                    error: 'There was an error saving Block Number!',
-                  });
-                }
-              });
+  //Object of car details
+  const carData = {
+    vin: data.vinNumber,
+    reg: data.regNumber,
+    make: data.make,
+    model: data.model,
+    year: data.year.toString(),
+    variant: data.variant,
+    type: data.type,
+    fuel: data.fuel,
+    drive: data.drive,
+  };
 
-              //Save car and owner details into their respective tables
-              const newCarDetails = new carDetails(carData);
-              const newOwner = new ownershipHistory(ownerData);
+  //Object of owner details
+  const ownerData = {
+    vin: data.vinNumber,
+    reg: data.regNumber,
+    yearPurchased: data.year,
+    millage: data.millage,
+    city: data.ownerCity,
+    state: data.ownerState,
+    ownerName: data.FullName,
+    ownerCNIC: data.ownerCNIC,
+    ownerContact: data.ownerContact,
+    date: Date.now().toString(),
+  };
 
-              //Save car details
-              newCarDetails.save((error) => {
-                if (error) {
-                  return res
-                    .status(400)
-                    .json({ error: 'There was an error saving Car Details' });
-                }
-              });
+  //Hash of all 4 types of car data ready to be passed into SC
+  const carDataHashed = carDataHashing(carData);
+  const ownerDataHashed = ownerDataHashing(ownerData);
+  const serviceDataHashed = hash([]);
+  const accidentDataHashed = hash([]);
 
-              //Save owner details
-              newOwner.save((error) => {
-                if (error) {
-                  return res.status(400).json({
-                    error: 'There was an error saving new Owner details',
-                  });
-                }
-              });
+  try {
+    //Call SC with this data
+    const response = await hashingTestSC.methods
+      .eventGenerator(
+        carDataHashed,
+        ownerDataHashed,
+        serviceDataHashed,
+        accidentDataHashed
+      )
+      .send({ from: accounts[0], gas: 3000000 });
 
-              res.send('The new car entry was sucessfully saved');
-            }) //end then block of SC
-            .catch((err) => console.log(err));
-        } //end else
-      }); // end then block of car details
-  } //end else of validity
-}); //end route
+    //After receiving transaction reciept back, save the blockNumber of transaction in info hashes table
+    const blockNumberInfoForDb = {
+      vin: data.vinNumber,
+      reg: data.regNumber,
+      block: response.events.Transferred.blockNumber,
+    };
+    const newInformationHash = new informationHash(blockNumberInfoForDb);
+    newInformationHash.save((error) => {
+      if (error) {
+        return res.status(400).json({
+          error: 'There was an error saving Block Number!',
+        });
+      }
+    });
+
+    //Save car and owner details into their respective tables
+    const newCarDetails = new carDetails(carData);
+    const newOwner = new ownershipHistory(ownerData);
+
+    //Save car details
+    newCarDetails.save((error) => {
+      if (error) {
+        return res
+          .status(400)
+          .json({ error: 'There was an error saving Car Details' });
+      }
+    });
+
+    //Save owner details
+    newOwner.save((error) => {
+      if (error) {
+        return res.status(400).json({
+          error: 'There was an error saving new Owner details',
+        });
+      }
+    });
+
+    res.send('The new car entry was successfully saved');
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 /**
  * This method transfer ownership of a vehicle to another individual
@@ -1071,9 +967,6 @@ router.post('/AccidentAndService', (req, res) => {
             } else {
               carDetailsMillage = 0;
             }
-
-            console.log('Printing car details millage');
-            console.log(carDetailsMillage);
 
             //create hash of owner data
             const ownerDataHashed = ownerDataHashing(owner);
@@ -1413,33 +1306,29 @@ router.post('/AccidentAndService', (req, res) => {
   } //end else block for validation of data
 });
 
-router.post('/alert', (req, res) => {
-  const data = req.body;
+router.post('/alert', async (req, res) => {
+  try {
+    const alerts = await alert.find({});
 
-  alert
-    .find({})
-    .then((alerts) => {
-      res.send(alerts);
-    })
-    .catch((error) => {
-      res.status(500).send('No alerts to display');
-    });
+    return res.send(alerts);
+  } catch (error) {
+    return res.status(500).send('No alerts to display');
+  }
 });
 
-router.post('/dismissAlert', (req, res) => {
+router.post('/dismissAlert', async (req, res) => {
   const data = req.body;
-  console.log(data.id);
-  alert
-    .deleteOne({ _id: data.id })
-    .then(() => {
-      res.json({ success: 'Alert Sucessfully Deleted' });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error:
-          'An error occured when trying to delete this alert from the database',
-      });
+
+  try {
+    await alert.deleteOne({ _id: data.id });
+
+    return res.json({ success: 'Alert Successfully Deleted' });
+  } catch (err) {
+    return res.status(400).json({
+      error:
+        'An error occured when trying to delete this alert from the database',
     });
+  }
 });
 
 //This function checks if a record against a car exists in the info hashes table
