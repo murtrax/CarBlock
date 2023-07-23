@@ -1,0 +1,1 @@
+exports.authRoutes = require('./auth');
