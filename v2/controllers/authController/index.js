@@ -1,13 +1,7 @@
-const jwt = require('jsonwebtoken');
 const HTTPError = require('../../utils/Error');
 const { User } = require('../../models');
 const { catchAsync } = require('../../utils/catchAsync');
-
-const generateToken = (data) => {
-  return jwt.sign(data, process.env.JWT_TOKEN_KEY || 'secret', {
-    expiresIn: '5000000',
-  });
-};
+const { generateToken } = require('./helpers');
 
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;

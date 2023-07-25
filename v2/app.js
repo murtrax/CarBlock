@@ -1,5 +1,5 @@
 const express = require('express');
-const { authRoutes } = require('./routes');
+const { authRoutes, carRoutes } = require('./routes');
 const morgan = require('morgan');
 const { globalErrorHandler } = require('./utils/ErrorHandler');
 
@@ -10,6 +10,7 @@ app.use(express.json());
 
 // ROUTES
 app.use('/auth', authRoutes);
+app.use('/car', carRoutes);
 
 app.use(globalErrorHandler);
 
